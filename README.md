@@ -6,9 +6,6 @@ The SDK can be used to create CDEvents and send them as CloudEvents, as well as 
 
 ## Get started
 
-```rust
-WIP ...
-```
 
 ## Create your first CDEvent
 
@@ -21,6 +18,7 @@ WIP ...
 ## Send your first CDEvent as CloudEvent
 
 Import the modules in your code
+
 
 ```rust
 WIP ...
