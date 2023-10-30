@@ -1,0 +1,23 @@
+on: push
+name: Clippy check
+
+jobs:
+   lint_check:
+      name: Rust - lint_${{ matrix.lint_projects }}
+      runs-on: ubuntu-22.04
+      strategy:
+        fail-fast: false
+        matrix:
+          lint_projects:
+            - cargo_fmt_check
+            - cargo_clippy
+            - cargo_deny
+            - cargo_toml_files
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+          with:
+            ref: ${{ github.event.inputs.commit_sha }}
+
+        - name: Run lint ${{ matrix.lint_projects }}
+          run:  make -f Makefile lint_${{ matrix.lint_projects }}
