@@ -1,0 +1,62 @@
+name: All
+
+permissions:
+  contents: read
+
+on:
+  merge_group:
+  pull_request:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+    inputs:
+      commit_sha:
+        description: Git commit sha, on which, to run this workflow
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  lint_commits:
+    name: All - lint_commits
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check Commit Lint
+        uses: build-trust/.github/actions/commit_lint@custom-actions
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+  lint_editorconfig:
+    name: All - lint_editorconfig
+    runs-on: ubuntu-20.04
+    container: # gitlab.com/greut/eclint
+      image: greut/eclint:v0.3.3@sha256:95e9a3dcbd236bae6569625cd403175cbde3705303774e7baca418b6442b8d77
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        with:
+          ref: ${{ github.event.inputs.commit_sha }}
+      - shell: sh
+        run: eclint -color=always
+
+  # Semgrep is a static analysis tool to lint code for patterns we want to forbid
+  # https://github.com/returntocorp/semgrep
+  lint_semgrep:
+    name: All - lint_semgrep
+    runs-on: ubuntu-20.04
+    container:
+      image: returntocorp/semgrep
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        with:
+          ref: ${{ github.event.inputs.commit_sha }}
+      - name: Run Semgrep
+        # .semgrepignore is not processed outside of working directory. See https://github.com/returntocorp/semgrep/issues/5669
+        run: |
+          mv semgrep/.semgrepignore . & \
+          semgrep --verbose --config="r2c" --config="tools/semgrep/rules/sample.yaml"
