@@ -1,0 +1,31 @@
+#cargo-deny is a cargo plugin that lets you lint your project's dependency graph
+#to ensure all your dependencies conform to your expectations and requirements.
+[bans]
+multiple-versions = "deny"
+# Dependencies cannot be specified with the "*" version.
+wildcards = "deny"
+
+[licenses]
+unlicensed = "deny"
+copyleft = "deny"
+confidence-threshold = 0.95
+allow = [
+    "Apache-2.0"
+]
+exceptions = []
+
+[advisories]
+unmaintained = "deny"
+vulnerability = "deny"
+#Determines what happens when a crate with a version that has been yanked from its source registry is encountered.
+yanked = "warn"
+ignore = []
+# Users who require or prefer Git to use SSH cloning instead of HTTPS,
+# such as implemented via "insteadOf" rules in Git config, can still
+# successfully fetch advisories with this enabled.
+#
+# See also:
+# https://doc.rust-lang.org/cargo/reference/config.html#netgit-fetch-with-cli
+# https://embarkstudios.github.io/cargo-deny/checks/advisories/cfg.html#the-git-fetch-with-cli-field-optional
+# https://github.com/EmbarkStudios/cargo-deny/pull/420
+git-fetch-with-cli = true
