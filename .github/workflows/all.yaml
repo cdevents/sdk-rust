@@ -25,16 +25,18 @@ defaults:
 jobs:
   lint_commits:
     name: All - lint_commits
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
-      - name: Check Commit Lint
-        uses: build-trust/.github/actions/commit_lint@custom-actions
+      - uses: actions/checkout@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v2.1.0
+      - run: yarn add @commitlint/cli
+      - run: yarn run commitlint --from HEAD~${{ github.event.pull_request.commits }} --to HEAD
 
   lint_editorconfig:
     name: All - lint_editorconfig
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     container: # gitlab.com/greut/eclint
       image: greut/eclint:v0.3.3
     steps:
@@ -48,7 +50,7 @@ jobs:
   # https://github.com/returntocorp/semgrep
   lint_semgrep:
     name: All - lint_semgrep
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     container:
       image: returntocorp/semgrep
     steps:
