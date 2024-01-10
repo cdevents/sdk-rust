@@ -1,0 +1,22 @@
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[package]
+name = "generator"
+description = "generate cdevents type from json schema on cdevents-spec"
+edition.workspace = true
+version.workspace = true
+authors.workspace = true
+repository.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+anyhow = "1.0"
+clap = { version = "4", features = ["derive"] }
+cruet = "0.14"
+handlebars = { version = "5", features = ["dir_source"] }
+serde_json = "*"
+url = "2.5"
+handlebars_misc_helpers = { version = "0.15", default-features = false, features = [
+    "string",
+    "json",
+] }

@@ -1,16 +1,18 @@
 [workspace]
-members = [
-  "bindings",
-  "factory",
-  "types",
-  "zz_artifact",
-  "zz_branch",
-  "zz_build",
-  "zz_change",
-  "zz_environment",
-  "zz_incident",
-  "zz_pipeline",
-  "zz_repository",
-  "zz_service",
-  "zz_task",
-]
+resolver = "2"
+members = ["cdevents", "generator"]
+
+[workspace.package]
+edition = "2021"
+version = "0.1.0"
+authors = ["David Bernard"]
+license = "ASL-2.0"
+repository = "https://github.com/cdevents/sdk-rust"
+rust-version = "1.75"
+publish = false
+
+[workspace.metadata.release]
+pre-release-commit-message = "🚀 (cargo-release) version {{version}}"
+tag-prefix = ""
+tag-name = "{{prefix}}{{version}}"
+tag-message = "🔖 {{version}}"
