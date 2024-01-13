@@ -1,0 +1,53 @@
+name: linter
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      commit_sha:
+        description: Git commit sha, on which, to run this workflow
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  lint_commits:
+    name: Lint Commit Messages
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check Commit Lint
+        uses: build-trust/.github/actions/commit_lint@custom-actions
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+  lint_check:
+        name: Rust - lint_${{ matrix.lint_projects }}
+        runs-on: ubuntu-22.04
+        strategy:
+          fail-fast: false
+          matrix:
+            lint_projects:
+              - cargo_fmt_check
+              - cargo_clippy
+              - cargo_deny
+              - cargo_toml_files
+        steps:
+          - name: Checkout repository
+            uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+            with:
+              ref: ${{ github.event.inputs.commit_sha }}
+
+          - name: Run lint ${{ matrix.lint_projects }}
+            run:  make -f Makefile lint_${{ matrix.lint_projects }}
+
