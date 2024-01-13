@@ -1,10 +1,10 @@
 [workspace]
 resolver = "2"
-members = ["cdevents", "generator"]
+members = ["cdevents-sdk", "generator"]
 
 [workspace.package]
 edition = "2021"
-version = "0.1.0"
+version = "0.3.0"
 authors = ["David Bernard"]
 license = "ASL-2.0"
 repository = "https://github.com/cdevents/sdk-rust"

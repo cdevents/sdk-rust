@@ -16,7 +16,7 @@ struct Settings {
     jsonschema_dir: PathBuf,
 
     /// destination directory where to generate code
-    #[arg(long, default_value = "../cdevents/src/generated")]
+    #[arg(long, default_value = "../cdevents-sdk/src/generated")]
     dest: PathBuf,
 }
 
