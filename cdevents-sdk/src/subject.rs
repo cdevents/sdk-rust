@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::Content;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Subject {
     #[serde(rename = "content")]
     pub content: Content,

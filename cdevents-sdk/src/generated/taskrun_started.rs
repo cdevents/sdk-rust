@@ -2,6 +2,7 @@
 use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Content {
     #[serde(rename = "pipelineRun", default, skip_serializing_if = "Option::is_none",)]
     pub pipeline_run: Option<PipelineRun>,
@@ -12,6 +13,7 @@ pub struct Content {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct PipelineRun {
     #[serde(rename = "id",)]
     pub id: String,
