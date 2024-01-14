@@ -17,6 +17,5 @@ To generate the `subjects` into sibling crate `cdevents/src/generated` from cont
 
 ```sh
 cargo run -p generator -- --help
-cargo run -p generator -- --templates-dir "generator/templates" --jsonschema-dir "cdevents-spec/schemas" --dest 
-"cdevents/src/generated"
+cargo run -p generator -- --templates-dir "generator/templates" --jsonschema-dir "cdevents-spec/schemas" --dest "cdevents-sdk/src/generated"
 ```

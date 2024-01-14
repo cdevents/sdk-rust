@@ -1,6 +1,8 @@
 use anyhow::{anyhow, Context, Result};
 use clap::Parser;
-use handlebars::{handlebars_helper, DirectorySourceOptions, Handlebars};
+use cruet::{to_class_case, Inflector};
+use handlebars::{DirectorySourceOptions, Handlebars};
+use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::{fs, path::PathBuf};
 
@@ -27,8 +29,6 @@ fn main() -> Result<()> {
     hbs.set_strict_mode(true);
     hbs.register_escape_fn(handlebars::no_escape);
     //hbs.unregister_escape_fn();
-    hbs.register_helper("type_of", Box::new(type_of));
-    hbs.register_helper("normalize_ident", Box::new(normalize_ident));
     handlebars_misc_helpers::register(&mut hbs);
     hbs.register_templates_directory(settings.templates_dir, DirectorySourceOptions::default())?;
 
@@ -42,25 +42,29 @@ fn main() -> Result<()> {
         let path = entry.path();
         if let Some(extension) = path.extension() {
             if extension == "json" {
-                let json = serde_json::from_str(&std::fs::read_to_string(&path)?)?;
-                let (type_name, code) = generate_subject(&hbs, json)
+                let json: Value = serde_json::from_str(&std::fs::read_to_string(&path)?)?;
+                let context_type = json["properties"]["context"]["properties"]["type"]["default"]
+                    .as_str()
+                    .unwrap_or_default()
+                    .to_string();
+                let (rust_module, code) = generate_subject(&hbs, json)
                     .with_context(|| format!("failed to generate subject on {:?}", &path))?;
                 let file = settings
                     .dest
-                    .join(cruet::to_snake_case(&type_name))
+                    .join(cruet::to_snake_case(&rust_module))
                     .with_extension("rs");
                 fs::write(file, code)?;
-                subjects.push(type_name);
+                subjects.push(SubjectInfo {
+                    context_type,
+                    rust_module,
+                });
             }
         }
     }
 
-    let (type_name, code) =
+    let (module_name, code) =
         generate_module(&hbs, &subjects).with_context(|| "failed to generate module")?;
-    let file = settings
-        .dest
-        .join(cruet::to_snake_case(&type_name))
-        .with_extension("rs");
+    let file = settings.dest.join(&module_name).with_extension("rs");
     fs::write(file, code)?;
 
     Ok(())
@@ -71,24 +75,19 @@ fn generate_subject(hbs: &Handlebars, jsonschema: Value) -> Result<(String, Stri
         .as_str()
         .ok_or(anyhow!("$id not found or not a string"))
         .and_then(|s| url::Url::parse(s).with_context(|| format!("failed to parse: {}", s)))?;
-    let type_name = id
+    let module_name = id
         .path_segments()
         .and_then(|v| v.last())
-        .map(cruet::to_class_case)
+        .map(cruet::to_snake_case)
         .ok_or(anyhow!("no path in $id"))?
-        .replace("Event", "Subject");
-    let mut data = jsonschema.clone();
-    data.as_object_mut().and_then(|m| {
-        m.insert(
-            "type_name".to_string(),
-            serde_json::to_value(&type_name).unwrap(),
-        )
-    });
+        .replace("_event", "_subject");
+
+    let data = build_data_for_subjects(jsonschema);
     let code = hbs.render("subject", &data)?;
-    Ok((type_name.to_string(), code))
+    Ok((module_name.to_string(), code))
 }
 
-fn generate_module(hbs: &Handlebars, subjects: &[String]) -> Result<(String, String)> {
+fn generate_module(hbs: &Handlebars, subjects: &[SubjectInfo]) -> Result<(String, String)> {
     let data = json!({
         "subjects": subjects
     });
@@ -96,24 +95,89 @@ fn generate_module(hbs: &Handlebars, subjects: &[String]) -> Result<(String, Str
     Ok(("mod".to_string(), code))
 }
 
-//TODO helper to convert into type
-//TODO helper to check if optionnal
-handlebars_helper!(type_of: |field_name: Value, def: Value, required: Value| {
-    let mut t = match def["type"].as_str() {
-        Some("string") => "String",
-        Some("object") => "serde_json::Map<String, serde_json::Value>",
-        x => todo!("impl type {:?}", x),
-    }.to_string();
-    if required.as_array().map(|a| a.contains(&field_name)).unwrap_or(false) {
-        t = format!("Option<{}>", t);
-    }
-    t
-});
+fn build_data_for_subjects(jsonschema: Value) -> Value {
+    let mut structs = vec![];
+    collect_structs(
+        &mut structs,
+        "subject",
+        &jsonschema["properties"]["subject"],
+    );
+    structs.reverse();
 
-handlebars_helper!(normalize_ident: |v: Value| {
-    match v.as_str() {
-        Some("type") => "tpe",
-        Some(x) => x,
-        None => unimplemented!(),
+    json!({
+        "structs": structs,
+        "jsonschema": jsonschema,
+    })
+}
+
+type RustTypeName = String;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct SubjectInfo {
+    context_type: String,
+    rust_module: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct StructDef {
+    type_name: RustTypeName,
+    json_definition: Value,
+    fields: Vec<FieldDef>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct FieldDef {
+    rust_name: String,
+    serde_name: String,
+    type_name: RustTypeName,
+    is_optional: bool,
+}
+
+fn collect_structs(
+    structs: &mut Vec<StructDef>,
+    field_name: &str,
+    json_definition: &Value,
+) -> RustTypeName {
+    match json_definition["type"].as_str() {
+        Some("string") => "String".to_string(),
+        Some("object") => match json_definition["properties"].as_object() {
+            None => "serde_json::Map<String, serde_json::Value>".to_string(),
+            Some(fields_kv) => {
+                let required = json_definition["required"].as_array();
+                let fields = fields_kv
+                    .into_iter()
+                    .map(|field| {
+                        let serde_name = field.0.to_string();
+                        let rust_name = if serde_name == "type" {
+                            "r#type".to_string()
+                        } else {
+                            serde_name.to_snake_case()
+                        };
+                        let mut type_name = collect_structs(structs, &serde_name, field.1);
+                        let field_name = json!(&serde_name);
+                        let is_optional =
+                            required.map(|a| !a.contains(&field_name)).unwrap_or(true);
+                        if is_optional {
+                            type_name = format!("Option<{}>", type_name);
+                        }
+                        FieldDef {
+                            rust_name,
+                            serde_name,
+                            type_name,
+                            is_optional,
+                        }
+                    })
+                    .collect::<Vec<_>>();
+                let type_name = to_class_case(field_name);
+                structs.push(StructDef {
+                    type_name: type_name.clone(),
+                    fields,
+                    json_definition: json_definition.clone(),
+                });
+                type_name
+            }
+        },
+        Some(x) => todo!("impl for type='{}'", x),
+        None => unimplemented!("expected key 'type' in field '{}'", field_name),
     }
-});
+}
