@@ -42,7 +42,7 @@ pub mod testsuiterun_finished;
 pub mod testsuiterun_queued;
 pub mod testsuiterun_started;
 
-use serde::{Deserialize, Serialize};
+use serde::{Serialize, Deserialize};
 
 pub const ARTIFACT_PACKAGED: &str = "dev.cdevents.artifact.packaged.0.1.1";
 pub const ARTIFACT_PUBLISHED: &str = "dev.cdevents.artifact.published.0.1.1";
@@ -84,7 +84,7 @@ pub const TESTSUITERUN_FINISHED: &str = "dev.cdevents.testsuiterun.finished.0.1.
 pub const TESTSUITERUN_QUEUED: &str = "dev.cdevents.testsuiterun.queued.0.1.0";
 pub const TESTSUITERUN_STARTED: &str = "dev.cdevents.testsuiterun.started.0.1.0";
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug,Clone,Serialize,Deserialize)]
 #[serde(untagged)] // TODO how to use content of context.type as discriminator ?
 pub enum Content {
     ArtifactPackaged(artifact_packaged::Content),
@@ -129,7 +129,7 @@ pub enum Content {
 }
 
 impl Content {
-    pub fn from_json(ty: &str, json: serde_json::Value) -> Result<Self, serde_json::Error> {
+    pub fn from_json(ty: &str, json: serde_json::Value) -> Result<Self, serde_json::Error>{
         match ty {
             ARTIFACT_PACKAGED => {
                 let variant: artifact_packaged::Content = serde_json::from_value(json)?;

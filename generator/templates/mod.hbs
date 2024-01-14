@@ -12,7 +12,7 @@ use serde::{Serialize, Deserialize};
 pub const {{to_screaming_snake_case this.rust_module}}: &str = "{{ this.context_type }}";
 {{/each}}
 
-#[derive(Debug,Clone,Serialize,Deserialize, PartialEq, Eq)]
+#[derive(Debug,Clone,Serialize,Deserialize)]
 #[serde(untagged)] // TODO how to use content of context.type as discriminator ?
 pub enum Content {
     {{#each variants }}
