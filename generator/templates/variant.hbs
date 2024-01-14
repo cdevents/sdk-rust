@@ -2,11 +2,14 @@
 use serde::{Serialize, Deserialize};
 
 {{#each structs }}
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct {{ this.type_name }} {
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct {{ this.type_info.type_declaration }} {
     {{#each this.fields }}
-    #[serde(rename = "{{ this.serde_name }}"{{#if this.is_optional }}, skip_serializing_if = "Option::is_none"{{/if}})]
-    pub {{ this.rust_name }}: {{this.type_name }},
+    #[serde(rename = "{{ this.serde_name }}",
+        {{~#if this.is_optional }} default, skip_serializing_if = "Option::is_none",{{/if~}}
+        {{~#if this.type_info.serde_with }} with = "{{ this.type_info.serde_with }}{{#if this.is_optional }}_optional{{/if}}",{{/if~}}
+    )]
+    pub {{ this.rust_name }}: {{this.type_info.type_declaration }},
     {{/each}}
 }
 

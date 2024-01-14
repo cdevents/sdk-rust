@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use clap::Parser;
-use cruet::{to_class_case, Inflector};
+use cruet::Inflector;
 use handlebars::{DirectorySourceOptions, Handlebars};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -118,7 +118,11 @@ fn build_data_for_variants(jsonschema: Value) -> Value {
     })
 }
 
-type RustTypeName = String;
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+struct TypeInfo {
+    type_declaration: String,
+    serde_with: Option<String>,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct VariantInfo {
@@ -128,7 +132,7 @@ struct VariantInfo {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct StructDef {
-    type_name: RustTypeName,
+    type_info: TypeInfo,
     json_definition: Value,
     fields: Vec<FieldDef>,
 }
@@ -137,7 +141,7 @@ struct StructDef {
 struct FieldDef {
     rust_name: String,
     serde_name: String,
-    type_name: RustTypeName,
+    type_info: TypeInfo,
     is_optional: bool,
 }
 
@@ -145,11 +149,41 @@ fn collect_structs(
     structs: &mut Vec<StructDef>,
     field_name: &str,
     json_definition: &Value,
-) -> RustTypeName {
+) -> TypeInfo {
     match json_definition["type"].as_str() {
-        Some("string") => "String".to_string(),
+        Some("string") => match json_definition["format"].as_str() {
+            Some("date-time") => TypeInfo {
+                type_declaration: "time::OffsetDateTime".to_string(),
+                serde_with: Some("crate::serde::datetime".to_string()),
+                ..Default::default()
+            },
+            //TODO manage purl
+            Some("uri-reference") => TypeInfo {
+                type_declaration: "fluent_uri::Uri<String>".to_string(),
+                serde_with: Some("crate::serde::uri_reference".to_string()),
+                ..Default::default()
+            },
+            Some("uri") => TypeInfo {
+                type_declaration: "fluent_uri::Uri<String>".to_string(),
+                serde_with: Some("crate::serde::uri".to_string()),
+                ..Default::default()
+            },
+            // Some("uri") => TypeInfo {
+            //     type_declaration: "http::Uri".to_string(),
+            //     serde_with: Some("crate::serde::uri".to_string()),
+            //     ..Default::default()
+            // },
+            //TODO manage enum
+            _ => TypeInfo {
+                type_declaration: "String".to_string(),
+                ..Default::default()
+            },
+        },
         Some("object") => match json_definition["properties"].as_object() {
-            None => "serde_json::Map<String, serde_json::Value>".to_string(),
+            None => TypeInfo {
+                type_declaration: "serde_json::Map<String, serde_json::Value>".to_string(),
+                ..Default::default()
+            },
             Some(fields_kv) => {
                 let required = json_definition["required"].as_array();
                 let fields = fields_kv
@@ -161,28 +195,32 @@ fn collect_structs(
                         } else {
                             serde_name.to_snake_case()
                         };
-                        let mut type_name = collect_structs(structs, &serde_name, field.1);
+                        let mut type_info = collect_structs(structs, &serde_name, field.1);
                         let field_name = json!(&serde_name);
                         let is_optional =
                             required.map(|a| !a.contains(&field_name)).unwrap_or(true);
                         if is_optional {
-                            type_name = format!("Option<{}>", type_name);
+                            type_info.type_declaration =
+                                format!("Option<{}>", type_info.type_declaration);
                         }
                         FieldDef {
                             rust_name,
                             serde_name,
-                            type_name,
+                            type_info,
                             is_optional,
                         }
                     })
                     .collect::<Vec<_>>();
-                let type_name = to_class_case(field_name);
+                let type_info = TypeInfo {
+                    type_declaration: field_name.to_class_case(),
+                    ..Default::default()
+                };
                 structs.push(StructDef {
-                    type_name: type_name.clone(),
+                    type_info: type_info.clone(),
                     fields,
                     json_definition: json_definition.clone(),
                 });
-                type_name
+                type_info
             }
         },
         Some(x) => todo!("impl for type='{}'", x),
