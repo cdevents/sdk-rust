@@ -1,3 +1,5 @@
+// TODO remove unwrap(), expect(...)
+// TODO reduce clone()
 mod generated;
 
 pub use generated::*;
@@ -20,65 +22,18 @@ pub struct CDEvent {
     pub custom_data_content_type: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct Context {
-    version: String,
-    id: String,
-    #[serde(with = "http_serde::uri")]
-    source: http::Uri,
-    #[serde(rename = "type")]
-    r#type: String,
-    #[serde(with = "time::serde::rfc3339")]
-    timestamp: time::OffsetDateTime,
-}
-
 impl<'de> Deserialize<'de> for CDEvent {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
+        #[derive(Deserialize)]
+        #[serde(field_identifier, rename_all = "camelCase")]
         enum Field {
             Context,
             Subject,
             CustomData,
             CustomDataContentType,
-        }
-
-        // This part could also be generated independently by:
-        //
-        //    #[derive(Deserialize)]
-        //    #[serde(field_identifier, rename_all = "lowercase")]
-        //    enum Field { { Context, Subject, CustomData, CustomDataContentType } }
-        impl<'de> Deserialize<'de> for Field {
-            fn deserialize<D>(deserializer: D) -> Result<Field, D::Error>
-            where
-                D: Deserializer<'de>,
-            {
-                struct FieldVisitor;
-
-                impl<'de> Visitor<'de> for FieldVisitor {
-                    type Value = Field;
-
-                    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-                        formatter.write_str("`context` and `subject`")
-                    }
-
-                    fn visit_str<E>(self, value: &str) -> Result<Field, E>
-                    where
-                        E: de::Error,
-                    {
-                        match value {
-                            "context" => Ok(Field::Context),
-                            "subject" => Ok(Field::Subject),
-                            "customData" => Ok(Field::CustomData),
-                            "customDataContentType" => Ok(Field::CustomDataContentType),
-                            _ => Err(de::Error::unknown_field(value, FIELDS)),
-                        }
-                    }
-                }
-
-                deserializer.deserialize_identifier(FieldVisitor)
-            }
         }
 
         struct CDEventVisitor;
@@ -127,8 +82,11 @@ impl<'de> Deserialize<'de> for CDEvent {
                     }
                 }
                 let context = context.ok_or_else(|| de::Error::missing_field("context"))?;
-                let subject = Subject::from_json(&context.r#type, subject_json.unwrap());
-                //let subject = subject.ok_or_else(|| de::Error::missing_field("subject"))?;
+                let subject_json =
+                    subject_json.ok_or_else(|| de::Error::missing_field("subject"))?;
+                let subject =
+                    Subject::from_json(&context.r#type, subject_json).map_err(de::Error::custom)?;
+
                 Ok(CDEvent {
                     context,
                     subject,
@@ -140,6 +98,47 @@ impl<'de> Deserialize<'de> for CDEvent {
 
         const FIELDS: &'static [&'static str] = &["context", "subject"];
         deserializer.deserialize_struct("CDEvent", FIELDS, CDEventVisitor)
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct Context {
+    version: String,
+    id: String,
+    #[serde(with = "http_serde::uri")]
+    source: http::Uri,
+    #[serde(rename = "type")]
+    r#type: String,
+    #[serde(with = "time::serde::rfc3339")]
+    timestamp: time::OffsetDateTime,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct Subject {
+    #[serde(rename = "content")]
+    pub content: Content,
+    #[serde(rename = "id")]
+    pub id: String,
+    #[serde(rename = "source", skip_serializing_if = "Option::is_none")]
+    pub source: Option<String>,
+    #[serde(rename = "type")]
+    pub r#type: String,
+}
+
+impl Subject {
+    pub fn from_json(ty: &str, json: serde_json::Value) -> Result<Self, serde_json::Error> {
+        Ok(Subject {
+            id: json["id"]
+                .as_str()
+                .ok_or_else(|| serde::de::Error::missing_field("id"))?
+                .to_string(),
+            r#type: json["type"]
+                .as_str()
+                .ok_or_else(|| serde::de::Error::missing_field("type"))?
+                .to_string(),
+            source: json["source"].as_str().map(|s| s.to_string()),
+            content: Content::from_json(ty, json["content"].clone())?,
+        })
     }
 }
 
@@ -162,10 +161,6 @@ mod tests {
         dbg!(&example_json);
         let cdevent: CDEvent =
             serde_json::from_value(example_json.clone()).expect("to parse as cdevent");
-        // let cdevent: CDEvent =
-        //     deserialize::<CDEvent, serde_json::Value, JsonError>(example_json.clone())
-        //         .expect("to parse as cdevent");
-
         dbg!(&cdevent);
         let cdevent_json = serde_json::to_value(cdevent).expect("to convert into json");
         dbg!(&cdevent_json);

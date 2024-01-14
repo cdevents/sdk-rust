@@ -32,9 +32,12 @@ fn main() -> Result<()> {
     handlebars_misc_helpers::register(&mut hbs);
     hbs.register_templates_directory(settings.templates_dir, DirectorySourceOptions::default())?;
 
+    if settings.dest.exists() {
+        fs::remove_dir_all(&settings.dest)?;
+    }
     fs::create_dir_all(&settings.dest)?;
 
-    let mut subjects = vec![];
+    let mut variants = vec![];
     let mut jsonfiles =
         std::fs::read_dir(settings.jsonschema_dir)?.collect::<Result<Vec<_>, _>>()?;
     jsonfiles.sort_by_key(|v| v.file_name());
@@ -47,14 +50,14 @@ fn main() -> Result<()> {
                     .as_str()
                     .unwrap_or_default()
                     .to_string();
-                let (rust_module, code) = generate_subject(&hbs, json)
-                    .with_context(|| format!("failed to generate subject on {:?}", &path))?;
+                let (rust_module, code) = generate_variant(&hbs, json)
+                    .with_context(|| format!("failed to generate variant on {:?}", &path))?;
                 let file = settings
                     .dest
                     .join(cruet::to_snake_case(&rust_module))
                     .with_extension("rs");
                 fs::write(file, code)?;
-                subjects.push(SubjectInfo {
+                variants.push(VariantInfo {
                     context_type,
                     rust_module,
                 });
@@ -63,14 +66,14 @@ fn main() -> Result<()> {
     }
 
     let (module_name, code) =
-        generate_module(&hbs, &subjects).with_context(|| "failed to generate module")?;
+        generate_module(&hbs, &variants).with_context(|| "failed to generate module")?;
     let file = settings.dest.join(&module_name).with_extension("rs");
     fs::write(file, code)?;
 
     Ok(())
 }
 
-fn generate_subject(hbs: &Handlebars, jsonschema: Value) -> Result<(String, String)> {
+fn generate_variant(hbs: &Handlebars, jsonschema: Value) -> Result<(String, String)> {
     let id = jsonschema["$id"]
         .as_str()
         .ok_or(anyhow!("$id not found or not a string"))
@@ -80,27 +83,27 @@ fn generate_subject(hbs: &Handlebars, jsonschema: Value) -> Result<(String, Stri
         .and_then(|v| v.last())
         .map(cruet::to_snake_case)
         .ok_or(anyhow!("no path in $id"))?
-        .replace("_event", "_subject");
+        .replace("_event", "");
 
-    let data = build_data_for_subjects(jsonschema);
-    let code = hbs.render("subject", &data)?;
+    let data = build_data_for_variants(jsonschema);
+    let code = hbs.render("variant", &data)?;
     Ok((module_name.to_string(), code))
 }
 
-fn generate_module(hbs: &Handlebars, subjects: &[SubjectInfo]) -> Result<(String, String)> {
+fn generate_module(hbs: &Handlebars, variants: &[VariantInfo]) -> Result<(String, String)> {
     let data = json!({
-        "subjects": subjects
+        "variants": variants
     });
     let code = hbs.render("mod", &data)?;
     Ok(("mod".to_string(), code))
 }
 
-fn build_data_for_subjects(jsonschema: Value) -> Value {
+fn build_data_for_variants(jsonschema: Value) -> Value {
     let mut structs = vec![];
     collect_structs(
         &mut structs,
-        "subject",
-        &jsonschema["properties"]["subject"],
+        "content",
+        &jsonschema["properties"]["subject"]["properties"]["content"],
     );
     structs.reverse();
 
@@ -113,7 +116,7 @@ fn build_data_for_subjects(jsonschema: Value) -> Value {
 type RustTypeName = String;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct SubjectInfo {
+struct VariantInfo {
     context_type: String,
     rust_module: String,
 }
