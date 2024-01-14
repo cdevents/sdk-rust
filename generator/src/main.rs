@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result};
 use clap::Parser;
 use cruet::{to_class_case, Inflector};
 use handlebars::{DirectorySourceOptions, Handlebars};
@@ -46,11 +46,7 @@ fn main() -> Result<()> {
         if let Some(extension) = path.extension() {
             if extension == "json" {
                 let json: Value = serde_json::from_str(&std::fs::read_to_string(&path)?)?;
-                let context_type = json["properties"]["context"]["properties"]["type"]["default"]
-                    .as_str()
-                    .unwrap_or_default()
-                    .to_string();
-                let (rust_module, code) = generate_variant(&hbs, json)
+                let (rust_module, context_type, code) = generate_variant(&hbs, json)
                     .with_context(|| format!("failed to generate variant on {:?}", &path))?;
                 let file = settings
                     .dest
@@ -73,21 +69,30 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn generate_variant(hbs: &Handlebars, jsonschema: Value) -> Result<(String, String)> {
-    let id = jsonschema["$id"]
+fn generate_variant(hbs: &Handlebars, jsonschema: Value) -> Result<(String, String, String)> {
+    // let id = jsonschema["$id"]
+    //     .as_str()
+    //     .ok_or(anyhow!("$id not found or not a string"))
+    //     .and_then(|s| url::Url::parse(s).with_context(|| format!("failed to parse: {}", s)))?;
+    // let module_name = id
+    //     .path_segments()
+    //     .and_then(|v| v.last())
+    //     .map(cruet::to_snake_case)
+    //     .ok_or(anyhow!("no path in $id"))?
+    //     .replace("_event", "");
+
+    // extract module's name from `context.type` (and not from `$id`)
+    let context_type = jsonschema["properties"]["context"]["properties"]["type"]["default"]
         .as_str()
-        .ok_or(anyhow!("$id not found or not a string"))
-        .and_then(|s| url::Url::parse(s).with_context(|| format!("failed to parse: {}", s)))?;
-    let module_name = id
-        .path_segments()
-        .and_then(|v| v.last())
-        .map(cruet::to_snake_case)
-        .ok_or(anyhow!("no path in $id"))?
-        .replace("_event", "");
+        .unwrap_or_default()
+        .to_string();
+
+    let fragments = context_type.split('.').collect::<Vec<_>>();
+    let module_name = format!("{}_{}", fragments[2], fragments[3]).to_snake_case();
 
     let data = build_data_for_variants(jsonschema);
     let code = hbs.render("variant", &data)?;
-    Ok((module_name.to_string(), code))
+    Ok((module_name.to_string(), context_type, code))
 }
 
 fn generate_module(hbs: &Handlebars, variants: &[VariantInfo]) -> Result<(String, String)> {
