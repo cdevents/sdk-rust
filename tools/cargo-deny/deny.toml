@@ -1,5 +1,5 @@
-#cargo-deny is a cargo plugin that lets you lint your project's dependency graph
-#to ensure all your dependencies conform to your expectations and requirements.
+# cargo-deny is a cargo plugin that lets you lint your project's dependency graph
+# to ensure all your dependencies conform to your expectations and requirements.
 [bans]
 multiple-versions = "deny"
 # Dependencies cannot be specified with the "*" version.
@@ -10,7 +10,7 @@ unlicensed = "deny"
 copyleft = "deny"
 confidence-threshold = 0.95
 allow = [
-    "Apache-2.0"
+    "MIT",
 ]
 exceptions = []
 
