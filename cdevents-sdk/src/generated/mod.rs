@@ -21,9 +21,9 @@ pub mod environment_modified;
 pub mod incident_detected;
 pub mod incident_reported;
 pub mod incident_resolved;
-pub mod pipeline_run_finished;
-pub mod pipeline_run_queued;
-pub mod pipeline_run_started;
+pub mod pipelinerun_finished;
+pub mod pipelinerun_queued;
+pub mod pipelinerun_started;
 pub mod repository_created;
 pub mod repository_deleted;
 pub mod repository_modified;
@@ -32,17 +32,17 @@ pub mod service_published;
 pub mod service_removed;
 pub mod service_rolledback;
 pub mod service_upgraded;
-pub mod task_run_finished;
-pub mod task_run_started;
-pub mod test_case_run_finished;
-pub mod test_case_run_queued;
-pub mod test_case_run_started;
-pub mod test_output_published;
-pub mod test_suite_finished;
-pub mod test_suite_run_queued;
-pub mod test_suite_run_started;
+pub mod taskrun_finished;
+pub mod taskrun_started;
+pub mod testcaserun_finished;
+pub mod testcaserun_queued;
+pub mod testcaserun_started;
+pub mod testoutput_published;
+pub mod testsuiterun_finished;
+pub mod testsuiterun_queued;
+pub mod testsuiterun_started;
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 pub const ARTIFACT_PACKAGED: &str = "dev.cdevents.artifact.packaged.0.1.1";
 pub const ARTIFACT_PUBLISHED: &str = "dev.cdevents.artifact.published.0.1.1";
@@ -63,9 +63,9 @@ pub const ENVIRONMENT_MODIFIED: &str = "dev.cdevents.environment.modified.0.1.1"
 pub const INCIDENT_DETECTED: &str = "dev.cdevents.incident.detected.0.1.0";
 pub const INCIDENT_REPORTED: &str = "dev.cdevents.incident.reported.0.1.0";
 pub const INCIDENT_RESOLVED: &str = "dev.cdevents.incident.resolved.0.1.0";
-pub const PIPELINE_RUN_FINISHED: &str = "dev.cdevents.pipelinerun.finished.0.1.1";
-pub const PIPELINE_RUN_QUEUED: &str = "dev.cdevents.pipelinerun.queued.0.1.1";
-pub const PIPELINE_RUN_STARTED: &str = "dev.cdevents.pipelinerun.started.0.1.1";
+pub const PIPELINERUN_FINISHED: &str = "dev.cdevents.pipelinerun.finished.0.1.1";
+pub const PIPELINERUN_QUEUED: &str = "dev.cdevents.pipelinerun.queued.0.1.1";
+pub const PIPELINERUN_STARTED: &str = "dev.cdevents.pipelinerun.started.0.1.1";
 pub const REPOSITORY_CREATED: &str = "dev.cdevents.repository.created.0.1.1";
 pub const REPOSITORY_DELETED: &str = "dev.cdevents.repository.deleted.0.1.1";
 pub const REPOSITORY_MODIFIED: &str = "dev.cdevents.repository.modified.0.1.1";
@@ -74,17 +74,17 @@ pub const SERVICE_PUBLISHED: &str = "dev.cdevents.service.published.0.1.1";
 pub const SERVICE_REMOVED: &str = "dev.cdevents.service.removed.0.1.1";
 pub const SERVICE_ROLLEDBACK: &str = "dev.cdevents.service.rolledback.0.1.1";
 pub const SERVICE_UPGRADED: &str = "dev.cdevents.service.upgraded.0.1.1";
-pub const TASK_RUN_FINISHED: &str = "dev.cdevents.taskrun.finished.0.1.1";
-pub const TASK_RUN_STARTED: &str = "dev.cdevents.taskrun.started.0.1.1";
-pub const TEST_CASE_RUN_FINISHED: &str = "dev.cdevents.testcaserun.finished.0.1.0";
-pub const TEST_CASE_RUN_QUEUED: &str = "dev.cdevents.testcaserun.queued.0.1.0";
-pub const TEST_CASE_RUN_STARTED: &str = "dev.cdevents.testcaserun.started.0.1.0";
-pub const TEST_OUTPUT_PUBLISHED: &str = "dev.cdevents.testoutput.published.0.1.0";
-pub const TEST_SUITE_FINISHED: &str = "dev.cdevents.testsuiterun.finished.0.1.0";
-pub const TEST_SUITE_RUN_QUEUED: &str = "dev.cdevents.testsuiterun.queued.0.1.0";
-pub const TEST_SUITE_RUN_STARTED: &str = "dev.cdevents.testsuiterun.started.0.1.0";
+pub const TASKRUN_FINISHED: &str = "dev.cdevents.taskrun.finished.0.1.1";
+pub const TASKRUN_STARTED: &str = "dev.cdevents.taskrun.started.0.1.1";
+pub const TESTCASERUN_FINISHED: &str = "dev.cdevents.testcaserun.finished.0.1.0";
+pub const TESTCASERUN_QUEUED: &str = "dev.cdevents.testcaserun.queued.0.1.0";
+pub const TESTCASERUN_STARTED: &str = "dev.cdevents.testcaserun.started.0.1.0";
+pub const TESTOUTPUT_PUBLISHED: &str = "dev.cdevents.testoutput.published.0.1.0";
+pub const TESTSUITERUN_FINISHED: &str = "dev.cdevents.testsuiterun.finished.0.1.0";
+pub const TESTSUITERUN_QUEUED: &str = "dev.cdevents.testsuiterun.queued.0.1.0";
+pub const TESTSUITERUN_STARTED: &str = "dev.cdevents.testsuiterun.started.0.1.0";
 
-#[derive(Debug,Clone,Serialize,Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(untagged)] // TODO how to use content of context.type as discriminator ?
 pub enum Content {
     ArtifactPackaged(artifact_packaged::Content),
@@ -106,9 +106,9 @@ pub enum Content {
     IncidentDetected(incident_detected::Content),
     IncidentReported(incident_reported::Content),
     IncidentResolved(incident_resolved::Content),
-    PipelineRunFinished(pipeline_run_finished::Content),
-    PipelineRunQueued(pipeline_run_queued::Content),
-    PipelineRunStarted(pipeline_run_started::Content),
+    PipelinerunFinished(pipelinerun_finished::Content),
+    PipelinerunQueued(pipelinerun_queued::Content),
+    PipelinerunStarted(pipelinerun_started::Content),
     RepositoryCreated(repository_created::Content),
     RepositoryDeleted(repository_deleted::Content),
     RepositoryModified(repository_modified::Content),
@@ -117,19 +117,19 @@ pub enum Content {
     ServiceRemoved(service_removed::Content),
     ServiceRolledback(service_rolledback::Content),
     ServiceUpgraded(service_upgraded::Content),
-    TaskRunFinished(task_run_finished::Content),
-    TaskRunStarted(task_run_started::Content),
-    TestCaseRunFinished(test_case_run_finished::Content),
-    TestCaseRunQueued(test_case_run_queued::Content),
-    TestCaseRunStarted(test_case_run_started::Content),
-    TestOutputPublished(test_output_published::Content),
-    TestSuiteFinished(test_suite_finished::Content),
-    TestSuiteRunQueued(test_suite_run_queued::Content),
-    TestSuiteRunStarted(test_suite_run_started::Content),
+    TaskrunFinished(taskrun_finished::Content),
+    TaskrunStarted(taskrun_started::Content),
+    TestcaserunFinished(testcaserun_finished::Content),
+    TestcaserunQueued(testcaserun_queued::Content),
+    TestcaserunStarted(testcaserun_started::Content),
+    TestoutputPublished(testoutput_published::Content),
+    TestsuiterunFinished(testsuiterun_finished::Content),
+    TestsuiterunQueued(testsuiterun_queued::Content),
+    TestsuiterunStarted(testsuiterun_started::Content),
 }
 
 impl Content {
-    pub fn from_json(ty: &str, json: serde_json::Value) -> Result<Self, serde_json::Error>{
+    pub fn from_json(ty: &str, json: serde_json::Value) -> Result<Self, serde_json::Error> {
         match ty {
             ARTIFACT_PACKAGED => {
                 let variant: artifact_packaged::Content = serde_json::from_value(json)?;
@@ -207,17 +207,17 @@ impl Content {
                 let variant: incident_resolved::Content = serde_json::from_value(json)?;
                 Ok(Self::IncidentResolved(variant))
             },
-            PIPELINE_RUN_FINISHED => {
-                let variant: pipeline_run_finished::Content = serde_json::from_value(json)?;
-                Ok(Self::PipelineRunFinished(variant))
+            PIPELINERUN_FINISHED => {
+                let variant: pipelinerun_finished::Content = serde_json::from_value(json)?;
+                Ok(Self::PipelinerunFinished(variant))
             },
-            PIPELINE_RUN_QUEUED => {
-                let variant: pipeline_run_queued::Content = serde_json::from_value(json)?;
-                Ok(Self::PipelineRunQueued(variant))
+            PIPELINERUN_QUEUED => {
+                let variant: pipelinerun_queued::Content = serde_json::from_value(json)?;
+                Ok(Self::PipelinerunQueued(variant))
             },
-            PIPELINE_RUN_STARTED => {
-                let variant: pipeline_run_started::Content = serde_json::from_value(json)?;
-                Ok(Self::PipelineRunStarted(variant))
+            PIPELINERUN_STARTED => {
+                let variant: pipelinerun_started::Content = serde_json::from_value(json)?;
+                Ok(Self::PipelinerunStarted(variant))
             },
             REPOSITORY_CREATED => {
                 let variant: repository_created::Content = serde_json::from_value(json)?;
@@ -251,41 +251,41 @@ impl Content {
                 let variant: service_upgraded::Content = serde_json::from_value(json)?;
                 Ok(Self::ServiceUpgraded(variant))
             },
-            TASK_RUN_FINISHED => {
-                let variant: task_run_finished::Content = serde_json::from_value(json)?;
-                Ok(Self::TaskRunFinished(variant))
+            TASKRUN_FINISHED => {
+                let variant: taskrun_finished::Content = serde_json::from_value(json)?;
+                Ok(Self::TaskrunFinished(variant))
             },
-            TASK_RUN_STARTED => {
-                let variant: task_run_started::Content = serde_json::from_value(json)?;
-                Ok(Self::TaskRunStarted(variant))
+            TASKRUN_STARTED => {
+                let variant: taskrun_started::Content = serde_json::from_value(json)?;
+                Ok(Self::TaskrunStarted(variant))
             },
-            TEST_CASE_RUN_FINISHED => {
-                let variant: test_case_run_finished::Content = serde_json::from_value(json)?;
-                Ok(Self::TestCaseRunFinished(variant))
+            TESTCASERUN_FINISHED => {
+                let variant: testcaserun_finished::Content = serde_json::from_value(json)?;
+                Ok(Self::TestcaserunFinished(variant))
             },
-            TEST_CASE_RUN_QUEUED => {
-                let variant: test_case_run_queued::Content = serde_json::from_value(json)?;
-                Ok(Self::TestCaseRunQueued(variant))
+            TESTCASERUN_QUEUED => {
+                let variant: testcaserun_queued::Content = serde_json::from_value(json)?;
+                Ok(Self::TestcaserunQueued(variant))
             },
-            TEST_CASE_RUN_STARTED => {
-                let variant: test_case_run_started::Content = serde_json::from_value(json)?;
-                Ok(Self::TestCaseRunStarted(variant))
+            TESTCASERUN_STARTED => {
+                let variant: testcaserun_started::Content = serde_json::from_value(json)?;
+                Ok(Self::TestcaserunStarted(variant))
             },
-            TEST_OUTPUT_PUBLISHED => {
-                let variant: test_output_published::Content = serde_json::from_value(json)?;
-                Ok(Self::TestOutputPublished(variant))
+            TESTOUTPUT_PUBLISHED => {
+                let variant: testoutput_published::Content = serde_json::from_value(json)?;
+                Ok(Self::TestoutputPublished(variant))
             },
-            TEST_SUITE_FINISHED => {
-                let variant: test_suite_finished::Content = serde_json::from_value(json)?;
-                Ok(Self::TestSuiteFinished(variant))
+            TESTSUITERUN_FINISHED => {
+                let variant: testsuiterun_finished::Content = serde_json::from_value(json)?;
+                Ok(Self::TestsuiterunFinished(variant))
             },
-            TEST_SUITE_RUN_QUEUED => {
-                let variant: test_suite_run_queued::Content = serde_json::from_value(json)?;
-                Ok(Self::TestSuiteRunQueued(variant))
+            TESTSUITERUN_QUEUED => {
+                let variant: testsuiterun_queued::Content = serde_json::from_value(json)?;
+                Ok(Self::TestsuiterunQueued(variant))
             },
-            TEST_SUITE_RUN_STARTED => {
-                let variant: test_suite_run_started::Content = serde_json::from_value(json)?;
-                Ok(Self::TestSuiteRunStarted(variant))
+            TESTSUITERUN_STARTED => {
+                let variant: testsuiterun_started::Content = serde_json::from_value(json)?;
+                Ok(Self::TestsuiterunStarted(variant))
             },
             variant => Err(serde_json::Error::custom(format_args!(
                 "unknown variant `{}`, expected 'dev.cdevents.{{subject}}.{{predicate}}.{{version}}'",
