@@ -2,6 +2,7 @@
 use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Content {
     #[serde(rename = "format",)]
     pub format: String,
@@ -14,6 +15,7 @@ pub struct Content {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct TestCaseRun {
     #[serde(rename = "id",)]
     pub id: String,

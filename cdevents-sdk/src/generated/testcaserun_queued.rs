@@ -2,6 +2,7 @@
 use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Content {
     #[serde(rename = "environment",)]
     pub environment: Environment,
@@ -14,6 +15,7 @@ pub struct Content {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Trigger {
     #[serde(rename = "type", default, skip_serializing_if = "Option::is_none",)]
     pub r#type: Option<String>,
@@ -22,6 +24,7 @@ pub struct Trigger {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct TestSuiteRun {
     #[serde(rename = "id",)]
     pub id: String,
@@ -30,6 +33,7 @@ pub struct TestSuiteRun {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct TestCase {
     #[serde(rename = "id",)]
     pub id: String,
@@ -44,6 +48,7 @@ pub struct TestCase {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Environment {
     #[serde(rename = "id",)]
     pub id: String,

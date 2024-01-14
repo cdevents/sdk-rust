@@ -2,6 +2,7 @@
 use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Content {
     #[serde(rename = "artifactId", default, skip_serializing_if = "Option::is_none",)]
     pub artifact_id: Option<String>,
@@ -16,6 +17,7 @@ pub struct Content {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Service {
     #[serde(rename = "id",)]
     pub id: String,
@@ -24,6 +26,7 @@ pub struct Service {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Environment {
     #[serde(rename = "id",)]
     pub id: String,
