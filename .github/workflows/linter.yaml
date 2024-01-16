@@ -28,6 +28,8 @@ jobs:
     steps:
       - name: Check Commit Lint
         uses: wagoid/commitlint-github-action@v5.0.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
   lint_check:
         name: Rust - lint_${{ matrix.lint_projects }}
