@@ -27,9 +27,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Check Commit Lint
-        uses: build-trust/.github/actions/commit_lint@custom-actions
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+        uses: wagoid/commitlint-github-action@v5.0.0
 
   lint_check:
         name: Rust - lint_${{ matrix.lint_projects }}
