@@ -26,10 +26,10 @@ jobs:
     name: Lint Commit Messages
     runs-on: ubuntu-20.04
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
       - name: Check Commit Lint
         uses: wagoid/commitlint-github-action@v5.0.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
 
   lint_check:
     name: Rust - lint_${{ matrix.lint_projects }}
@@ -44,9 +44,7 @@ jobs:
           - cargo_toml_files
     steps:
       - name: Checkout repository
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
-        with:
-          ref: ${{ github.event.inputs.commit_sha }}
+        uses: actions/checkout@v4
       - name: Run lint ${{ matrix.lint_projects }}
         run:  make -f Makefile lint_${{ matrix.lint_projects }}
 
