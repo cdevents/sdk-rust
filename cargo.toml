@@ -1,17 +1,16 @@
 [workspace]
-
 members = [
-    "bindings",
-    "factory",
-    "types",
-    "zz_artifact",
-    "zz_branch",
-    "zz_build",
-    "zz_change",
-    "zz_environment",
-    "zz_incident",
-    "zz_pipeline",
-    "zz_repository",
-    "zz_service",
-    "zz_task"
+  "bindings",
+  "factory",
+  "types",
+  "zz_artifact",
+  "zz_branch",
+  "zz_build",
+  "zz_change",
+  "zz_environment",
+  "zz_incident",
+  "zz_pipeline",
+  "zz_repository",
+  "zz_service",
+  "zz_task",
 ]
