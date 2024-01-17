@@ -26,7 +26,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Check Commit Lint
+        with:
+          configFile: "./.commitlintrc.json"
         uses: wagoid/commitlint-github-action@v5.4.5
 
   lint_check:
@@ -68,3 +72,4 @@ jobs:
         run: cargo --version
       - name: Run lint ${{ matrix.lint_projects }}
         run:  make -f Makefile lint_${{ matrix.lint_projects }}
+
