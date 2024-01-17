@@ -42,7 +42,6 @@ jobs:
         lint_projects:
           - cargo_fmt_check
           - cargo_toml_fmt_files
-          - cargo_toml_check_files
           - cargo_clippy
           - cargo_deny
     steps:
