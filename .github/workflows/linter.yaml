@@ -1,0 +1,70 @@
+name: linter
+
+permissions:
+  contents: read
+  # To report GitHub Actions status checks
+  statuses: write
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      commit_sha:
+        description: Git commit sha, on which, to run this workflow
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  lint_commits:
+    name: Lint Commit Messages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Check Commit Lint
+        uses: wagoid/commitlint-github-action@v5.4.5
+
+  lint_check:
+    name: Rust - lint_${{ matrix.lint_projects }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        lint_projects:
+          - cargo_fmt_check
+          - cargo_toml_fmt_files
+          - cargo_toml_check_files
+          - cargo_clippy
+          - cargo_deny
+    steps:
+      - name: Run the checkout command
+        uses: actions/checkout@v4
+      - name: Install rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: nightly
+          components: clippy, rustfmt
+      - name: Install development tools
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-deny, dprint
+      - name: Rust Cache
+        uses: actions/cache@v3
+        continue-on-error: false
+        with:
+            path: |
+              ~/.cargo/bin
+              ~/.cargo/registry
+              ~/.cargo/git/db/
+            key: ${{ runner.os }}-sdk-rust-${{ hashFiles('**/Cargo.lock') }}
+            restore-keys: |
+                 ${{ runner.os }}-sdk-rust-
+      - name: Check cargo version
+        run: cargo --version
+      - name: Run lint ${{ matrix.lint_projects }}
+        run:  make -f Makefile lint_${{ matrix.lint_projects }}
