@@ -2,7 +2,8 @@ default:
     @just --list --unsorted
 
 _install_cargo-binstall:
-    cargo install cargo-binstall
+    # cargo install cargo-binstall
+    cargo binstall -V || curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
 
 _install_cargo-nextest: _install_cargo-binstall
     cargo binstall cargo-nextest -y
