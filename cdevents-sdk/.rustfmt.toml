@@ -1,0 +1,9 @@
+# see https://rust-lang.github.io/rustfmt/
+
+# - disable all formatting until support of `ignore` or `generated`
+# - the marker `#![rustfmt::skip]` generates an `error: custom inner attributes are unstable` on clippy,...
+disable_all_formatting = true
+
+# unstable_features = true # nightly only
+# ignore = ["generated"]   # unstable
+# format_generated_files = false # unstable
