@@ -52,6 +52,7 @@ fn main() -> Result<()> {
                     .dest
                     .join(cruet::to_snake_case(&rust_module))
                     .with_extension("rs");
+                //TODO use a formatter like https://crates.io/crates/prettyplease?
                 fs::write(file, code)?;
                 variants.push(VariantInfo {
                     context_type,
@@ -64,6 +65,7 @@ fn main() -> Result<()> {
     let (module_name, code) =
         generate_module(&hbs, &variants).with_context(|| "failed to generate module")?;
     let file = settings.dest.join(module_name).with_extension("rs");
+    //TODO use a formatter like https://crates.io/crates/prettyplease?
     fs::write(file, code)?;
 
     Ok(())
