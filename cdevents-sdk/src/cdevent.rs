@@ -93,7 +93,7 @@ impl<'de> Deserialize<'de> for CDEvent {
             }
         }
 
-        const FIELDS: &'static [&'static str] = &["context", "subject"];
+        const FIELDS: &[&str] = &["context", "subject"];
         deserializer.deserialize_struct("CDEvent", FIELDS, CDEventVisitor)
     }
 }
