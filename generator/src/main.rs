@@ -63,7 +63,7 @@ fn main() -> Result<()> {
 
     let (module_name, code) =
         generate_module(&hbs, &variants).with_context(|| "failed to generate module")?;
-    let file = settings.dest.join(&module_name).with_extension("rs");
+    let file = settings.dest.join(module_name).with_extension("rs");
     fs::write(file, code)?;
 
     Ok(())
@@ -155,18 +155,15 @@ fn collect_structs(
             Some("date-time") => TypeInfo {
                 type_declaration: "time::OffsetDateTime".to_string(),
                 serde_with: Some("crate::serde::datetime".to_string()),
-                ..Default::default()
             },
             //TODO manage purl
             Some("uri-reference") => TypeInfo {
                 type_declaration: "fluent_uri::Uri<String>".to_string(),
                 serde_with: Some("crate::serde::uri_reference".to_string()),
-                ..Default::default()
             },
             Some("uri") => TypeInfo {
                 type_declaration: "fluent_uri::Uri<String>".to_string(),
                 serde_with: Some("crate::serde::uri".to_string()),
-                ..Default::default()
             },
             // Some("uri") => TypeInfo {
             //     type_declaration: "http::Uri".to_string(),

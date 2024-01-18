@@ -6,7 +6,7 @@ use std::path::PathBuf;
 
 #[rstest]
 fn for_each_example(#[files("../cdevents-spec/examples/*.json")] path: PathBuf) {
-    let example_txt = fs::read_to_string(&path).expect("to read file as string");
+    let example_txt = fs::read_to_string(path).expect("to read file as string");
     //HACK uri are stored ad http::Uri, they are "normalized" when serialized, so prenormalization to avoid failure like
     // json atoms at path ".subject.content.repository.source" are not equal:
     //     lhs:
