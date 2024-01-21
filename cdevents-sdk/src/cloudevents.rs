@@ -13,11 +13,11 @@ impl BuilderExt for cloudevents::EventBuilderV10 {
 
     fn with_cdevent(self, cdevent: CDEvent) -> Result<Self, Self::Error> {
         Ok(
-            self.id(&cdevent.context.id)
-                .ty(&cdevent.context.r#type)
-                .source(cdevent.context.source.as_str())
-                .subject(&cdevent.subject.id)
-                .time(cdevent.context.timestamp.format(&Rfc3339).map_err(|e| Self::Error::Other{source: Box::new(e)})?)
+            self.id(cdevent.id())
+                .ty(cdevent.ty())
+                .source(cdevent.source().as_str())
+                .subject(cdevent.subject().id())
+                .time(cdevent.timestamp().format(&Rfc3339).map_err(|e| Self::Error::Other{source: Box::new(e)})?)
                 .data("application/json", serde_json::to_value(cdevent).map_err(Self::Error::from)?)
         )
     }
@@ -61,32 +61,19 @@ impl TryFrom<Event> for CDEvent {
 #[cfg(test)]
 mod tests {
     use ::cloudevents::{AttributesReader, EventBuilder, EventBuilderV10};
-    use ::time::OffsetDateTime;
-
     use crate::*;
-
     use super::*;
 
     #[test]
-    fn test_true() -> Result<(), Box<dyn std::error::Error>> {
-        let cdevent = CDEvent {
-            context: Context {
-                version: "0.3.0".to_string(),
-                id: "271069a8-fc18-44f1-b38f-9d70a1695819".to_string(),
-                r#type: "dev.cdevents.build.queued.0.1.1".to_string(),
-                source: "/event/source/123".try_into()?,
-                timestamp: OffsetDateTime::now_utc(),
-            },
-            subject: Subject {
-                id: "subject123".to_string(),
-                source: Some("/event/source/123".try_into()?),
-                r#type: "build".to_string(),
-                content: Content::BuildQueued(build_queued::Content{})
-            },
-            custom_data: None,
-            custom_data_content_type: None,
-        };
-
+    fn test_into_cloudevent() -> Result<(), Box<dyn std::error::Error>> {
+        let cdevent = CDEvent::from(
+            Subject::from(build_queued::Content{})
+                .with_id("subject123")
+                .with_source("/event/source/123".try_into()?)
+        )
+        .with_id("271069a8-fc18-44f1-b38f-9d70a1695819")
+        .with_source("https://dev.cdevents".try_into()?)
+        ;
 
         let cloudevent_via_builder = EventBuilderV10::new()
             .with_cdevent(cdevent.clone())?
@@ -95,11 +82,11 @@ mod tests {
         assert_eq!(cloudevent_via_builder, cloudevent);
 
         assert_eq!(cloudevent.id(), "271069a8-fc18-44f1-b38f-9d70a1695819");
-        assert_eq!(cloudevent.id(), cdevent.context.id);
+        assert_eq!(cloudevent.id(), cdevent.id());
 
         let (_, _, data) = cloudevent.take_data();
         let cdevent_extracted: CDEvent = data.ok_or(Error::DataNotFoundInCloudEvent)?.try_into()?;
-        assert_eq!(cloudevent.id(), cdevent_extracted.context.id);
+        assert_eq!(cloudevent.id(), cdevent_extracted.id());
         assert_eq!(cdevent, cdevent_extracted);
         Ok(())
     }

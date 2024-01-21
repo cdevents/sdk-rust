@@ -18,7 +18,7 @@ pub struct Content {
 #[serde(deny_unknown_fields)]
 pub struct Trigger {
     #[serde(rename = "type", default, skip_serializing_if = "Option::is_none",)]
-    pub r#type: Option<String>,
+    pub ty: Option<String>,
     #[serde(rename = "uri", default, skip_serializing_if = "Option::is_none",)]
     pub uri: Option<crate::Uri>,
 }

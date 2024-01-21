@@ -4,14 +4,14 @@ use crate::UriReference;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
-pub struct Context {
-    pub version: String,
-    pub id: String,
-    pub source: UriReference,
+pub(crate) struct Context {
+    pub(crate) version: String,
+    pub(crate) id: String,
+    pub(crate) source: UriReference,
     #[serde(rename = "type")]
-    pub r#type: String,
+    pub(crate) ty: String,
     #[serde(with = "crate::serde::datetime")]
-    pub timestamp: time::OffsetDateTime,
+    pub(crate) timestamp: time::OffsetDateTime,
 }
 
 impl Default for Context {
@@ -20,7 +20,7 @@ impl Default for Context {
             version: "0.3.0".into(),
             id: "00000000-0000-0000-0000-000000000000".into(),
             source: UriReference::default(),
-            r#type: "dev.cdevents.undef.undef.0.0.0".into(),
+            ty: "dev.cdevents.undef.undef.0.0.0".into(),
             timestamp: time::OffsetDateTime::now_utc(),
         }
     }
