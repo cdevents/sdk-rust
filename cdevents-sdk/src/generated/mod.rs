@@ -134,164 +134,413 @@ impl Content {
         match ty {
             ARTIFACT_PACKAGED => {
                 let variant: artifact_packaged::Content = serde_json::from_value(json)?;
-                Ok(Self::ArtifactPackaged(variant))
+                Ok(variant.into())
             },
             ARTIFACT_PUBLISHED => {
                 let variant: artifact_published::Content = serde_json::from_value(json)?;
-                Ok(Self::ArtifactPublished(variant))
+                Ok(variant.into())
             },
             ARTIFACT_SIGNED => {
                 let variant: artifact_signed::Content = serde_json::from_value(json)?;
-                Ok(Self::ArtifactSigned(variant))
+                Ok(variant.into())
             },
             BRANCH_CREATED => {
                 let variant: branch_created::Content = serde_json::from_value(json)?;
-                Ok(Self::BranchCreated(variant))
+                Ok(variant.into())
             },
             BRANCH_DELETED => {
                 let variant: branch_deleted::Content = serde_json::from_value(json)?;
-                Ok(Self::BranchDeleted(variant))
+                Ok(variant.into())
             },
             BUILD_FINISHED => {
                 let variant: build_finished::Content = serde_json::from_value(json)?;
-                Ok(Self::BuildFinished(variant))
+                Ok(variant.into())
             },
             BUILD_QUEUED => {
                 let variant: build_queued::Content = serde_json::from_value(json)?;
-                Ok(Self::BuildQueued(variant))
+                Ok(variant.into())
             },
             BUILD_STARTED => {
                 let variant: build_started::Content = serde_json::from_value(json)?;
-                Ok(Self::BuildStarted(variant))
+                Ok(variant.into())
             },
             CHANGE_ABANDONED => {
                 let variant: change_abandoned::Content = serde_json::from_value(json)?;
-                Ok(Self::ChangeAbandoned(variant))
+                Ok(variant.into())
             },
             CHANGE_CREATED => {
                 let variant: change_created::Content = serde_json::from_value(json)?;
-                Ok(Self::ChangeCreated(variant))
+                Ok(variant.into())
             },
             CHANGE_MERGED => {
                 let variant: change_merged::Content = serde_json::from_value(json)?;
-                Ok(Self::ChangeMerged(variant))
+                Ok(variant.into())
             },
             CHANGE_REVIEWED => {
                 let variant: change_reviewed::Content = serde_json::from_value(json)?;
-                Ok(Self::ChangeReviewed(variant))
+                Ok(variant.into())
             },
             CHANGE_UPDATED => {
                 let variant: change_updated::Content = serde_json::from_value(json)?;
-                Ok(Self::ChangeUpdated(variant))
+                Ok(variant.into())
             },
             ENVIRONMENT_CREATED => {
                 let variant: environment_created::Content = serde_json::from_value(json)?;
-                Ok(Self::EnvironmentCreated(variant))
+                Ok(variant.into())
             },
             ENVIRONMENT_DELETED => {
                 let variant: environment_deleted::Content = serde_json::from_value(json)?;
-                Ok(Self::EnvironmentDeleted(variant))
+                Ok(variant.into())
             },
             ENVIRONMENT_MODIFIED => {
                 let variant: environment_modified::Content = serde_json::from_value(json)?;
-                Ok(Self::EnvironmentModified(variant))
+                Ok(variant.into())
             },
             INCIDENT_DETECTED => {
                 let variant: incident_detected::Content = serde_json::from_value(json)?;
-                Ok(Self::IncidentDetected(variant))
+                Ok(variant.into())
             },
             INCIDENT_REPORTED => {
                 let variant: incident_reported::Content = serde_json::from_value(json)?;
-                Ok(Self::IncidentReported(variant))
+                Ok(variant.into())
             },
             INCIDENT_RESOLVED => {
                 let variant: incident_resolved::Content = serde_json::from_value(json)?;
-                Ok(Self::IncidentResolved(variant))
+                Ok(variant.into())
             },
             PIPELINERUN_FINISHED => {
                 let variant: pipelinerun_finished::Content = serde_json::from_value(json)?;
-                Ok(Self::PipelinerunFinished(variant))
+                Ok(variant.into())
             },
             PIPELINERUN_QUEUED => {
                 let variant: pipelinerun_queued::Content = serde_json::from_value(json)?;
-                Ok(Self::PipelinerunQueued(variant))
+                Ok(variant.into())
             },
             PIPELINERUN_STARTED => {
                 let variant: pipelinerun_started::Content = serde_json::from_value(json)?;
-                Ok(Self::PipelinerunStarted(variant))
+                Ok(variant.into())
             },
             REPOSITORY_CREATED => {
                 let variant: repository_created::Content = serde_json::from_value(json)?;
-                Ok(Self::RepositoryCreated(variant))
+                Ok(variant.into())
             },
             REPOSITORY_DELETED => {
                 let variant: repository_deleted::Content = serde_json::from_value(json)?;
-                Ok(Self::RepositoryDeleted(variant))
+                Ok(variant.into())
             },
             REPOSITORY_MODIFIED => {
                 let variant: repository_modified::Content = serde_json::from_value(json)?;
-                Ok(Self::RepositoryModified(variant))
+                Ok(variant.into())
             },
             SERVICE_DEPLOYED => {
                 let variant: service_deployed::Content = serde_json::from_value(json)?;
-                Ok(Self::ServiceDeployed(variant))
+                Ok(variant.into())
             },
             SERVICE_PUBLISHED => {
                 let variant: service_published::Content = serde_json::from_value(json)?;
-                Ok(Self::ServicePublished(variant))
+                Ok(variant.into())
             },
             SERVICE_REMOVED => {
                 let variant: service_removed::Content = serde_json::from_value(json)?;
-                Ok(Self::ServiceRemoved(variant))
+                Ok(variant.into())
             },
             SERVICE_ROLLEDBACK => {
                 let variant: service_rolledback::Content = serde_json::from_value(json)?;
-                Ok(Self::ServiceRolledback(variant))
+                Ok(variant.into())
             },
             SERVICE_UPGRADED => {
                 let variant: service_upgraded::Content = serde_json::from_value(json)?;
-                Ok(Self::ServiceUpgraded(variant))
+                Ok(variant.into())
             },
             TASKRUN_FINISHED => {
                 let variant: taskrun_finished::Content = serde_json::from_value(json)?;
-                Ok(Self::TaskrunFinished(variant))
+                Ok(variant.into())
             },
             TASKRUN_STARTED => {
                 let variant: taskrun_started::Content = serde_json::from_value(json)?;
-                Ok(Self::TaskrunStarted(variant))
+                Ok(variant.into())
             },
             TESTCASERUN_FINISHED => {
                 let variant: testcaserun_finished::Content = serde_json::from_value(json)?;
-                Ok(Self::TestcaserunFinished(variant))
+                Ok(variant.into())
             },
             TESTCASERUN_QUEUED => {
                 let variant: testcaserun_queued::Content = serde_json::from_value(json)?;
-                Ok(Self::TestcaserunQueued(variant))
+                Ok(variant.into())
             },
             TESTCASERUN_STARTED => {
                 let variant: testcaserun_started::Content = serde_json::from_value(json)?;
-                Ok(Self::TestcaserunStarted(variant))
+                Ok(variant.into())
             },
             TESTOUTPUT_PUBLISHED => {
                 let variant: testoutput_published::Content = serde_json::from_value(json)?;
-                Ok(Self::TestoutputPublished(variant))
+                Ok(variant.into())
             },
             TESTSUITERUN_FINISHED => {
                 let variant: testsuiterun_finished::Content = serde_json::from_value(json)?;
-                Ok(Self::TestsuiterunFinished(variant))
+                Ok(variant.into())
             },
             TESTSUITERUN_QUEUED => {
                 let variant: testsuiterun_queued::Content = serde_json::from_value(json)?;
-                Ok(Self::TestsuiterunQueued(variant))
+                Ok(variant.into())
             },
             TESTSUITERUN_STARTED => {
                 let variant: testsuiterun_started::Content = serde_json::from_value(json)?;
-                Ok(Self::TestsuiterunStarted(variant))
+                Ok(variant.into())
             },
             variant => Err(serde_json::Error::custom(format_args!(
                 "unknown variant `{}`, expected 'dev.cdevents.{{subject}}.{{predicate}}.{{version}}'",
                 variant,
             ))),
         }
+    }
+
+    pub fn ty(&self) -> &'static str {
+        match self {
+            Self::ArtifactPackaged(_) => ARTIFACT_PACKAGED,
+            Self::ArtifactPublished(_) => ARTIFACT_PUBLISHED,
+            Self::ArtifactSigned(_) => ARTIFACT_SIGNED,
+            Self::BranchCreated(_) => BRANCH_CREATED,
+            Self::BranchDeleted(_) => BRANCH_DELETED,
+            Self::BuildFinished(_) => BUILD_FINISHED,
+            Self::BuildQueued(_) => BUILD_QUEUED,
+            Self::BuildStarted(_) => BUILD_STARTED,
+            Self::ChangeAbandoned(_) => CHANGE_ABANDONED,
+            Self::ChangeCreated(_) => CHANGE_CREATED,
+            Self::ChangeMerged(_) => CHANGE_MERGED,
+            Self::ChangeReviewed(_) => CHANGE_REVIEWED,
+            Self::ChangeUpdated(_) => CHANGE_UPDATED,
+            Self::EnvironmentCreated(_) => ENVIRONMENT_CREATED,
+            Self::EnvironmentDeleted(_) => ENVIRONMENT_DELETED,
+            Self::EnvironmentModified(_) => ENVIRONMENT_MODIFIED,
+            Self::IncidentDetected(_) => INCIDENT_DETECTED,
+            Self::IncidentReported(_) => INCIDENT_REPORTED,
+            Self::IncidentResolved(_) => INCIDENT_RESOLVED,
+            Self::PipelinerunFinished(_) => PIPELINERUN_FINISHED,
+            Self::PipelinerunQueued(_) => PIPELINERUN_QUEUED,
+            Self::PipelinerunStarted(_) => PIPELINERUN_STARTED,
+            Self::RepositoryCreated(_) => REPOSITORY_CREATED,
+            Self::RepositoryDeleted(_) => REPOSITORY_DELETED,
+            Self::RepositoryModified(_) => REPOSITORY_MODIFIED,
+            Self::ServiceDeployed(_) => SERVICE_DEPLOYED,
+            Self::ServicePublished(_) => SERVICE_PUBLISHED,
+            Self::ServiceRemoved(_) => SERVICE_REMOVED,
+            Self::ServiceRolledback(_) => SERVICE_ROLLEDBACK,
+            Self::ServiceUpgraded(_) => SERVICE_UPGRADED,
+            Self::TaskrunFinished(_) => TASKRUN_FINISHED,
+            Self::TaskrunStarted(_) => TASKRUN_STARTED,
+            Self::TestcaserunFinished(_) => TESTCASERUN_FINISHED,
+            Self::TestcaserunQueued(_) => TESTCASERUN_QUEUED,
+            Self::TestcaserunStarted(_) => TESTCASERUN_STARTED,
+            Self::TestoutputPublished(_) => TESTOUTPUT_PUBLISHED,
+            Self::TestsuiterunFinished(_) => TESTSUITERUN_FINISHED,
+            Self::TestsuiterunQueued(_) => TESTSUITERUN_QUEUED,
+            Self::TestsuiterunStarted(_) => TESTSUITERUN_STARTED,
+        }
+    }
+
+    pub fn subject_predicate(&self) -> (&'static str, &'static str){
+        let mut split = self.ty().split('.');
+        (
+            split.nth(2).expect("fargment 2 of ty should always exists"),
+            split.nth(3).expect("fargment 3 of ty should always exists")
+        )
+    }
+
+}
+
+impl From<artifact_packaged::Content> for Content {
+    fn from(value: artifact_packaged::Content) -> Self {
+        Self::ArtifactPackaged(value)
+    }
+}
+impl From<artifact_published::Content> for Content {
+    fn from(value: artifact_published::Content) -> Self {
+        Self::ArtifactPublished(value)
+    }
+}
+impl From<artifact_signed::Content> for Content {
+    fn from(value: artifact_signed::Content) -> Self {
+        Self::ArtifactSigned(value)
+    }
+}
+impl From<branch_created::Content> for Content {
+    fn from(value: branch_created::Content) -> Self {
+        Self::BranchCreated(value)
+    }
+}
+impl From<branch_deleted::Content> for Content {
+    fn from(value: branch_deleted::Content) -> Self {
+        Self::BranchDeleted(value)
+    }
+}
+impl From<build_finished::Content> for Content {
+    fn from(value: build_finished::Content) -> Self {
+        Self::BuildFinished(value)
+    }
+}
+impl From<build_queued::Content> for Content {
+    fn from(value: build_queued::Content) -> Self {
+        Self::BuildQueued(value)
+    }
+}
+impl From<build_started::Content> for Content {
+    fn from(value: build_started::Content) -> Self {
+        Self::BuildStarted(value)
+    }
+}
+impl From<change_abandoned::Content> for Content {
+    fn from(value: change_abandoned::Content) -> Self {
+        Self::ChangeAbandoned(value)
+    }
+}
+impl From<change_created::Content> for Content {
+    fn from(value: change_created::Content) -> Self {
+        Self::ChangeCreated(value)
+    }
+}
+impl From<change_merged::Content> for Content {
+    fn from(value: change_merged::Content) -> Self {
+        Self::ChangeMerged(value)
+    }
+}
+impl From<change_reviewed::Content> for Content {
+    fn from(value: change_reviewed::Content) -> Self {
+        Self::ChangeReviewed(value)
+    }
+}
+impl From<change_updated::Content> for Content {
+    fn from(value: change_updated::Content) -> Self {
+        Self::ChangeUpdated(value)
+    }
+}
+impl From<environment_created::Content> for Content {
+    fn from(value: environment_created::Content) -> Self {
+        Self::EnvironmentCreated(value)
+    }
+}
+impl From<environment_deleted::Content> for Content {
+    fn from(value: environment_deleted::Content) -> Self {
+        Self::EnvironmentDeleted(value)
+    }
+}
+impl From<environment_modified::Content> for Content {
+    fn from(value: environment_modified::Content) -> Self {
+        Self::EnvironmentModified(value)
+    }
+}
+impl From<incident_detected::Content> for Content {
+    fn from(value: incident_detected::Content) -> Self {
+        Self::IncidentDetected(value)
+    }
+}
+impl From<incident_reported::Content> for Content {
+    fn from(value: incident_reported::Content) -> Self {
+        Self::IncidentReported(value)
+    }
+}
+impl From<incident_resolved::Content> for Content {
+    fn from(value: incident_resolved::Content) -> Self {
+        Self::IncidentResolved(value)
+    }
+}
+impl From<pipelinerun_finished::Content> for Content {
+    fn from(value: pipelinerun_finished::Content) -> Self {
+        Self::PipelinerunFinished(value)
+    }
+}
+impl From<pipelinerun_queued::Content> for Content {
+    fn from(value: pipelinerun_queued::Content) -> Self {
+        Self::PipelinerunQueued(value)
+    }
+}
+impl From<pipelinerun_started::Content> for Content {
+    fn from(value: pipelinerun_started::Content) -> Self {
+        Self::PipelinerunStarted(value)
+    }
+}
+impl From<repository_created::Content> for Content {
+    fn from(value: repository_created::Content) -> Self {
+        Self::RepositoryCreated(value)
+    }
+}
+impl From<repository_deleted::Content> for Content {
+    fn from(value: repository_deleted::Content) -> Self {
+        Self::RepositoryDeleted(value)
+    }
+}
+impl From<repository_modified::Content> for Content {
+    fn from(value: repository_modified::Content) -> Self {
+        Self::RepositoryModified(value)
+    }
+}
+impl From<service_deployed::Content> for Content {
+    fn from(value: service_deployed::Content) -> Self {
+        Self::ServiceDeployed(value)
+    }
+}
+impl From<service_published::Content> for Content {
+    fn from(value: service_published::Content) -> Self {
+        Self::ServicePublished(value)
+    }
+}
+impl From<service_removed::Content> for Content {
+    fn from(value: service_removed::Content) -> Self {
+        Self::ServiceRemoved(value)
+    }
+}
+impl From<service_rolledback::Content> for Content {
+    fn from(value: service_rolledback::Content) -> Self {
+        Self::ServiceRolledback(value)
+    }
+}
+impl From<service_upgraded::Content> for Content {
+    fn from(value: service_upgraded::Content) -> Self {
+        Self::ServiceUpgraded(value)
+    }
+}
+impl From<taskrun_finished::Content> for Content {
+    fn from(value: taskrun_finished::Content) -> Self {
+        Self::TaskrunFinished(value)
+    }
+}
+impl From<taskrun_started::Content> for Content {
+    fn from(value: taskrun_started::Content) -> Self {
+        Self::TaskrunStarted(value)
+    }
+}
+impl From<testcaserun_finished::Content> for Content {
+    fn from(value: testcaserun_finished::Content) -> Self {
+        Self::TestcaserunFinished(value)
+    }
+}
+impl From<testcaserun_queued::Content> for Content {
+    fn from(value: testcaserun_queued::Content) -> Self {
+        Self::TestcaserunQueued(value)
+    }
+}
+impl From<testcaserun_started::Content> for Content {
+    fn from(value: testcaserun_started::Content) -> Self {
+        Self::TestcaserunStarted(value)
+    }
+}
+impl From<testoutput_published::Content> for Content {
+    fn from(value: testoutput_published::Content) -> Self {
+        Self::TestoutputPublished(value)
+    }
+}
+impl From<testsuiterun_finished::Content> for Content {
+    fn from(value: testsuiterun_finished::Content) -> Self {
+        Self::TestsuiterunFinished(value)
+    }
+}
+impl From<testsuiterun_queued::Content> for Content {
+    fn from(value: testsuiterun_queued::Content) -> Self {
+        Self::TestsuiterunQueued(value)
+    }
+}
+impl From<testsuiterun_started::Content> for Content {
+    fn from(value: testsuiterun_started::Content) -> Self {
+        Self::TestsuiterunStarted(value)
     }
 }

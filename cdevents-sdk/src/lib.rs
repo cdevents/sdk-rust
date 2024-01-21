@@ -14,7 +14,7 @@ mod uri;
 mod uri_reference;
 
 pub use cdevent::*;
-pub use context::*;
+pub(crate) use context::*;
 pub use error::*;
 pub use generated::*;
 pub use subject::*;

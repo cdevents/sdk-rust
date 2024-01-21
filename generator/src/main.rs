@@ -189,7 +189,7 @@ fn collect_structs(
                     .map(|field| {
                         let serde_name = field.0.to_string();
                         let rust_name = if serde_name == "type" {
-                            "r#type".to_string()
+                            "ty".to_string()
                         } else {
                             serde_name.to_snake_case()
                         };

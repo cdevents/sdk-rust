@@ -27,7 +27,7 @@ impl Content {
             {{#each variants }}
             {{to_screaming_snake_case this.rust_module}} => {
                 let variant: {{this.rust_module}}::Content = serde_json::from_value(json)?;
-                Ok(Self::{{to_class_case this.rust_module}}(variant))
+                Ok(variant.into())
             },
             {{/each}}
             variant => Err(serde_json::Error::custom(format_args!(
@@ -36,4 +36,29 @@ impl Content {
             ))),
         }
     }
+
+    pub fn ty(&self) -> &'static str {
+        match self {
+            {{#each variants }}
+            Self::{{to_class_case this.rust_module}}(_) => {{to_screaming_snake_case this.rust_module}},
+            {{/each}}
+        }
+    }
+
+    pub fn subject_predicate(&self) -> (&'static str, &'static str){
+        let mut split = self.ty().split('.');
+        (
+            split.nth(2).expect("fargment 2 of ty should always exists"),
+            split.nth(3).expect("fargment 3 of ty should always exists")
+        )
+    }
+
 }
+
+{{#each variants }}
+impl From<{{this.rust_module}}::Content> for Content {
+    fn from(value: {{this.rust_module}}::Content) -> Self {
+        Self::{{to_class_case this.rust_module}}(value)
+    }
+}
+{{/each}}
