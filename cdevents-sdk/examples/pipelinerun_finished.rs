@@ -1,21 +1,3 @@
-# Rust CDEvents SDK
-
-Rust SDK to emit [CDEvents](https://cdevents.dev).
-
-The SDK can be used to create CDEvents and send them as CloudEvents, as well as parse a received CloudEvent into a CDEvent.
-
-## Create and send your first CDEvent as CloudEvent
-
-Import the modules in your code
-
-```toml
-cdevents = "0.1.0"
-```
-
-To send a CDEvent as CloudEvent:
-
-```rust
-// from examples/pipelinerun_finished.rs
 use std::error::Error;
 
 use cdevents_sdk::{CDEvent, Context, Subject, pipelinerun_finished, Content};
@@ -27,7 +9,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         context: Context {
             version: "0.3.0".to_string(),
             id: "271069a8-fc18-44f1-b38f-9d70a1695819".to_string(),
-            r#type: "dev.cdevents.pipelinerun.finished.0.1.1".to_string(),
+            r#type: "dev.cdevents.pipelinerun .finished.0.1.1".to_string(),
             source: "/event/source/123".try_into()?,
             timestamp: OffsetDateTime::now_utc(),
         },
@@ -66,16 +48,3 @@ fn main() -> Result<(), Box<dyn Error>> {
     assert_eq!(cdevent_expected, cdevent_extracted);
     Ok(())
 }
-```
-
-See the [CloudEvents](https://github.com/cloudevents/sdk-go#send-your-first-cloudevent) docs as well.
-
-## Contributing
-
-If you would like to contribute, see our [development](DEVELOPMENT.md) guide.
-
-## References
-
-- [CDEvents](https://cdevents.dev)
-- [CDEvents Primer](https://cdevents.dev/docs/primer/)
-- [CDFoundation Specification](https://cdevents.dev/docs/)

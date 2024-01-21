@@ -1,7 +1,11 @@
+#![doc = include_str!("../../README.md")]
+//#![warn(missing_docs)]
 // TODO remove unwrap(), expect(...)
 // TODO reduce clone()
 mod cdevent;
 mod context;
+#[cfg(feature = "cloudevents")]
+pub mod cloudevents;
 mod error;
 mod generated;
 pub(crate) mod serde;
