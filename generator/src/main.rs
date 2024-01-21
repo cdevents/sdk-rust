@@ -160,17 +160,16 @@ fn collect_structs(
             },
             //TODO manage purl
             Some("uri-reference") => TypeInfo {
-                type_declaration: "fluent_uri::Uri<String>".to_string(),
-                serde_with: Some("crate::serde::uri_reference".to_string()),
+                type_declaration: "crate::UriReference".to_string(),
+                serde_with: None,
             },
             Some("uri") => TypeInfo {
-                type_declaration: "fluent_uri::Uri<String>".to_string(),
-                serde_with: Some("crate::serde::uri".to_string()),
+                type_declaration: "crate::Uri".to_string(),
+                serde_with: None,
             },
             // Some("uri") => TypeInfo {
             //     type_declaration: "http::Uri".to_string(),
             //     serde_with: Some("crate::serde::uri".to_string()),
-            //     ..Default::default()
             // },
             //TODO manage enum
             _ => TypeInfo {

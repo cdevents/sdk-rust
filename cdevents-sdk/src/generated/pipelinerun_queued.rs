@@ -3,7 +3,7 @@
 
 use serde::{Serialize, Deserialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct Content {
     #[serde(rename = "pipelineName", default, skip_serializing_if = "Option::is_none",)]

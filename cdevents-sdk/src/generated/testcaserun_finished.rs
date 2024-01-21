@@ -3,7 +3,7 @@
 
 use serde::{Serialize, Deserialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct Content {
     #[serde(rename = "environment",)]
@@ -20,7 +20,7 @@ pub struct Content {
     pub test_suite_run: Option<TestSuiteRun>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct TestSuiteRun {
     #[serde(rename = "id",)]
@@ -29,7 +29,7 @@ pub struct TestSuiteRun {
     pub source: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct TestCase {
     #[serde(rename = "id",)]
@@ -38,18 +38,18 @@ pub struct TestCase {
     pub name: Option<String>,
     #[serde(rename = "type", default, skip_serializing_if = "Option::is_none",)]
     pub r#type: Option<String>,
-    #[serde(rename = "uri", default, skip_serializing_if = "Option::is_none", with = "crate::serde::uri_optional",)]
-    pub uri: Option<fluent_uri::Uri<String>>,
+    #[serde(rename = "uri", default, skip_serializing_if = "Option::is_none",)]
+    pub uri: Option<crate::Uri>,
     #[serde(rename = "version", default, skip_serializing_if = "Option::is_none",)]
     pub version: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct Environment {
     #[serde(rename = "id",)]
     pub id: String,
-    #[serde(rename = "source", default, skip_serializing_if = "Option::is_none", with = "crate::serde::uri_reference_optional",)]
-    pub source: Option<fluent_uri::Uri<String>>,
+    #[serde(rename = "source", default, skip_serializing_if = "Option::is_none",)]
+    pub source: Option<crate::UriReference>,
 }
 
