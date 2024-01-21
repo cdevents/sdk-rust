@@ -1,3 +1,5 @@
+# TODO add a task to automatically update the README with the content of examples
+
 default:
     @just --list --unsorted
 
@@ -38,7 +40,7 @@ alias fmt := format
 # Format the code and sort dependencies
 format:
     cargo fmt
-    # cargo sort --workspace --grouped
+    @# cargo sort --workspace --grouped
     just --unstable --fmt
 
 deny: _install_cargo-deny
@@ -63,8 +65,9 @@ megalinter:
 # Launch tests
 test: _install_cargo-nextest
     cargo nextest run
-    # cargo test --doc
-    # cargo hack nextest --each-feature -- --test-threads=1
+    cargo test --doc
+    @# cargo hack test --each-feature
+    @# cargo hack nextest --each-feature -- --test-threads=1 # [cargo-hack and cargo-nextest don't compose well](https://github.com/nextest-rs/nextest/issues/1029)
 
 changelog: _install_git-cliff
     git-cliff -o "CHANGELOG.md"
@@ -72,6 +75,9 @@ changelog: _install_git-cliff
 
 release *arguments: _install_cargo-release _install_git-cliff
     cargo release --workspace --execute {{ arguments }}
-    # git-cliff could not be used as `pre-release-hook` of cargo-release because it uses tag
+    @# git-cliff could not be used as `pre-release-hook` of cargo-release because it uses tag
     git-cliff -o "CHANGELOG.md"
     git add CHANGELOG.md && git commit -m "📝 update CHANGELOG" && git push
+
+run_examples:
+    cargo run --example pipelinerun_finished
