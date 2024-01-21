@@ -85,7 +85,7 @@ pub const TESTSUITERUN_FINISHED: &str = "dev.cdevents.testsuiterun.finished.0.1.
 pub const TESTSUITERUN_QUEUED: &str = "dev.cdevents.testsuiterun.queued.0.1.0";
 pub const TESTSUITERUN_STARTED: &str = "dev.cdevents.testsuiterun.started.0.1.0";
 
-#[derive(Debug,Clone,Serialize,Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(untagged)] // TODO how to use content of context.type as discriminator ?
 pub enum Content {
     ArtifactPackaged(artifact_packaged::Content),

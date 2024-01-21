@@ -5,7 +5,7 @@ use serde::{
 };
 use std::fmt;
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct CDEvent {
     pub context: Context,

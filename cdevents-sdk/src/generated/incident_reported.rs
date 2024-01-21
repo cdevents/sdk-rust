@@ -3,7 +3,7 @@
 
 use serde::{Serialize, Deserialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct Content {
     #[serde(rename = "artifactId", default, skip_serializing_if = "Option::is_none",)]
@@ -14,25 +14,25 @@ pub struct Content {
     pub environment: Environment,
     #[serde(rename = "service", default, skip_serializing_if = "Option::is_none",)]
     pub service: Option<Service>,
-    #[serde(rename = "ticketURI", with = "crate::serde::uri",)]
-    pub ticket_uri: fluent_uri::Uri<String>,
+    #[serde(rename = "ticketURI",)]
+    pub ticket_uri: crate::Uri,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct Service {
     #[serde(rename = "id",)]
     pub id: String,
-    #[serde(rename = "source", default, skip_serializing_if = "Option::is_none", with = "crate::serde::uri_reference_optional",)]
-    pub source: Option<fluent_uri::Uri<String>>,
+    #[serde(rename = "source", default, skip_serializing_if = "Option::is_none",)]
+    pub source: Option<crate::UriReference>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct Environment {
     #[serde(rename = "id",)]
     pub id: String,
-    #[serde(rename = "source", default, skip_serializing_if = "Option::is_none", with = "crate::serde::uri_reference_optional",)]
-    pub source: Option<fluent_uri::Uri<String>>,
+    #[serde(rename = "source", default, skip_serializing_if = "Option::is_none",)]
+    pub source: Option<crate::UriReference>,
 }
 

@@ -1,8 +1,10 @@
+use std::str::FromStr;
+
 use serde::{Deserialize, Serialize};
 
-use crate::Content;
+use crate::{Content, UriReference};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct Subject {
     #[serde(rename = "content")]
@@ -13,9 +15,8 @@ pub struct Subject {
         rename = "source",
         default,
         skip_serializing_if = "Option::is_none",
-        with = "crate::serde::uri_reference_optional"
     )]
-    pub source: Option<fluent_uri::Uri<String>>,
+    pub source: Option<UriReference>,
     #[serde(rename = "type")]
     pub r#type: String,
 }
@@ -34,8 +35,7 @@ impl Subject {
             source: match json["source"].as_str() {
                 None => None,
                 Some(s) => Some(
-                    fluent_uri::Uri::parse_from(s.to_owned())
-                        .map_err(|e| serde::de::Error::custom(e.1))?,
+                    UriReference::from_str(s).map_err(serde::de::Error::custom)?,
                 ),
             },
             content: Content::from_json(ty, json["content"].clone())?,

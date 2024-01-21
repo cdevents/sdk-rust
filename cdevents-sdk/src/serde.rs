@@ -26,38 +26,70 @@ pub(crate) mod datetime {
     }
 }
 
-pub(crate) use uri_reference as uri;
-pub(crate) use uri_reference_optional as uri_optional;
+// pub(crate) fn ok_or_none<'de, D, T>(deserializer: D) -> Result<Option<T>, D::Error>
+// where
+//     D: Deserializer<'de>,
+//     T: Deserialize<'de>,
+// {
+//     let v = Value::deserialize(deserializer)?;
+//     Ok(T::deserialize(v).ok())
+// }
 
-pub(crate) mod uri_reference_optional {
-    use serde::{Deserialize, Deserializer, Serializer};
+// pub(crate) mod ok_or_none {
+//     use serde::{Deserialize, Deserializer, Serializer};
 
-    #[derive(Deserialize)]
-    struct Wrapper(#[serde(with = "crate::serde::uri_reference")] fluent_uri::Uri<String>);
+//     pub fn deserialize<'de, D, T>(deserializer: D) -> Result<Option<T>, D::Error>
+//     where
+//         D: Deserializer<'de>,
+//         T: Deserialize<'de>,
+//     {
+//         let v = Option::deserialize(deserializer)?;
+//         Ok(T::deserialize(v).ok())
+//     }
 
-    pub fn deserialize<'de, D>(deserializer: D) -> Result<Option<fluent_uri::Uri<String>>, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let v = Option::deserialize(deserializer)?;
-        Ok(v.map(|Wrapper(a)| a))
-    }
+//     pub fn serialize<S>(
+//         input: &Option<fluent_uri::Uri<String>>,
+//         serializer: S,
+//     ) -> Result<S::Ok, S::Error>
+//     where
+//         S: Serializer,
+//     {
+//         match input {
+//             None => serializer.serialize_none(),
+//             Some(input) => crate::serde::uri_reference::serialize(input, serializer),
+//         }
+//     }
+// }
 
-    pub fn serialize<S>(
-        input: &Option<fluent_uri::Uri<String>>,
-        serializer: S,
-    ) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        match input {
-            None => serializer.serialize_none(),
-            Some(input) => crate::serde::uri_reference::serialize(input, serializer),
-        }
-    }
-}
+// pub(crate) mod uri_reference_optional {
+//     use serde::{Deserialize, Deserializer, Serializer};
 
-pub(crate) mod uri_reference {
+//     #[derive(Deserialize)]
+//     struct Wrapper(#[serde(with = "crate::serde::uri_reference")] fluent_uri::Uri<String>);
+
+//     pub fn deserialize<'de, D>(deserializer: D) -> Result<Option<fluent_uri::Uri<String>>, D::Error>
+//     where
+//         D: Deserializer<'de>,
+//     {
+//         let v = Option::deserialize(deserializer)?;
+//         Ok(v.map(|Wrapper(a)| a))
+//     }
+
+//     pub fn serialize<S>(
+//         input: &Option<fluent_uri::Uri<String>>,
+//         serializer: S,
+//     ) -> Result<S::Ok, S::Error>
+//     where
+//         S: Serializer,
+//     {
+//         match input {
+//             None => serializer.serialize_none(),
+//             Some(input) => crate::serde::uri_reference::serialize(input, serializer),
+//         }
+//     }
+// }
+
+pub(crate) mod fluent_uri {
     use serde::{de::Error, Deserialize, Deserializer, Serializer};
 
     pub fn deserialize<'de, D>(deserializer: D) -> Result<fluent_uri::Uri<String>, D::Error>
