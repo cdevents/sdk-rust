@@ -8,8 +8,8 @@ Goals: generate rust code for cdevents from jsonschema provided as part of cdeve
 
 ## Why not use a jsonschema to rust generator?
 
-- I tried some (like ) and they failed (no error), maybe too early, not support for the version of jsonschema used by cdevents (often they support jsonschema draft-4)
-- The json schema (v0.3) are not connected, so lot of duplication (context,...), so classical generator will create as many Context type as Event type,...
+- I tried some and they failed (no error), maybe too early, not support for the version of jsonschema used by cdevents (often they support jsonschema draft-4)
+- The json schema (v0.3) are not connected, so lot of duplication (context,...), so classical generators will create as many Context type as Event type,... Our implementation only part of the schema is extracted to generate what is different aka the `content` of subjects.
 
 ## Run
 

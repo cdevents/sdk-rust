@@ -1,6 +1,9 @@
 // wrapper for fluent_uri::Uri to allow for restristed set of operations
 // and to complete currently missing features.
-//TODO impl the check difference for URI and Uri
+// Why fluent_uri?
+// - support uri & uri-reference, preserve the original string, but young, doesn't impl PartialEq,...
+// - http::Uri, more mature, but doesn't support uri-reference, and normalize url when generate string
+//TODO impl the check difference for Uri and Uri-reference
 
 use std::str::FromStr;
 

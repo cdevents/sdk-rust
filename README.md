@@ -68,4 +68,4 @@ If you would like to contribute, see our [development](DEVELOPMENT.md) guide.
 
 - [CDEvents](https://cdevents.dev)
 - [CDEvents Primer](https://cdevents.dev/docs/primer/)
-- [CDFoundation Specification](https://cdevents.dev/docs/)
+- [CDEvents Specification](https://cdevents.dev/docs/)
