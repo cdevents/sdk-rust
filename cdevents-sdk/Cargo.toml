@@ -1,12 +1,13 @@
 [package]
 name = "cdevents-sdk"
-edition.workspace = true
 version.workspace = true
 authors.workspace = true
+edition.workspace = true
 license.workspace = true
+publish = true
 repository.workspace = true
 rust-version.workspace = true
-publish = true
+description = "A Rust SDK for CDEvents"
 
 [dependencies]
 cloudevents-sdk = { version = "0.7", optional = true, default-features = false }
@@ -17,8 +18,8 @@ thiserror = "1.0"
 time = { version = "0.3", features = ["serde-human-readable"] }
 
 [dev-dependencies]
-rstest = "0.18"
 assert-json-diff = "2.0"
+rstest = "0.18"
 
 [features]
 default = ["cloudevents"]

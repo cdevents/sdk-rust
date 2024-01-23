@@ -9,7 +9,7 @@ authors = [
     # The actual list of contributors can be retrieved from the git log
     "The CDEvents Rust SDK Authors",
 ]
-license = "ASL-2.0"
+license = "Apache-2.0"
 repository = "https://github.com/cdevents/sdk-rust"
 rust-version = "1.75"
 publish = false
