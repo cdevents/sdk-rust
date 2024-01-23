@@ -10,9 +10,7 @@ publish = true
 
 [dependencies]
 cloudevents-sdk = { version = "0.7", optional = true, default-features = false }
-fluent-uri = "0.1"                                                               # support uri & uri-reference, preserve the original string, but young, doesn't impl PartialEq,...
-# http = "1"             # doesn't support uri-reference
-# http-serde = "2"
+fluent-uri = "0.1"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 thiserror = "1.0"
