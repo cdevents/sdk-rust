@@ -1,0 +1,15 @@
+[env]
+# RUSTC_WRAPPER = "sccache"
+RUST_WITHOUT = "rust-docs"
+# ASDF_RUST_PROFILE = "minimal"
+MISE_CARGO_BINSTALL = "true"
+
+[tools]
+rust = "1.75"
+make = "latest"
+# # experimental
+# "cargo:cargo-binstall" = "latest"
+# "cargo:cargo-nextest" = "latest"
+# "cargo:cargo-hack" = "latest"
+# "cargo:cargo-deny" = "latest"
+# "cargo:git-cliff" = "latest"
