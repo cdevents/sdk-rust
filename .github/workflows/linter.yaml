@@ -30,7 +30,7 @@ jobs:
           fetch-depth: 0
       - name: Check Commit Lint
         with:
-          configFile: "./.commitlintrc.json"
+          configFile: "./.commitlint.config.js"
         uses: wagoid/commitlint-github-action@v5.4.5
 
   lint_check:
