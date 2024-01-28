@@ -10,17 +10,16 @@ unlicensed = "deny"
 copyleft = "deny"
 confidence-threshold = 0.95
 allow = [
-    "MIT",
     "Apache-2.0",
+    "MIT",
+    "BSD-2-Clause",
 ]
 exceptions = []
 
 [advisories]
 unmaintained = "deny"
 vulnerability = "deny"
-#Determines what happens when a crate with a version that has been yanked from its source registry is encountered.
 yanked = "warn"
-ignore = []
 # Users who require or prefer Git to use SSH cloning instead of HTTPS,
 # such as implemented via "insteadOf" rules in Git config, can still
 # successfully fetch advisories with this enabled.
