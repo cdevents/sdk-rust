@@ -8,11 +8,16 @@
 use std::str::FromStr;
 
 use serde::{Serialize, Deserialize};
-
+#[cfg(feature = "testkit")] use proptest_derive::Arbitrary;
 use crate::UriReference;
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
-pub struct Uri(#[serde(with = "crate::serde::fluent_uri")] pub(crate) fluent_uri::Uri<String>);
+#[cfg_attr(feature = "testkit", derive(Arbitrary))]
+pub struct Uri(
+    #[cfg_attr(feature = "testkit", proptest(value = "fluent_uri::Uri::parse_from(\"https://example.com/\".to_owned()).unwrap()"))] //TODO generate random value
+    #[serde(with = "crate::serde::fluent_uri")]
+    pub(crate) fluent_uri::Uri<String>
+);
 
 impl PartialEq for Uri {
     fn eq(&self, other: &Self) -> bool {
@@ -72,3 +77,19 @@ impl Uri {
 //         uri.0
 //     }
 // }
+
+#[cfg(test)]
+mod tests {
+    use proptest::prelude::*;
+    use super::*;
+
+    proptest! {
+        #[test]
+        #[cfg(feature = "testkit")]
+        fn arbitraries_are_json_valid(s in any::<Uri>()) {
+            let json_str = serde_json::to_string(&s).unwrap();
+            let actual = serde_json::from_str::<Uri>(&json_str).unwrap();
+            assert_eq!(s, actual);
+        }
+    }
+}

@@ -1,9 +1,11 @@
 // @generated
 // by cdevents/sdk-rust/generator (subject.hbs)
 
+#[cfg(feature = "testkit")] use proptest_derive::Arbitrary;
 use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[cfg_attr(feature = "testkit", derive(Arbitrary))]
 #[serde(deny_unknown_fields)]
 pub struct Content {
     #[serde(rename = "environment",)]
@@ -21,6 +23,7 @@ pub struct Content {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[cfg_attr(feature = "testkit", derive(Arbitrary))]
 #[serde(deny_unknown_fields)]
 pub struct ContentTestSuiteRun {
     #[serde(rename = "id",)]
@@ -30,6 +33,7 @@ pub struct ContentTestSuiteRun {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[cfg_attr(feature = "testkit", derive(Arbitrary))]
 #[serde(deny_unknown_fields)]
 pub struct ContentTestCase {
     #[serde(rename = "id",)]
@@ -45,6 +49,7 @@ pub struct ContentTestCase {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[cfg_attr(feature = "testkit", derive(Arbitrary))]
 #[serde(deny_unknown_fields)]
 pub struct ContentEnvironment {
     #[serde(rename = "id",)]
@@ -54,6 +59,7 @@ pub struct ContentEnvironment {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
+#[cfg_attr(feature = "testkit", derive(Arbitrary))]
 pub enum ContentOutcome {
     #[serde(rename = "pass")]
     Pass,
@@ -66,6 +72,7 @@ pub enum ContentOutcome {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
+#[cfg_attr(feature = "testkit", derive(Arbitrary))]
 pub enum ContentSeverity {
     #[serde(rename = "low")]
     Low,
@@ -78,6 +85,7 @@ pub enum ContentSeverity {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
+#[cfg_attr(feature = "testkit", derive(Arbitrary))]
 pub enum ContentTestCaseType {
     #[serde(rename = "performance")]
     Performance,
@@ -95,4 +103,20 @@ pub enum ContentTestCaseType {
     E2E,
     #[serde(rename = "other")]
     Other,
+}
+
+#[cfg(test)]
+mod tests {
+    use proptest::prelude::*;
+    use super::*;
+
+    proptest! {
+        #[test]
+        #[cfg(feature = "testkit")]
+        fn arbitraries_are_json_valid(s in any::<Content>()) {
+            let json_str = serde_json::to_string(&s).unwrap();
+            let actual = serde_json::from_str::<Content>(&json_str).unwrap();
+            assert_eq!(s, actual);
+        }
+    }
 }

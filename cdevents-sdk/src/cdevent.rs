@@ -189,3 +189,40 @@ impl<'de> Deserialize<'de> for CDEvent {
         deserializer.deserialize_struct("CDEvent", FIELDS, CDEventVisitor)
     }
 }
+
+#[cfg(feature = "testkit")]
+impl<> proptest::arbitrary::Arbitrary for CDEvent {
+    type Parameters = ();
+    type Strategy = proptest::strategy::BoxedStrategy<Self>;
+
+    fn arbitrary_with(_args: Self::Parameters) -> Self::Strategy {
+        use proptest::prelude::*;
+        (
+            any::<Subject>(),
+            "\\PC*",
+            any::<Option<UriReference>>(),
+        ).prop_map(|(subject, id, source)| {
+            let mut cdevent = CDEvent::from(subject).with_id(id);
+            if let Some(source) = source {
+                cdevent = cdevent.with_source(source);
+            }
+            cdevent
+        }).boxed()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::CDEvent;
+    use proptest::prelude::*;
+
+    proptest! {
+        #[test]
+        #[cfg(feature = "testkit")]
+        fn arbitraries_are_json_valid(s in any::<CDEvent>()) {
+            let json_str = serde_json::to_string(&s).unwrap();
+            let actual = serde_json::from_str::<CDEvent>(&json_str).unwrap();
+            assert_eq!(s, actual);
+        }
+    }
+}

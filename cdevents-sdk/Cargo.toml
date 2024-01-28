@@ -12,6 +12,8 @@ description = "A Rust SDK for CDEvents"
 [dependencies]
 cloudevents-sdk = { version = "0.7", optional = true, default-features = false }
 fluent-uri = "0.1"
+proptest = { version = "1.4", optional = true }
+proptest-derive = { version = "0.4", optional = true }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 thiserror = "1.0"
@@ -19,8 +21,12 @@ time = { version = "0.3", features = ["serde-human-readable"] }
 
 [dev-dependencies]
 assert-json-diff = "2.0"
+proptest = "1"
 rstest = "0.18"
 
 [features]
 default = ["cloudevents"]
+# provide cloudevents helpers and extensions
 cloudevents = ["dep:cloudevents-sdk"]
+# provide test helpers (proptest'strategies and arbitraries for struct generation)
+testkit = ["dep:proptest", "dep:proptest-derive"]
