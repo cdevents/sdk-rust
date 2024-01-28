@@ -15,4 +15,3 @@ pub struct Content {
     #[serde(rename = "viewUrl", default, skip_serializing_if = "Option::is_none",)]
     pub view_url: Option<String>,
 }
-

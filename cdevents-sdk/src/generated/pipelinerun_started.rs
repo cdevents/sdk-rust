@@ -11,4 +11,3 @@ pub struct Content {
     #[serde(rename = "url",)]
     pub url: String,
 }
-

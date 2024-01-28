@@ -2,8 +2,8 @@
 // by cdevents/sdk-rust/generator (subject.hbs)
 
 use serde::{Serialize, Deserialize};
-
 {{#each structs }}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct {{ this.type_info.type_declaration }} {
@@ -15,5 +15,15 @@ pub struct {{ this.type_info.type_declaration }} {
     pub {{ this.rust_name }}: {{this.type_info.type_declaration }},
     {{/each}}
 }
+{{/each}}
+{{#each enums }}
 
+#[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
+pub enum {{ this.type_info.type_declaration }} {
+    {{#each this.values }}
+    #[serde(rename = "{{this.1}}")]{{#if this.0}}
+    #[default]{{/if}}
+    {{to_class_case this.1}},
+    {{/each}}
+}
 {{/each}}

@@ -7,4 +7,3 @@ use serde::{Serialize, Deserialize};
 #[serde(deny_unknown_fields)]
 pub struct Content {
 }
-
