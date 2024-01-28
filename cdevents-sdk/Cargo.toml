@@ -21,6 +21,7 @@ time = { version = "0.3", features = ["serde-human-readable"] }
 
 [dev-dependencies]
 assert-json-diff = "2.0"
+boon = "0.5"
 proptest = "1"
 rstest = "0.18"
 
