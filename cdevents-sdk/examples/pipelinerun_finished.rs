@@ -11,10 +11,10 @@ fn main() -> Result<(), Box<dyn Error>> {
             pipeline_name: Some("testPipeline".into()),
             url: Some("https://dev.pipeline.run/url".into())
         })
-        .with_id("/dev/pipeline/run/1")
+        .with_id("/dev/pipeline/run/1".try_into()?)
         .with_source("https://dev.pipeline.run/source".try_into()?)
     )
-    .with_id("271069a8-fc18-44f1-b38f-9d70a1695819")
+    .with_id("271069a8-fc18-44f1-b38f-9d70a1695819".try_into()?)
     .with_source("https://dev.cdevents".try_into()?)
     ;
 
@@ -34,7 +34,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let cloudevent_received: Event = cloudevent.clone();
     let cdevent_extracted: CDEvent = cloudevent_received.try_into()?;
 
-    assert_eq!(cloudevent.id(), cdevent_extracted.id());
+    assert_eq!(cloudevent.id(), cdevent_extracted.id().to_string());
     assert_eq!(cdevent_expected, cdevent_extracted);
     Ok(())
 }

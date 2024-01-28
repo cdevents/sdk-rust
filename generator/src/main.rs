@@ -46,18 +46,15 @@ fn main() -> Result<()> {
         if let Some(extension) = path.extension() {
             if extension == "json" {
                 let json: Value = serde_json::from_str(&std::fs::read_to_string(&path)?)?;
-                let (rust_module, context_type, code) = generate_variant(&hbs, json)
+                let (variant_info, code) = generate_variant(&hbs, json)
                     .with_context(|| format!("failed to generate variant on {:?}", &path))?;
                 let file = settings
                     .dest
-                    .join(cruet::to_snake_case(&rust_module))
+                    .join(cruet::to_snake_case(&variant_info.rust_module))
                     .with_extension("rs");
                 //TODO use a formatter like https://crates.io/crates/prettyplease?
                 fs::write(file, code)?;
-                variants.push(VariantInfo {
-                    context_type,
-                    rust_module,
-                });
+                variants.push(variant_info);
             }
         }
     }
@@ -71,7 +68,7 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn generate_variant(hbs: &Handlebars, jsonschema: Value) -> Result<(String, String, String)> {
+fn generate_variant(hbs: &Handlebars, jsonschema: Value) -> Result<(VariantInfo, String)> {
     // let id = jsonschema["$id"]
     //     .as_str()
     //     .ok_or(anyhow!("$id not found or not a string"))
@@ -90,11 +87,23 @@ fn generate_variant(hbs: &Handlebars, jsonschema: Value) -> Result<(String, Stri
         .to_string();
 
     let fragments = context_type.split('.').collect::<Vec<_>>();
-    let module_name = format!("{}_{}", fragments[2], fragments[3]).to_snake_case();
+    let rust_module = format!("{}_{}", fragments[2], fragments[3]).to_snake_case();
+    let predicate = fragments[3].to_owned();
+    // due to inconstency in case/format the subject could be not be extracted from the context.type (ty), jsonshema $id, spec filename (shema, examples)
+    let subject = jsonschema["properties"]["subject"]["properties"]["type"]["default"]
+        .as_str()
+        .unwrap_or_default()
+        .to_string();
 
     let data = build_data_for_variants(jsonschema);
     let code = hbs.render("variant", &data)?;
-    Ok((module_name.to_string(), context_type, code))
+    let variant_info = VariantInfo {
+        context_type,
+        rust_module,
+        subject,
+        predicate,
+    };
+    Ok((variant_info, code))
 }
 
 fn generate_module(hbs: &Handlebars, variants: &[VariantInfo]) -> Result<(String, String)> {
@@ -133,6 +142,8 @@ struct TypeInfo {
 struct VariantInfo {
     context_type: String,
     rust_module: String,
+    subject: String,
+    predicate: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -183,12 +194,22 @@ fn collect_structs(
             //     type_declaration: "http::Uri".to_string(),
             //     serde_with: Some("crate::serde::uri".to_string()),
             // },
-            //TODO manage enum
             _ => match json_definition["enum"].as_array() {
-                None => TypeInfo {
-                    type_declaration: "String".to_string(),
-                    ..Default::default()
-                },
+                None => {
+                    let type_declaration =
+                        match (field_names.last(), json_definition["minLength"].as_i64()) {
+                            (Some(&"id"), _) => "crate::Id",
+                            (Some(&"name"), Some(1)) => "crate::Name",
+                            (Some(x), Some(1)) if x.ends_with("Id") => "crate::Id",
+                            (Some(x), Some(1)) if x.ends_with("Name") => "crate::Name",
+                            _ => "String",
+                        }
+                        .to_string();
+                    TypeInfo {
+                        type_declaration,
+                        ..Default::default()
+                    }
+                }
                 Some(values) => {
                     let default_value = json_definition["default"].as_str();
                     let values = values

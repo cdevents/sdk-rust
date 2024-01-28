@@ -23,7 +23,7 @@ pub struct Content {
 #[serde(deny_unknown_fields)]
 pub struct ContentTestCaseRun {
     #[serde(rename = "id",)]
-    pub id: String,
+    pub id: crate::Id,
     #[serde(rename = "source", default, skip_serializing_if = "Option::is_none",)]
     pub source: Option<String>,
 }

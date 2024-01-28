@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use serde::{Deserialize, Serialize};
 
-use crate::{Content, UriReference};
+use crate::{Content, Id, UriReference};
 
 /// see <https://github.com/cdevents/spec/blob/main/spec.md#cdevent-subject>
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -11,7 +11,7 @@ pub struct Subject {
     #[serde(rename = "content")]
     content: Content,
     #[serde(rename = "id")]
-    id: String,
+    id: Id,
     #[serde(
         rename = "source",
         default,
@@ -24,13 +24,12 @@ pub struct Subject {
 
 impl Subject {
     /// see <https://github.com/cdevents/spec/blob/main/spec.md#id-subject>
-    pub fn id(&self) -> &str {
+    pub fn id(&self) -> &Id {
         &self.id
     }
 
-    pub fn with_id<T>(mut self, id: T) -> Self
-        where T: Into<String> {
-        self.id = id.into();
+    pub fn with_id(mut self, id: Id) -> Self {
+        self.id = id;
         self
     }
 
@@ -60,7 +59,8 @@ impl Subject {
             id: json["id"]
                 .as_str()
                 .ok_or_else(|| serde::de::Error::missing_field("id"))?
-                .to_string(),
+                .try_into()
+                .map_err(serde::de::Error::custom)?,
             ty: json["type"]
                 .as_str()
                 .ok_or_else(|| serde::de::Error::missing_field("type"))?
@@ -79,10 +79,13 @@ impl Subject {
 impl<T> From<T> for Subject where T: Into<Content>{
     fn from(content: T) -> Self {
         let content = content.into();
-        let ty = content.ty().to_owned();
+        let ty = crate::extract_subject_predicate(content.ty())
+            .map(|(s, _)| s)
+            .unwrap_or("unknown")
+            .to_owned();
         Self {
             content,
-            id: String::new(),
+            id: Id::default(),
             source: None,
             ty,
         }
@@ -97,7 +100,7 @@ impl<> proptest::arbitrary::Arbitrary for Subject {
         use proptest::prelude::*;
         (
             any::<Content>(),
-            "\\PC*",
+            any::<Id>(),
             any::<Option<UriReference>>(),
         ).prop_map(|(content, id, source)| {
             let mut subject = Subject::from(content).with_id(id);

@@ -9,7 +9,7 @@ use serde::{Serialize, Deserialize};
 #[serde(deny_unknown_fields)]
 pub struct Content {
     #[serde(rename = "name",)]
-    pub name: String,
+    pub name: crate::Name,
     #[serde(rename = "owner", default, skip_serializing_if = "Option::is_none",)]
     pub owner: Option<String>,
     #[serde(rename = "url",)]

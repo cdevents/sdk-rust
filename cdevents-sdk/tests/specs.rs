@@ -32,7 +32,7 @@ fn for_each_example(#[files("../cdevents-spec/examples/*.json")] path: PathBuf) 
 
 fn check_against_schema(json: &serde_json::Value, ty: &str) {
     let (subject, predicate) = cdevents_sdk::extract_subject_predicate(ty).expect("valid type: {ty}");
-    let schemapath = format!("../cdevents-spec/schemas/{subject}{predicate}.json");
+    let schemapath = format!("../cdevents-spec/schemas/{subject}{predicate}.json").to_lowercase();
     //TODO optimize to not recompile a previously read schema
     let mut schemas = Schemas::new();
     let mut compiler = Compiler::new();
