@@ -1,4 +1,4 @@
-use crate::{Context, Subject, UriReference};
+use crate::{Context, Id, Subject, UriReference};
 use serde::{
     de::{self, Deserializer, MapAccess, Visitor},
     Deserialize, Serialize,
@@ -22,7 +22,7 @@ pub struct CDEvent {
 impl From<Subject> for CDEvent {
     fn from(subject: Subject) -> Self {
         let context = Context {
-            ty: subject.ty().into(),
+            ty: subject.content().ty().into(),
             ..Default::default()
         };
         Self {
@@ -46,12 +46,12 @@ impl CDEvent {
     }
 
     /// see <https://github.com/cdevents/spec/blob/main/spec.md#id-context>
-    pub fn id(&self) -> &str {
-        self.context.id.as_str()
+    pub fn id(&self) -> &Id {
+        &self.context.id
     }
 
-    pub fn with_id<T>(mut self, v: T) -> Self where T: Into<String> {
-        self.context.id = v.into();
+    pub fn with_id(mut self, v: Id) -> Self {
+        self.context.id = v;
         self
     }
 
@@ -83,8 +83,8 @@ impl CDEvent {
     /// see <https://github.com/cdevents/spec/blob/main/spec.md#type-context>
     /// derived from subject.content
     pub fn ty(&self) -> &str {
-        //self.context.ty()
-        self.subject.ty()
+        //self.subject.content().ty()
+        self.context.ty.as_str()
     }
 
     /// see <https://github.com/cdevents/spec/blob/main/spec.md#customdata>
@@ -199,14 +199,10 @@ impl<> proptest::arbitrary::Arbitrary for CDEvent {
         use proptest::prelude::*;
         (
             any::<Subject>(),
-            "\\PC*",
-            any::<Option<UriReference>>(),
+            any::<Id>(),
+            any::<UriReference>(),
         ).prop_map(|(subject, id, source)| {
-            let mut cdevent = CDEvent::from(subject).with_id(id);
-            if let Some(source) = source {
-                cdevent = cdevent.with_source(source);
-            }
-            cdevent
+            CDEvent::from(subject).with_id(id).with_source(source)
         }).boxed()
     }
 }

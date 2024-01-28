@@ -45,14 +45,32 @@ impl Content {
         }
     }
 
-    pub fn subject_predicate(&self) -> (&'static str, &'static str){
-        let mut split = self.ty().split('.');
-        (
-            split.nth(2).expect("fargment 2 of ty should always exists"),
-            split.nth(3).expect("fargment 3 of ty should always exists")
-        )
+    pub fn subject(&self) -> &'static str {
+        match self {
+            {{#each variants }}
+            Self::{{to_class_case this.rust_module}}(_) => "{{ this.subject }}",
+            {{/each}}
+        }
     }
 
+    pub fn predicate(&self) -> &'static str {
+        match self {
+            {{#each variants }}
+            Self::{{to_class_case this.rust_module}}(_) => "{{ this.predicate }}",
+            {{/each}}
+        }
+    }
+}
+
+// due to inconstency in case/format the subject could be not be extracted from the context.type (ty), jsonshema $id, spec filename (shema, examples)
+pub fn extract_subject_predicate(ty: &str) -> Option<(&str, &str)>{
+    // let mut split = ty.split('.');
+    match ty {
+        {{#each variants }}
+        {{to_screaming_snake_case this.rust_module}} => Some(("{{ this.subject }}", "{{ this.predicate }}")),
+        {{/each}}
+        _ => None,
+    }
 }
 
 {{#each variants }}
@@ -77,3 +95,15 @@ impl<> proptest::arbitrary::Arbitrary for Content {
         ].boxed()
     }
 }
+
+// #[cfg(test)]
+// mod tests {
+//     use super::*;
+// 
+//     #[test]
+//     fn test_true() {
+//         {{#each variants }}
+//         assert_eq!(extract_subject_predicate({{to_screaming_snake_case this.rust_module}}), Some(("{{ this.subject }}","{{ this.predicate }}")));
+//         {{/each}}
+//     }
+// }

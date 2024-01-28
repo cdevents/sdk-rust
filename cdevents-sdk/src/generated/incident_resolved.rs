@@ -9,7 +9,7 @@ use serde::{Serialize, Deserialize};
 #[serde(deny_unknown_fields)]
 pub struct Content {
     #[serde(rename = "artifactId", default, skip_serializing_if = "Option::is_none",)]
-    pub artifact_id: Option<String>,
+    pub artifact_id: Option<crate::Id>,
     #[serde(rename = "description", default, skip_serializing_if = "Option::is_none",)]
     pub description: Option<String>,
     #[serde(rename = "environment",)]
@@ -23,7 +23,7 @@ pub struct Content {
 #[serde(deny_unknown_fields)]
 pub struct ContentService {
     #[serde(rename = "id",)]
-    pub id: String,
+    pub id: crate::Id,
     #[serde(rename = "source", default, skip_serializing_if = "Option::is_none",)]
     pub source: Option<crate::UriReference>,
 }
@@ -33,7 +33,7 @@ pub struct ContentService {
 #[serde(deny_unknown_fields)]
 pub struct ContentEnvironment {
     #[serde(rename = "id",)]
-    pub id: String,
+    pub id: crate::Id,
     #[serde(rename = "source", default, skip_serializing_if = "Option::is_none",)]
     pub source: Option<crate::UriReference>,
 }

@@ -1,12 +1,12 @@
 use serde::{Deserialize, Serialize};
 
-use crate::UriReference;
+use crate::{Id, UriReference};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub(crate) struct Context {
     pub(crate) version: String,
-    pub(crate) id: String,
+    pub(crate) id: Id,
     pub(crate) source: UriReference,
     #[serde(rename = "type")]
     pub(crate) ty: String,
@@ -18,8 +18,8 @@ impl Default for Context {
     fn default() -> Self {
         Self {
             version: "0.3.0".into(),
-            id: "00000000-0000-0000-0000-000000000000".into(),
-            source: UriReference::default(),
+            id: Id::default(),
+            source: "/undef".try_into().expect("/undef is a valid uri-reference"),
             ty: "dev.cdevents.undef.undef.0.0.0".into(),
             timestamp: time::OffsetDateTime::now_utc(),
         }

@@ -27,7 +27,7 @@ pub struct Content {
 #[serde(deny_unknown_fields)]
 pub struct ContentTestSuiteRun {
     #[serde(rename = "id",)]
-    pub id: String,
+    pub id: crate::Id,
     #[serde(rename = "source", default, skip_serializing_if = "Option::is_none",)]
     pub source: Option<String>,
 }
@@ -37,7 +37,7 @@ pub struct ContentTestSuiteRun {
 #[serde(deny_unknown_fields)]
 pub struct ContentTestCase {
     #[serde(rename = "id",)]
-    pub id: String,
+    pub id: crate::Id,
     #[serde(rename = "name", default, skip_serializing_if = "Option::is_none",)]
     pub name: Option<String>,
     #[serde(rename = "type", default, skip_serializing_if = "Option::is_none",)]
@@ -53,7 +53,7 @@ pub struct ContentTestCase {
 #[serde(deny_unknown_fields)]
 pub struct ContentEnvironment {
     #[serde(rename = "id",)]
-    pub id: String,
+    pub id: crate::Id,
     #[serde(rename = "source", default, skip_serializing_if = "Option::is_none",)]
     pub source: Option<crate::UriReference>,
 }

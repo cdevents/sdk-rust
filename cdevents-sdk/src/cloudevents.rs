@@ -68,10 +68,10 @@ mod tests {
     fn test_into_cloudevent() -> Result<(), Box<dyn std::error::Error>> {
         let cdevent = CDEvent::from(
             Subject::from(build_queued::Content{})
-                .with_id("subject123")
+                .with_id("subject123".try_into()?)
                 .with_source("/event/source/123".try_into()?)
         )
-        .with_id("271069a8-fc18-44f1-b38f-9d70a1695819")
+        .with_id("271069a8-fc18-44f1-b38f-9d70a1695819".try_into()?)
         .with_source("https://dev.cdevents".try_into()?)
         ;
 
@@ -82,11 +82,11 @@ mod tests {
         assert_eq!(cloudevent_via_builder, cloudevent);
 
         assert_eq!(cloudevent.id(), "271069a8-fc18-44f1-b38f-9d70a1695819");
-        assert_eq!(cloudevent.id(), cdevent.id());
+        assert_eq!(cloudevent.id(), cdevent.id().to_string());
 
         let (_, _, data) = cloudevent.take_data();
         let cdevent_extracted: CDEvent = data.ok_or(Error::DataNotFoundInCloudEvent)?.try_into()?;
-        assert_eq!(cloudevent.id(), cdevent_extracted.id());
+        assert_eq!(cloudevent.id(), cdevent_extracted.id().to_string());
         assert_eq!(cdevent, cdevent_extracted);
         Ok(())
     }

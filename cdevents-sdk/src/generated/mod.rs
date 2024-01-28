@@ -339,14 +339,140 @@ impl Content {
         }
     }
 
-    pub fn subject_predicate(&self) -> (&'static str, &'static str){
-        let mut split = self.ty().split('.');
-        (
-            split.nth(2).expect("fargment 2 of ty should always exists"),
-            split.nth(3).expect("fargment 3 of ty should always exists")
-        )
+    pub fn subject(&self) -> &'static str {
+        match self {
+            Self::ArtifactPackaged(_) => "artifact",
+            Self::ArtifactPublished(_) => "artifact",
+            Self::ArtifactSigned(_) => "artifact",
+            Self::BranchCreated(_) => "branch",
+            Self::BranchDeleted(_) => "branch",
+            Self::BuildFinished(_) => "build",
+            Self::BuildQueued(_) => "build",
+            Self::BuildStarted(_) => "build",
+            Self::ChangeAbandoned(_) => "change",
+            Self::ChangeCreated(_) => "change",
+            Self::ChangeMerged(_) => "change",
+            Self::ChangeReviewed(_) => "change",
+            Self::ChangeUpdated(_) => "change",
+            Self::EnvironmentCreated(_) => "environment",
+            Self::EnvironmentDeleted(_) => "environment",
+            Self::EnvironmentModified(_) => "environment",
+            Self::IncidentDetected(_) => "incident",
+            Self::IncidentReported(_) => "incident",
+            Self::IncidentResolved(_) => "incident",
+            Self::PipelinerunFinished(_) => "pipelineRun",
+            Self::PipelinerunQueued(_) => "pipelineRun",
+            Self::PipelinerunStarted(_) => "pipelineRun",
+            Self::RepositoryCreated(_) => "repository",
+            Self::RepositoryDeleted(_) => "repository",
+            Self::RepositoryModified(_) => "repository",
+            Self::ServiceDeployed(_) => "service",
+            Self::ServicePublished(_) => "service",
+            Self::ServiceRemoved(_) => "service",
+            Self::ServiceRolledback(_) => "service",
+            Self::ServiceUpgraded(_) => "service",
+            Self::TaskrunFinished(_) => "taskRun",
+            Self::TaskrunStarted(_) => "taskRun",
+            Self::TestcaserunFinished(_) => "testCaseRun",
+            Self::TestcaserunQueued(_) => "testCaseRun",
+            Self::TestcaserunStarted(_) => "testCaseRun",
+            Self::TestoutputPublished(_) => "testOutput",
+            Self::TestsuiterunFinished(_) => "testSuiteRun",
+            Self::TestsuiterunQueued(_) => "testSuiteRun",
+            Self::TestsuiterunStarted(_) => "testSuiteRun",
+        }
     }
 
+    pub fn predicate(&self) -> &'static str {
+        match self {
+            Self::ArtifactPackaged(_) => "packaged",
+            Self::ArtifactPublished(_) => "published",
+            Self::ArtifactSigned(_) => "signed",
+            Self::BranchCreated(_) => "created",
+            Self::BranchDeleted(_) => "deleted",
+            Self::BuildFinished(_) => "finished",
+            Self::BuildQueued(_) => "queued",
+            Self::BuildStarted(_) => "started",
+            Self::ChangeAbandoned(_) => "abandoned",
+            Self::ChangeCreated(_) => "created",
+            Self::ChangeMerged(_) => "merged",
+            Self::ChangeReviewed(_) => "reviewed",
+            Self::ChangeUpdated(_) => "updated",
+            Self::EnvironmentCreated(_) => "created",
+            Self::EnvironmentDeleted(_) => "deleted",
+            Self::EnvironmentModified(_) => "modified",
+            Self::IncidentDetected(_) => "detected",
+            Self::IncidentReported(_) => "reported",
+            Self::IncidentResolved(_) => "resolved",
+            Self::PipelinerunFinished(_) => "finished",
+            Self::PipelinerunQueued(_) => "queued",
+            Self::PipelinerunStarted(_) => "started",
+            Self::RepositoryCreated(_) => "created",
+            Self::RepositoryDeleted(_) => "deleted",
+            Self::RepositoryModified(_) => "modified",
+            Self::ServiceDeployed(_) => "deployed",
+            Self::ServicePublished(_) => "published",
+            Self::ServiceRemoved(_) => "removed",
+            Self::ServiceRolledback(_) => "rolledback",
+            Self::ServiceUpgraded(_) => "upgraded",
+            Self::TaskrunFinished(_) => "finished",
+            Self::TaskrunStarted(_) => "started",
+            Self::TestcaserunFinished(_) => "finished",
+            Self::TestcaserunQueued(_) => "queued",
+            Self::TestcaserunStarted(_) => "started",
+            Self::TestoutputPublished(_) => "published",
+            Self::TestsuiterunFinished(_) => "finished",
+            Self::TestsuiterunQueued(_) => "queued",
+            Self::TestsuiterunStarted(_) => "started",
+        }
+    }
+}
+
+// due to inconstency in case/format the subject could be not be extracted from the context.type (ty), jsonshema $id, spec filename (shema, examples)
+pub fn extract_subject_predicate(ty: &str) -> Option<(&str, &str)>{
+    // let mut split = ty.split('.');
+    match ty {
+        ARTIFACT_PACKAGED => Some(("artifact", "packaged")),
+        ARTIFACT_PUBLISHED => Some(("artifact", "published")),
+        ARTIFACT_SIGNED => Some(("artifact", "signed")),
+        BRANCH_CREATED => Some(("branch", "created")),
+        BRANCH_DELETED => Some(("branch", "deleted")),
+        BUILD_FINISHED => Some(("build", "finished")),
+        BUILD_QUEUED => Some(("build", "queued")),
+        BUILD_STARTED => Some(("build", "started")),
+        CHANGE_ABANDONED => Some(("change", "abandoned")),
+        CHANGE_CREATED => Some(("change", "created")),
+        CHANGE_MERGED => Some(("change", "merged")),
+        CHANGE_REVIEWED => Some(("change", "reviewed")),
+        CHANGE_UPDATED => Some(("change", "updated")),
+        ENVIRONMENT_CREATED => Some(("environment", "created")),
+        ENVIRONMENT_DELETED => Some(("environment", "deleted")),
+        ENVIRONMENT_MODIFIED => Some(("environment", "modified")),
+        INCIDENT_DETECTED => Some(("incident", "detected")),
+        INCIDENT_REPORTED => Some(("incident", "reported")),
+        INCIDENT_RESOLVED => Some(("incident", "resolved")),
+        PIPELINERUN_FINISHED => Some(("pipelineRun", "finished")),
+        PIPELINERUN_QUEUED => Some(("pipelineRun", "queued")),
+        PIPELINERUN_STARTED => Some(("pipelineRun", "started")),
+        REPOSITORY_CREATED => Some(("repository", "created")),
+        REPOSITORY_DELETED => Some(("repository", "deleted")),
+        REPOSITORY_MODIFIED => Some(("repository", "modified")),
+        SERVICE_DEPLOYED => Some(("service", "deployed")),
+        SERVICE_PUBLISHED => Some(("service", "published")),
+        SERVICE_REMOVED => Some(("service", "removed")),
+        SERVICE_ROLLEDBACK => Some(("service", "rolledback")),
+        SERVICE_UPGRADED => Some(("service", "upgraded")),
+        TASKRUN_FINISHED => Some(("taskRun", "finished")),
+        TASKRUN_STARTED => Some(("taskRun", "started")),
+        TESTCASERUN_FINISHED => Some(("testCaseRun", "finished")),
+        TESTCASERUN_QUEUED => Some(("testCaseRun", "queued")),
+        TESTCASERUN_STARTED => Some(("testCaseRun", "started")),
+        TESTOUTPUT_PUBLISHED => Some(("testOutput", "published")),
+        TESTSUITERUN_FINISHED => Some(("testSuiteRun", "finished")),
+        TESTSUITERUN_QUEUED => Some(("testSuiteRun", "queued")),
+        TESTSUITERUN_STARTED => Some(("testSuiteRun", "started")),
+        _ => None,
+    }
 }
 
 impl From<artifact_packaged::Content> for Content {
@@ -595,3 +721,91 @@ impl<> proptest::arbitrary::Arbitrary for Content {
         ].boxed()
     }
 }
+
+// #[cfg(test)]
+// mod tests {
+//     use super::*;
+// 
+//     #[test]
+//     fn test_true() {
+//         
+//         assert_eq!(extract_subject_predicate(ARTIFACT_PACKAGED), Some(("artifact","packaged")));
+//         
+//         assert_eq!(extract_subject_predicate(ARTIFACT_PUBLISHED), Some(("artifact","published")));
+//         
+//         assert_eq!(extract_subject_predicate(ARTIFACT_SIGNED), Some(("artifact","signed")));
+//         
+//         assert_eq!(extract_subject_predicate(BRANCH_CREATED), Some(("branch","created")));
+//         
+//         assert_eq!(extract_subject_predicate(BRANCH_DELETED), Some(("branch","deleted")));
+//         
+//         assert_eq!(extract_subject_predicate(BUILD_FINISHED), Some(("build","finished")));
+//         
+//         assert_eq!(extract_subject_predicate(BUILD_QUEUED), Some(("build","queued")));
+//         
+//         assert_eq!(extract_subject_predicate(BUILD_STARTED), Some(("build","started")));
+//         
+//         assert_eq!(extract_subject_predicate(CHANGE_ABANDONED), Some(("change","abandoned")));
+//         
+//         assert_eq!(extract_subject_predicate(CHANGE_CREATED), Some(("change","created")));
+//         
+//         assert_eq!(extract_subject_predicate(CHANGE_MERGED), Some(("change","merged")));
+//         
+//         assert_eq!(extract_subject_predicate(CHANGE_REVIEWED), Some(("change","reviewed")));
+//         
+//         assert_eq!(extract_subject_predicate(CHANGE_UPDATED), Some(("change","updated")));
+//         
+//         assert_eq!(extract_subject_predicate(ENVIRONMENT_CREATED), Some(("environment","created")));
+//         
+//         assert_eq!(extract_subject_predicate(ENVIRONMENT_DELETED), Some(("environment","deleted")));
+//         
+//         assert_eq!(extract_subject_predicate(ENVIRONMENT_MODIFIED), Some(("environment","modified")));
+//         
+//         assert_eq!(extract_subject_predicate(INCIDENT_DETECTED), Some(("incident","detected")));
+//         
+//         assert_eq!(extract_subject_predicate(INCIDENT_REPORTED), Some(("incident","reported")));
+//         
+//         assert_eq!(extract_subject_predicate(INCIDENT_RESOLVED), Some(("incident","resolved")));
+//         
+//         assert_eq!(extract_subject_predicate(PIPELINERUN_FINISHED), Some(("pipelineRun","finished")));
+//         
+//         assert_eq!(extract_subject_predicate(PIPELINERUN_QUEUED), Some(("pipelineRun","queued")));
+//         
+//         assert_eq!(extract_subject_predicate(PIPELINERUN_STARTED), Some(("pipelineRun","started")));
+//         
+//         assert_eq!(extract_subject_predicate(REPOSITORY_CREATED), Some(("repository","created")));
+//         
+//         assert_eq!(extract_subject_predicate(REPOSITORY_DELETED), Some(("repository","deleted")));
+//         
+//         assert_eq!(extract_subject_predicate(REPOSITORY_MODIFIED), Some(("repository","modified")));
+//         
+//         assert_eq!(extract_subject_predicate(SERVICE_DEPLOYED), Some(("service","deployed")));
+//         
+//         assert_eq!(extract_subject_predicate(SERVICE_PUBLISHED), Some(("service","published")));
+//         
+//         assert_eq!(extract_subject_predicate(SERVICE_REMOVED), Some(("service","removed")));
+//         
+//         assert_eq!(extract_subject_predicate(SERVICE_ROLLEDBACK), Some(("service","rolledback")));
+//         
+//         assert_eq!(extract_subject_predicate(SERVICE_UPGRADED), Some(("service","upgraded")));
+//         
+//         assert_eq!(extract_subject_predicate(TASKRUN_FINISHED), Some(("taskRun","finished")));
+//         
+//         assert_eq!(extract_subject_predicate(TASKRUN_STARTED), Some(("taskRun","started")));
+//         
+//         assert_eq!(extract_subject_predicate(TESTCASERUN_FINISHED), Some(("testCaseRun","finished")));
+//         
+//         assert_eq!(extract_subject_predicate(TESTCASERUN_QUEUED), Some(("testCaseRun","queued")));
+//         
+//         assert_eq!(extract_subject_predicate(TESTCASERUN_STARTED), Some(("testCaseRun","started")));
+//         
+//         assert_eq!(extract_subject_predicate(TESTOUTPUT_PUBLISHED), Some(("testOutput","published")));
+//         
+//         assert_eq!(extract_subject_predicate(TESTSUITERUN_FINISHED), Some(("testSuiteRun","finished")));
+//         
+//         assert_eq!(extract_subject_predicate(TESTSUITERUN_QUEUED), Some(("testSuiteRun","queued")));
+//         
+//         assert_eq!(extract_subject_predicate(TESTSUITERUN_STARTED), Some(("testSuiteRun","started")));
+//         
+//     }
+// }
