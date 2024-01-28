@@ -544,3 +544,54 @@ impl From<testsuiterun_started::Content> for Content {
         Self::TestsuiterunStarted(value)
     }
 }
+
+#[cfg(feature = "testkit")]
+impl<> proptest::arbitrary::Arbitrary for Content {
+    type Parameters = ();
+    type Strategy = proptest::strategy::BoxedStrategy<Self>;
+
+    fn arbitrary_with(_args: Self::Parameters) -> Self::Strategy {
+        use proptest::prelude::*;
+        prop_oneof![
+            any::<artifact_packaged::Content>().prop_map(Content::from),
+            any::<artifact_published::Content>().prop_map(Content::from),
+            any::<artifact_signed::Content>().prop_map(Content::from),
+            any::<branch_created::Content>().prop_map(Content::from),
+            any::<branch_deleted::Content>().prop_map(Content::from),
+            any::<build_finished::Content>().prop_map(Content::from),
+            any::<build_queued::Content>().prop_map(Content::from),
+            any::<build_started::Content>().prop_map(Content::from),
+            any::<change_abandoned::Content>().prop_map(Content::from),
+            any::<change_created::Content>().prop_map(Content::from),
+            any::<change_merged::Content>().prop_map(Content::from),
+            any::<change_reviewed::Content>().prop_map(Content::from),
+            any::<change_updated::Content>().prop_map(Content::from),
+            any::<environment_created::Content>().prop_map(Content::from),
+            any::<environment_deleted::Content>().prop_map(Content::from),
+            any::<environment_modified::Content>().prop_map(Content::from),
+            any::<incident_detected::Content>().prop_map(Content::from),
+            any::<incident_reported::Content>().prop_map(Content::from),
+            any::<incident_resolved::Content>().prop_map(Content::from),
+            any::<pipelinerun_finished::Content>().prop_map(Content::from),
+            any::<pipelinerun_queued::Content>().prop_map(Content::from),
+            any::<pipelinerun_started::Content>().prop_map(Content::from),
+            any::<repository_created::Content>().prop_map(Content::from),
+            any::<repository_deleted::Content>().prop_map(Content::from),
+            any::<repository_modified::Content>().prop_map(Content::from),
+            any::<service_deployed::Content>().prop_map(Content::from),
+            any::<service_published::Content>().prop_map(Content::from),
+            any::<service_removed::Content>().prop_map(Content::from),
+            any::<service_rolledback::Content>().prop_map(Content::from),
+            any::<service_upgraded::Content>().prop_map(Content::from),
+            any::<taskrun_finished::Content>().prop_map(Content::from),
+            any::<taskrun_started::Content>().prop_map(Content::from),
+            any::<testcaserun_finished::Content>().prop_map(Content::from),
+            any::<testcaserun_queued::Content>().prop_map(Content::from),
+            any::<testcaserun_started::Content>().prop_map(Content::from),
+            any::<testoutput_published::Content>().prop_map(Content::from),
+            any::<testsuiterun_finished::Content>().prop_map(Content::from),
+            any::<testsuiterun_queued::Content>().prop_map(Content::from),
+            any::<testsuiterun_started::Content>().prop_map(Content::from),
+        ].boxed()
+    }
+}

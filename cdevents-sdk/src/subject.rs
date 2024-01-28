@@ -88,3 +88,40 @@ impl<T> From<T> for Subject where T: Into<Content>{
         }
     }
 }
+
+#[cfg(feature = "testkit")]
+impl<> proptest::arbitrary::Arbitrary for Subject {
+    type Parameters = ();
+    type Strategy = proptest::strategy::BoxedStrategy<Self>;
+    fn arbitrary_with(_args: Self::Parameters) -> Self::Strategy {
+        use proptest::prelude::*;
+        (
+            any::<Content>(),
+            "\\PC*",
+            any::<Option<UriReference>>(),
+        ).prop_map(|(content, id, source)| {
+            let mut subject = Subject::from(content).with_id(id);
+            if let Some(source) = source {
+                subject = subject.with_source(source);
+            }
+            subject
+        }).boxed()
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use proptest::prelude::*;
+    use super::*;
+
+    proptest! {
+        #[test]
+        #[cfg(feature = "testkit")]
+        fn jsonify_arbitraries(s in any::<Subject>()) {
+            // Not enough information into json of subject to deserialize into the same sut content
+            // so only check that it could be serialized
+            serde_json::to_string(&s).unwrap();
+        }
+    }
+}

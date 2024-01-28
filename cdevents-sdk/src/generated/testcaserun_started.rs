@@ -1,9 +1,11 @@
 // @generated
 // by cdevents/sdk-rust/generator (subject.hbs)
 
+#[cfg(feature = "testkit")] use proptest_derive::Arbitrary;
 use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[cfg_attr(feature = "testkit", derive(Arbitrary))]
 #[serde(deny_unknown_fields)]
 pub struct Content {
     #[serde(rename = "environment",)]
@@ -17,6 +19,7 @@ pub struct Content {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[cfg_attr(feature = "testkit", derive(Arbitrary))]
 #[serde(deny_unknown_fields)]
 pub struct ContentTrigger {
     #[serde(rename = "type", default, skip_serializing_if = "Option::is_none",)]
@@ -26,6 +29,7 @@ pub struct ContentTrigger {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[cfg_attr(feature = "testkit", derive(Arbitrary))]
 #[serde(deny_unknown_fields)]
 pub struct ContentTestSuiteRun {
     #[serde(rename = "id",)]
@@ -35,6 +39,7 @@ pub struct ContentTestSuiteRun {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[cfg_attr(feature = "testkit", derive(Arbitrary))]
 #[serde(deny_unknown_fields)]
 pub struct ContentTestCase {
     #[serde(rename = "id",)]
@@ -50,6 +55,7 @@ pub struct ContentTestCase {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[cfg_attr(feature = "testkit", derive(Arbitrary))]
 #[serde(deny_unknown_fields)]
 pub struct ContentEnvironment {
     #[serde(rename = "id",)]
@@ -59,6 +65,7 @@ pub struct ContentEnvironment {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
+#[cfg_attr(feature = "testkit", derive(Arbitrary))]
 pub enum ContentTestCaseType {
     #[serde(rename = "performance")]
     Performance,
@@ -79,6 +86,7 @@ pub enum ContentTestCaseType {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
+#[cfg_attr(feature = "testkit", derive(Arbitrary))]
 pub enum ContentTriggerType {
     #[serde(rename = "manual")]
     Manual,
@@ -90,4 +98,20 @@ pub enum ContentTriggerType {
     Schedule,
     #[serde(rename = "other")]
     Other,
+}
+
+#[cfg(test)]
+mod tests {
+    use proptest::prelude::*;
+    use super::*;
+
+    proptest! {
+        #[test]
+        #[cfg(feature = "testkit")]
+        fn arbitraries_are_json_valid(s in any::<Content>()) {
+            let json_str = serde_json::to_string(&s).unwrap();
+            let actual = serde_json::from_str::<Content>(&json_str).unwrap();
+            assert_eq!(s, actual);
+        }
+    }
 }

@@ -62,3 +62,18 @@ impl From<{{this.rust_module}}::Content> for Content {
     }
 }
 {{/each}}
+
+#[cfg(feature = "testkit")]
+impl<> proptest::arbitrary::Arbitrary for Content {
+    type Parameters = ();
+    type Strategy = proptest::strategy::BoxedStrategy<Self>;
+
+    fn arbitrary_with(_args: Self::Parameters) -> Self::Strategy {
+        use proptest::prelude::*;
+        prop_oneof![
+{{#each variants }}
+            any::<{{this.rust_module}}::Content>().prop_map(Content::from),
+{{/each}}
+        ].boxed()
+    }
+}

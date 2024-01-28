@@ -12,7 +12,7 @@ build_%:
 	cargo build --package $*
 
 check:
-	cargo check
+	cargo hack check --each-feature
 check_no_std:
 	cargo --version
 	cargo check --target thumbv7em-none-eabihf -p ockam --no-default-features --features 'no_std alloc software_vault'
@@ -52,7 +52,7 @@ generate:
 	cargo run -p generator -- --templates-dir "generator/templates" --jsonschema-dir "cdevents-spec/schemas" --dest "cdevents-sdk/src/generated"
 
 test:
-	cargo nextest run
+	cargo nextest run --all-features
 	cargo test --doc
 
 .PHONY:
