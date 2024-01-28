@@ -107,15 +107,18 @@ fn generate_module(hbs: &Handlebars, variants: &[VariantInfo]) -> Result<(String
 
 fn build_data_for_variants(jsonschema: Value) -> Value {
     let mut structs = vec![];
+    let mut enums = vec![];
     collect_structs(
         &mut structs,
-        "content",
+        &mut enums,
+        &["content"],
         &jsonschema["properties"]["subject"]["properties"]["content"],
     );
     structs.reverse();
 
     json!({
         "structs": structs,
+        "enums": enums,
         "jsonschema": jsonschema,
     })
 }
@@ -140,6 +143,14 @@ struct StructDef {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+struct EnumDef {
+    type_info: TypeInfo,
+    json_definition: Value,
+    /// (is_default, value as string)
+    values: Vec<(bool, String)>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct FieldDef {
     rust_name: String,
     serde_name: String,
@@ -149,7 +160,8 @@ struct FieldDef {
 
 fn collect_structs(
     structs: &mut Vec<StructDef>,
-    field_name: &str,
+    enums: &mut Vec<EnumDef>,
+    field_names: &[&str],
     json_definition: &Value,
 ) -> TypeInfo {
     match json_definition["type"].as_str() {
@@ -172,9 +184,29 @@ fn collect_structs(
             //     serde_with: Some("crate::serde::uri".to_string()),
             // },
             //TODO manage enum
-            _ => TypeInfo {
-                type_declaration: "String".to_string(),
-                ..Default::default()
+            _ => match json_definition["enum"].as_array() {
+                None => TypeInfo {
+                    type_declaration: "String".to_string(),
+                    ..Default::default()
+                },
+                Some(values) => {
+                    let default_value = json_definition["default"].as_str();
+                    let values = values
+                        .iter()
+                        .map(|v| v.as_str().unwrap_or_default().to_string())
+                        .map(|v| (default_value == Some(&v), v))
+                        .collect::<Vec<_>>();
+                    let type_info = TypeInfo {
+                        type_declaration: to_type_name(field_names),
+                        ..Default::default()
+                    };
+                    enums.push(EnumDef {
+                        type_info: type_info.clone(),
+                        json_definition: json_definition.clone(),
+                        values,
+                    });
+                    type_info
+                }
             },
         },
         Some("object") => match json_definition["properties"].as_object() {
@@ -193,7 +225,11 @@ fn collect_structs(
                         } else {
                             serde_name.to_snake_case()
                         };
-                        let mut type_info = collect_structs(structs, &serde_name, field.1);
+                        let mut children_field_names = vec![];
+                        children_field_names.extend_from_slice(field_names);
+                        children_field_names.push(&serde_name);
+                        let mut type_info =
+                            collect_structs(structs, enums, &children_field_names, field.1);
                         let field_name = json!(&serde_name);
                         let is_optional =
                             required.map(|a| !a.contains(&field_name)).unwrap_or(true);
@@ -210,7 +246,7 @@ fn collect_structs(
                     })
                     .collect::<Vec<_>>();
                 let type_info = TypeInfo {
-                    type_declaration: field_name.to_class_case(),
+                    type_declaration: to_type_name(field_names),
                     ..Default::default()
                 };
                 structs.push(StructDef {
@@ -222,6 +258,10 @@ fn collect_structs(
             }
         },
         Some(x) => todo!("impl for type='{}'", x),
-        None => unimplemented!("expected key 'type' in field '{}'", field_name),
+        None => unimplemented!("expected key 'type' in field '{}'", field_names.join(".")),
     }
+}
+
+fn to_type_name(fied_names: &[&str]) -> String {
+    fied_names.join("_").to_class_case()
 }

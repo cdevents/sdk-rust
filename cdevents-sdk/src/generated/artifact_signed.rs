@@ -9,4 +9,3 @@ pub struct Content {
     #[serde(rename = "signature",)]
     pub signature: String,
 }
-

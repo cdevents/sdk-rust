@@ -11,14 +11,14 @@ pub struct Content {
     #[serde(rename = "description", default, skip_serializing_if = "Option::is_none",)]
     pub description: Option<String>,
     #[serde(rename = "environment",)]
-    pub environment: Environment,
+    pub environment: ContentEnvironment,
     #[serde(rename = "service", default, skip_serializing_if = "Option::is_none",)]
-    pub service: Option<Service>,
+    pub service: Option<ContentService>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
-pub struct Service {
+pub struct ContentService {
     #[serde(rename = "id",)]
     pub id: String,
     #[serde(rename = "source", default, skip_serializing_if = "Option::is_none",)]
@@ -27,10 +27,9 @@ pub struct Service {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
-pub struct Environment {
+pub struct ContentEnvironment {
     #[serde(rename = "id",)]
     pub id: String,
     #[serde(rename = "source", default, skip_serializing_if = "Option::is_none",)]
     pub source: Option<crate::UriReference>,
 }
-
