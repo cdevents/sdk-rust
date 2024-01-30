@@ -37,7 +37,7 @@ lint_cargo_deny:
 		--config=tools/cargo-deny/deny.toml
 
 lint_cargo_clippy:
-	cargo clippy --no-deps --all-targets -- -D warnings
+	cargo clippy --workspace --all-features --no-deps --all-targets -- --deny warnings
 
 lint_cargo_toml_fmt_files:
 	dprint fmt --config=tools/dprint/dprint.json
