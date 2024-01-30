@@ -32,7 +32,9 @@ lint_cargo_fmt_check:
 	cargo fmt --all -- --check
 
 lint_cargo_deny:
-	cargo deny --all-features \
+	cargo deny --workspace --all-features \
+		--exclude-dev \
+		--exclude generator \
 		check licenses advisories \
 		--config=tools/cargo-deny/deny.toml
 
