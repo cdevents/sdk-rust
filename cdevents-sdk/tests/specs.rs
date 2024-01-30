@@ -38,14 +38,12 @@ fn check_against_schema(json: &serde_json::Value, ty: &str) {
     let mut compiler = Compiler::new();
     let sch_index = compiler.compile(&schemapath, &mut schemas);
     if let Err(err) = sch_index {
-        assert!(false, "{err:#}");
-        return; // to allow sch_index.unwrap()
+        panic!("{err:#}"); //like a assert(false,...)
     }
     let sch_index = sch_index.unwrap();
-    let result = schemas.validate(&json, sch_index);
+    let result = schemas.validate(json, sch_index);
     if let Err(err) = result {
-        assert!(false, "{err}");
-        return;
+        panic!("{err}");
     }
 }
 

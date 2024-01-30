@@ -76,7 +76,7 @@ impl<> proptest::arbitrary::Arbitrary for UriReference {
         use proptest::prelude::*;
         (prop_oneof![
             "\\/[a-z_\\-\\/]+".prop_map(|s| UriReference::from_str(&s).unwrap()),
-            Just("https://example.com/").prop_map(|s| UriReference::from_str(&s).unwrap()),
+            Just("https://example.com/").prop_map(|s| UriReference::from_str(s).unwrap()),
         ]).boxed()
     }
 }
