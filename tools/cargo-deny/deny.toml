@@ -9,12 +9,13 @@ wildcards = "deny"
 unlicensed = "deny"
 copyleft = "deny"
 confidence-threshold = 0.95
-allow = [
-    "Apache-2.0",
-    "MIT",
-    "BSD-2-Clause",
-]
+allow = ["Apache-2.0", "MIT", "BSD-2-Clause", "Unicode-DFS-2016"]
 exceptions = []
+
+# The unpublished packages (generator) would be ignored now
+# FIXME the generator is excluded explicitly (see Makefile), I don't know why this is not working
+[licenses.private]
+ignore = true
 
 [advisories]
 unmaintained = "deny"
