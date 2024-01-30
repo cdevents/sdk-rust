@@ -44,7 +44,7 @@ jobs:
           - lint_cargo_toml_fmt_files
           - lint_cargo_clippy
           - lint_cargo_deny
-          - test
+          # - test # disable test until setup of nextest
     steps:
       - name: Run the checkout command
         uses: actions/checkout@v4
@@ -73,5 +73,5 @@ jobs:
               ${{ runner.os }}-sdk-rust-
       - name: Check cargo version
         run: cargo --version
-      - name: Run lint ${{ matrix.tasks }}
+      - name: Run ${{ matrix.tasks }}
         run:  make -f Makefile ${{ matrix.tasks }}
