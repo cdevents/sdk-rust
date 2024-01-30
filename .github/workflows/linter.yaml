@@ -34,19 +34,23 @@ jobs:
         uses: wagoid/commitlint-github-action@v5.4.5
 
   lint_check:
-    name: Rust - lint_${{ matrix.lint_projects }}
+    name: Rust - ${{ matrix.tasks }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        lint_projects:
-          - cargo_fmt_check
-          - cargo_toml_fmt_files
-          - cargo_clippy
-          - cargo_deny
+        tasks:
+          - lint_cargo_fmt_check
+          - lint_cargo_toml_fmt_files
+          - lint_cargo_clippy
+          - lint_cargo_deny
+          - test
     steps:
       - name: Run the checkout command
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: "true"
       - name: Install rust toolchain
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
@@ -66,8 +70,8 @@ jobs:
               ~/.cargo/git/db/
             key: ${{ runner.os }}-sdk-rust-${{ hashFiles('**/Cargo.lock') }}
             restore-keys: |
-                 ${{ runner.os }}-sdk-rust-
+              ${{ runner.os }}-sdk-rust-
       - name: Check cargo version
         run: cargo --version
-      - name: Run lint ${{ matrix.lint_projects }}
-        run:  make -f Makefile lint_${{ matrix.lint_projects }}
+      - name: Run lint ${{ matrix.tasks }}
+        run:  make -f Makefile ${{ matrix.tasks }}
