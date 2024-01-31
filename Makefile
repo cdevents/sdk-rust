@@ -53,6 +53,15 @@ lint_cargo_toml_fmt_files:
 lint_cargo_toml_check_files:
 	dprint check --config=tools/dprint/dprint.json
 
+test_cargo_nextest:
+	cargo nextest run --all-features
+
+test_cargo_check:
+	cargo hack check --each-feature --no-dev-deps
+
+test_cargo_machete:
+	cargo machete --with-metadata
+
 clean:
 	cargo clean
 
