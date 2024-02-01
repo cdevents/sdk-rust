@@ -58,11 +58,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 }
 ```
 
-See the [CloudEvents](https://github.com/cloudevents/sdk-go#send-your-first-cloudevent) docs as well.
-
-## Contributing
-
-If you would like to contribute, see our [development](DEVELOPMENT.md) guide.
+See the [CloudEvents](https://github.com/cloudevents/sdk-rust) docs as well.
 
 ## References
 
