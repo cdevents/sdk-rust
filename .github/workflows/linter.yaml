@@ -34,17 +34,16 @@ jobs:
         uses: wagoid/commitlint-github-action@v5.4.5
 
   lint_check:
-    name: Rust - ${{ matrix.tasks }}
+    name: Rust - lint_${{ matrix.lint_projects }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        tasks:
-          - lint_cargo_fmt_check
-          - lint_cargo_toml_fmt_files
-          - lint_cargo_clippy
-          - lint_cargo_deny
-          # - test # disable test until setup of nextest
+        lint_projects:
+          - cargo_fmt_check
+          - cargo_toml_fmt_files
+          - cargo_clippy
+          - cargo_deny
     steps:
       - name: Run the checkout command
         uses: actions/checkout@v4
@@ -73,5 +72,5 @@ jobs:
               ${{ runner.os }}-sdk-rust-
       - name: Check cargo version
         run: cargo --version
-      - name: Run ${{ matrix.tasks }}
-        run:  make -f Makefile ${{ matrix.tasks }}
+      - name: Run ${{ matrix.lint_projects }}
+        run:  make -f Makefile lint_${{ matrix.lint_projects }}
