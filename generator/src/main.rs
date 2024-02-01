@@ -190,10 +190,6 @@ fn collect_structs(
                 type_declaration: "crate::Uri".to_string(),
                 serde_with: None,
             },
-            // Some("uri") => TypeInfo {
-            //     type_declaration: "http::Uri".to_string(),
-            //     serde_with: Some("crate::serde::uri".to_string()),
-            // },
             _ => match json_definition["enum"].as_array() {
                 None => {
                     let type_declaration =
