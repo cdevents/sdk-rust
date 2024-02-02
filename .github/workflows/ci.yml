@@ -1,0 +1,44 @@
+name: ci
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+    env:
+      CARGO_TERM_COLOR: always
+      RUST_BACKTRACE: full
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: "true"
+      # - uses: jdx/mise-action@v2
+      - name: install mise until mise-action is allowed
+        uses: taiki-e/install-action@v2
+        with:
+          tool: mise, cargo-nextest, cargo-hack
+      - name: Rust Cache
+        uses: actions/cache@v4
+        continue-on-error: false
+        with:
+          path: |
+            ~/.cargo/bin
+            ~/.cargo/registry
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-sdk-rust-${{ hashFiles('**/Cargo.toml') }} # no Cargo.lock in this repo
+          restore-keys: |
+            ${{ runner.os }}-sdk-rust-
+      - run: make generate
+      - run: make check_no_uncommitted_changes_on_sdk
+      - run: make check
+      - run: make test
