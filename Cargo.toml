@@ -6,17 +6,10 @@ members = ["cdevents-sdk", "generator"]
 edition = "2021"
 version = "0.1.0"
 authors = [
-    # The actual list of contributors can be retrieved from the git log
-    "The CDEvents Rust SDK Authors",
+  # The actual list of contributors can be retrieved from the git log
+  "The CDEvents Rust SDK Authors",
 ]
 license = "Apache-2.0"
 repository = "https://github.com/cdevents/sdk-rust"
 rust-version = "1.75"
 publish = false
-
-[workspace.metadata.release]
-pre-release-commit-message = "🚀 (cargo-release) version {{version}}"
-tag-prefix = ""
-tag-name = "{{prefix}}{{version}}"
-tag-message = "🔖 {{version}}"
-

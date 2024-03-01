@@ -8,9 +8,7 @@ on:
         description: 'Release version'
         required: true
 
-permissions:
-  contents: read
-  packages: write
+pull-requests: write
 
 jobs:
   release-plz:
@@ -23,7 +21,7 @@ jobs:
           fetch-depth: 0
           # we use Release-plz-token (personal token) to explicitly specify github-actions
           # that it is the user who is running the action.
-          token: ${{ secrets.RELEASE_PLZ_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install Rust toolchain
         uses: actions-rust-lang/setup-rust-toolchain@v1
@@ -31,5 +29,4 @@ jobs:
       - name: Run release-plz
         uses: MarcoIeni/release-plz-action@v0.5
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_PLZ_TOKEN }}
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}

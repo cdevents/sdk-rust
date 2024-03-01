@@ -63,6 +63,7 @@ impl UriReference {
 #[cfg(feature = "testkit")]
 impl<> proptest::arbitrary::Arbitrary for UriReference {
     type Parameters = ();
+    type Strategy = proptest::strategy::BoxedStrategy<Self>;
     fn arbitrary_with(_args: Self::Parameters) -> Self::Strategy {
         use proptest::prelude::*;
         (prop_oneof![
@@ -70,8 +71,6 @@ impl<> proptest::arbitrary::Arbitrary for UriReference {
             Just("https://example.com/").prop_map(|s| UriReference::from_str(s).unwrap()),
         ]).boxed()
     }
-
-    type Strategy = proptest::strategy::BoxedStrategy<Self>;
 }
 
 #[cfg(test)]
