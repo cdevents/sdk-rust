@@ -14,7 +14,7 @@ struct Settings {
     templates_dir: PathBuf,
 
     /// directory with json schemas of events to generate
-    #[arg(long, default_value = "../cdevents-spec/schemas")]
+    #[arg(long, default_value = "../cdevents-specs/spec-v0.3/schemas")]
     jsonschema_dir: PathBuf,
 
     /// destination directory where to generate code

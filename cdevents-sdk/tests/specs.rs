@@ -7,7 +7,7 @@ use proptest::prelude::*;
 use boon::{Schemas, Compiler};
 
 #[rstest]
-fn for_each_example(#[files("../cdevents-spec/examples/*.json")] path: PathBuf) {
+fn for_each_example(#[files("../cdevents-specs/spec-v0.3/examples/*.json")] path: PathBuf) {
     let example_txt = fs::read_to_string(path).expect("to read file as string");
     //HACK uri are stored ad http::Uri, they are "normalized" when serialized, so prenormalization to avoid failure like
     // json atoms at path ".subject.content.repository.source" are not equal:
@@ -32,7 +32,7 @@ fn for_each_example(#[files("../cdevents-spec/examples/*.json")] path: PathBuf) 
 
 fn check_against_schema(json: &serde_json::Value, ty: &str) {
     let (subject, predicate) = cdevents_sdk::extract_subject_predicate(ty).expect("valid type: {ty}");
-    let schemapath = format!("../cdevents-spec/schemas/{subject}{predicate}.json").to_lowercase();
+    let schemapath = format!("../cdevents-specs/spec-v0.3/schemas/{subject}{predicate}.json").to_lowercase();
     //TODO optimize to not recompile a previously read schema
     let mut schemas = Schemas::new();
     let mut compiler = Compiler::new();
@@ -48,7 +48,7 @@ fn check_against_schema(json: &serde_json::Value, ty: &str) {
 }
 
 #[rstest]
-fn validate_example_against_schema(#[files("../cdevents-spec/examples/*.json")] path: PathBuf) {
+fn validate_example_against_schema(#[files("../cdevents-specs/spec-v0.3/examples/*.json")] path: PathBuf) {
     let example_txt = fs::read_to_string(path).expect("to read file as string");
     let example_json: serde_json::Value =
         serde_json::from_str(&example_txt).expect("to parse as json");

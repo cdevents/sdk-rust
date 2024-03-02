@@ -13,9 +13,9 @@ Goals: generate rust code for cdevents from jsonschema provided as part of cdeve
 
 ## Run
 
-To generate the `subjects` into sibling crate `cdevents/src/generated` from content of `cdevents-spec/schemas`, from root workspace
+To generate the `subjects` into sibling crate `cdevents/src/generated` from content of `cdevents-specs/spec-v0.3/schemas`, from root workspace
 
 ```sh
 cargo run -p generator -- --help
-cargo run -p generator -- --templates-dir "generator/templates" --jsonschema-dir "cdevents-spec/schemas" --dest "cdevents-sdk/src/generated"
+cargo run -p generator -- --templates-dir "generator/templates" --jsonschema-dir "cdevents-specs/spec-v0.3/schemas" --dest "cdevents-sdk/src/generated"
 ```
