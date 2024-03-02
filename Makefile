@@ -11,6 +11,9 @@ build_release_%:
 build_%:
 	cargo build --package $*
 
+fmt:
+	cargo fmt --all
+
 check:
 	cargo hack check --each-feature
 
