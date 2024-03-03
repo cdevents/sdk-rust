@@ -25,14 +25,13 @@ impl EventsSchemas {
             let ty = jsonschema["properties"]["context"]["properties"]["type"]["default"].as_str()
                 .unwrap_or_default()
                 .to_string();
-            if !mapping.contains_key(&ty) {
+            mapping.entry(ty).or_insert_with(|| {
                 let sch_index = compiler.compile(&schemapath.to_string_lossy(), &mut schemas);
                 if let Err(err) = sch_index {
                     panic!("{err:#}"); //like a assert(false,...)
                 }
-                let sch_index = sch_index.unwrap();
-                mapping.insert(ty, sch_index);
-            }
+                sch_index.unwrap()
+            });
         }
         Self {
             schemas, mapping
@@ -40,8 +39,8 @@ impl EventsSchemas {
     }
 
     fn check_against_schema(&self, json: &serde_json::Value, ty: &str) {
-        let sch_index = self.mapping.get(ty).expect(&format!("to have schema for {ty}"));
-        let result = self.schemas.validate(json, sch_index.clone());
+        let sch_index = self.mapping.get(ty).unwrap_or_else(|| panic!("to have schema for {ty}"));
+        let result = self.schemas.validate(json, *sch_index);
         if let Err(err) = result {
             panic!("{err}");
         }
@@ -51,7 +50,7 @@ impl EventsSchemas {
 static EVENTS_SCHEMA_CELL: OnceLock<EventsSchemas> = OnceLock::new();
 
 fn events_schemas() -> &'static EventsSchemas { 
-    EVENTS_SCHEMA_CELL.get_or_init(|| EventsSchemas::load())
+    EVENTS_SCHEMA_CELL.get_or_init(EventsSchemas::load)
 }
 
 #[rstest]
