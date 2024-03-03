@@ -1,10 +1,12 @@
 use anyhow::{Context, Result};
 use clap::Parser;
 use cruet::Inflector;
+use glob::glob;
 use handlebars::{DirectorySourceOptions, Handlebars};
+use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use std::{fs, path::PathBuf};
+use std::{cmp::Ordering, collections::HashMap, fs, path::PathBuf};
 
 /// generator of part of the rust code of cdevents from spec
 #[derive(Parser, Debug)]
@@ -13,9 +15,9 @@ struct Settings {
     #[arg(long, default_value = "templates")]
     templates_dir: PathBuf,
 
-    /// directory with json schemas of events to generate
-    #[arg(long, default_value = "../cdevents-specs/spec-v0.3/schemas")]
-    jsonschema_dir: PathBuf,
+    /// glob pattern to find files with json schemas of events to generate
+    #[arg(long, default_value = "../cdevents-specs/*/schemas/*.json")]
+    jsonschemas: String,
 
     /// destination directory where to generate code
     #[arg(long, default_value = "../cdevents-sdk/src/generated")]
@@ -37,30 +39,37 @@ fn main() -> Result<()> {
     }
     fs::create_dir_all(&settings.dest)?;
 
-    let mut variants = vec![];
-    let mut jsonfiles =
-        std::fs::read_dir(settings.jsonschema_dir)?.collect::<Result<Vec<_>, _>>()?;
-    jsonfiles.sort_by_key(|v| v.file_name());
-    for entry in jsonfiles {
-        let path = entry.path();
-        if let Some(extension) = path.extension() {
-            if extension == "json" {
-                let json: Value = serde_json::from_str(&std::fs::read_to_string(&path)?)?;
-                let (variant_info, code) = generate_variant(&hbs, json)
-                    .with_context(|| format!("failed to generate variant on {:?}", &path))?;
+    let mut variants = IndexMap::new();
+    let mut variants_per_specs = VariantPerSpecs::new();
+
+    let mut jsonfiles = glob(&settings.jsonschemas)?.collect::<Result<Vec<_>, _>>()?;
+    jsonfiles.sort_by(|a, b| a.file_name().cmp(&b.file_name()));
+    for path in jsonfiles {
+        let json: Value = serde_json::from_str(&std::fs::read_to_string(&path)?)?;
+        let (variant_info, code) = generate_variant(&hbs, json)
+            .with_context(|| format!("failed to generate variant on {:?}", &path))?;
+        if let Some(code) = code {
+            variants_per_specs.register(&variant_info);
+
+            if !variants.contains_key(&variant_info.context_type) {
+                // generate code for variant
                 let file = settings
                     .dest
                     .join(cruet::to_snake_case(&variant_info.rust_module))
                     .with_extension("rs");
                 //TODO use a formatter like https://crates.io/crates/prettyplease?
                 fs::write(file, code)?;
-                variants.push(variant_info);
+                variants.insert(variant_info.context_type.to_owned(), variant_info);
             }
         }
     }
 
-    let (module_name, code) =
-        generate_module(&hbs, &variants).with_context(|| "failed to generate module")?;
+    let (module_name, code) = generate_module(
+        &hbs,
+        &variants.into_values().collect::<Vec<_>>(),
+        &variants_per_specs,
+    )
+    .with_context(|| "failed to generate module")?;
     let file = settings.dest.join(module_name).with_extension("rs");
     //TODO use a formatter like https://crates.io/crates/prettyplease?
     fs::write(file, code)?;
@@ -68,17 +77,30 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn generate_variant(hbs: &Handlebars, jsonschema: Value) -> Result<(VariantInfo, String)> {
-    // let id = jsonschema["$id"]
-    //     .as_str()
-    //     .ok_or(anyhow!("$id not found or not a string"))
-    //     .and_then(|s| url::Url::parse(s).with_context(|| format!("failed to parse: {}", s)))?;
-    // let module_name = id
-    //     .path_segments()
-    //     .and_then(|v| v.last())
-    //     .map(cruet::to_snake_case)
-    //     .ok_or(anyhow!("no path in $id"))?
-    //     .replace("_event", "");
+fn to_rust_module(subject: &str, predicate: &str, version: Option<&Version>) -> String {
+    //HACK: ignore module for version with modifier (draft, beta, ...)
+    if let Some(version) = version {
+        format!(
+            "{}_{}_{}_{}_{}",
+            subject, predicate, version.major, version.minor, version.patch
+        )
+        .to_snake_case()
+    } else {
+        format!("{}_{}", subject, predicate).to_snake_case()
+    }
+}
+
+fn generate_variant(hbs: &Handlebars, jsonschema: Value) -> Result<(VariantInfo, Option<String>)> {
+    //e.g. "$id": "https://cdevents.dev/0.3.0/schema/branch-created-event"
+    let spec_version = jsonschema["$id"]
+        .as_str()
+        .ok_or(anyhow::anyhow!("$id not found or not a string"))
+        .and_then(|s| url::Url::parse(s).with_context(|| format!("failed to parse: {}", s)))?
+        .path_segments()
+        .ok_or(anyhow::anyhow!("$id not an url with a path"))?
+        .next()
+        .unwrap_or("0.0.0")
+        .to_owned();
 
     // extract module's name from `context.type` (and not from `$id`)
     let context_type = jsonschema["properties"]["context"]["properties"]["type"]["default"]
@@ -87,28 +109,52 @@ fn generate_variant(hbs: &Handlebars, jsonschema: Value) -> Result<(VariantInfo,
         .to_string();
 
     let fragments = context_type.split('.').collect::<Vec<_>>();
-    let rust_module = format!("{}_{}", fragments[2], fragments[3]).to_snake_case();
+    let subject = fragments[2].to_owned();
     let predicate = fragments[3].to_owned();
+    let version_modifiers = fragments[6].split('-').collect::<Vec<_>>();
+
+    let version = Version {
+        major: fragments[4].parse::<u8>()?,
+        minor: fragments[5].parse::<u8>()?,
+        patch: version_modifiers[0].parse::<u8>()?,
+        modifier: version_modifiers
+            .get(1)
+            .map(|s| s.to_string())
+            .unwrap_or_default(),
+    };
+    let rust_module = to_rust_module(&subject, &predicate, Some(&version));
     // due to inconstency in case/format the subject could be not be extracted from the context.type (ty), jsonshema $id, spec filename (shema, examples)
-    let subject = jsonschema["properties"]["subject"]["properties"]["type"]["default"]
+    let subject_type = jsonschema["properties"]["subject"]["properties"]["type"]["default"]
         .as_str()
         .unwrap_or_default()
         .to_string();
 
     let data = build_data_for_variants(jsonschema);
-    let code = hbs.render("variant", &data)?;
+    let code = if version.modifier.is_empty() {
+        Some(hbs.render("variant", &data)?)
+    } else {
+        None
+    };
     let variant_info = VariantInfo {
         context_type,
         rust_module,
         subject,
+        subject_type,
         predicate,
+        version,
+        spec_version,
     };
     Ok((variant_info, code))
 }
 
-fn generate_module(hbs: &Handlebars, variants: &[VariantInfo]) -> Result<(String, String)> {
+fn generate_module(
+    hbs: &Handlebars,
+    variants: &[VariantInfo],
+    variants_per_specs: &VariantPerSpecs,
+) -> Result<(String, String)> {
     let data = json!({
-        "variants": variants
+        "variants": variants,
+        "variants_per_specs": variants_per_specs.generate_mapping(),
     });
     let code = hbs.render("mod", &data)?;
     Ok(("mod".to_string(), code))
@@ -143,7 +189,32 @@ struct VariantInfo {
     context_type: String,
     rust_module: String,
     subject: String,
+    subject_type: String,
     predicate: String,
+    version: Version,
+    spec_version: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, PartialOrd)]
+struct Version {
+    major: u8,
+    minor: u8,
+    patch: u8,
+    modifier: String,
+}
+
+impl Ord for Version {
+    fn cmp(&self, other: &Self) -> Ordering {
+        let mut r = self.major.cmp(&other.major);
+        if r.is_eq() {
+            r = self.minor.cmp(&other.minor);
+        }
+        if r.is_eq() {
+            r = self.patch.cmp(&other.patch);
+        }
+        //TODO compare modifier with semantic ("snapshot", "draft", "alpha", "beta", "rc", "ga", "")
+        r
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -196,8 +267,10 @@ fn collect_structs(
                         match (field_names.last(), json_definition["minLength"].as_i64()) {
                             (Some(&"id"), _) => "crate::Id",
                             (Some(&"name"), Some(1)) => "crate::Name",
+                            (Some(&"url"), Some(1)) => "crate::Uri", // workaround for wrongly typed in jsonschema
                             (Some(x), Some(1)) if x.ends_with("Id") => "crate::Id",
                             (Some(x), Some(1)) if x.ends_with("Name") => "crate::Name",
+                            (Some(_), Some(1)) => "crate::NonEmptyString",
                             _ => "String",
                         }
                         .to_string();
@@ -281,4 +354,64 @@ fn collect_structs(
 
 fn to_type_name(fied_names: &[&str]) -> String {
     fied_names.join("_").to_class_case()
+}
+
+struct VariantPerSpecs {
+    specs: HashMap<String, IndexMap<(String, String), Version>>,
+}
+
+impl VariantPerSpecs {
+    fn new() -> Self {
+        let mut specs = HashMap::new();
+        specs.insert("latest".to_owned(), IndexMap::new());
+        Self { specs }
+    }
+
+    fn register(&mut self, variant_info: &VariantInfo) {
+        let key_version = (variant_info.subject.clone(), variant_info.predicate.clone());
+        match self.specs.get_mut(&variant_info.spec_version) {
+            Some(l) => {
+                l.insert(key_version.clone(), variant_info.version.clone());
+            }
+            None => {
+                let mut l = IndexMap::new();
+                l.insert(key_version.clone(), variant_info.version.clone());
+                self.specs.insert(variant_info.spec_version.clone(), l);
+            }
+        }
+
+        if let Some(variants_latest) = self.specs.get_mut("latest") {
+            // update variant_version
+            match variants_latest.get(&key_version) {
+                Some(v) if v < &variant_info.version => {
+                    variants_latest.insert(key_version, variant_info.version.clone());
+                }
+                None => {
+                    variants_latest.insert(key_version, variant_info.version.clone());
+                }
+                _ => (),
+            }
+        }
+    }
+
+    fn generate_mapping(&self) -> HashMap<String, Vec<(String, String)>> {
+        self.specs.iter().fold(HashMap::new(), |mut acc, (k, v)| {
+            let mapping = v
+                .iter()
+                .map(|(k, v)| {
+                    (
+                        to_rust_module(&k.0, &k.1, Some(v)),
+                        to_rust_module(&k.0, &k.1, None),
+                    )
+                })
+                .collect::<Vec<_>>();
+            let mod_name = if k == "latest" {
+                k.to_owned()
+            } else {
+                format!("spec_{}", k).to_snake_case()
+            };
+            acc.insert(mod_name, mapping);
+            acc
+        })
+    }
 }

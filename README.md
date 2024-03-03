@@ -18,7 +18,7 @@ To send a CDEvent as CloudEvent:
 // from examples/pipelinerun_finished.rs
 use std::error::Error;
 
-use cdevents_sdk::{CDEvent, Subject, pipelinerun_finished, Content};
+use cdevents_sdk::{CDEvent, Subject, latest::pipelinerun_finished, Content};
 use cloudevents::{Event, AttributesReader};
 
 fn main() -> Result<(), Box<dyn Error>> {

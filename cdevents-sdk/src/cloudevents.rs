@@ -67,7 +67,7 @@ mod tests {
     #[test]
     fn test_into_cloudevent() -> Result<(), Box<dyn std::error::Error>> {
         let cdevent = CDEvent::from(
-            Subject::from(build_queued::Content{})
+            Subject::from(latest::build_queued::Content{})
                 .with_id("subject123".try_into()?)
                 .with_source("/event/source/123".try_into()?)
         )

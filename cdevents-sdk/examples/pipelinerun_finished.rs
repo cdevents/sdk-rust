@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use cdevents_sdk::{CDEvent, Subject, pipelinerun_finished};
+use cdevents_sdk::{CDEvent, Subject, latest::pipelinerun_finished};
 use cloudevents::{Event, AttributesReader};
 
 fn main() -> Result<(), Box<dyn Error>> {
