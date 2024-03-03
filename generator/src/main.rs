@@ -1,3 +1,5 @@
+mod version;
+
 use anyhow::{Context, Result};
 use clap::Parser;
 use cruet::Inflector;
@@ -6,7 +8,8 @@ use handlebars::{DirectorySourceOptions, Handlebars};
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use std::{cmp::Ordering, collections::HashMap, fs, path::PathBuf};
+use std::{collections::HashMap, fs, path::PathBuf};
+use version::Version;
 
 /// generator of part of the rust code of cdevents from spec
 #[derive(Parser, Debug)]
@@ -193,28 +196,6 @@ struct VariantInfo {
     predicate: String,
     version: Version,
     spec_version: String,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, PartialOrd)]
-struct Version {
-    major: u8,
-    minor: u8,
-    patch: u8,
-    modifier: String,
-}
-
-impl Ord for Version {
-    fn cmp(&self, other: &Self) -> Ordering {
-        let mut r = self.major.cmp(&other.major);
-        if r.is_eq() {
-            r = self.minor.cmp(&other.minor);
-        }
-        if r.is_eq() {
-            r = self.patch.cmp(&other.patch);
-        }
-        //TODO compare modifier with semantic ("snapshot", "draft", "alpha", "beta", "rc", "ga", "")
-        r
-    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
