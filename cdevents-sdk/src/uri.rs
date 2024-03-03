@@ -5,7 +5,6 @@
 // - http::Uri, more mature, but doesn't support uri-reference, and normalize url when generate string
 //TODO impl the check difference for Uri and Uri-reference
 
-use std::fmt::Display;
 use std::str::FromStr;
 
 use serde::{Serialize, Deserialize};
@@ -53,9 +52,17 @@ impl TryFrom<&str> for Uri {
     }
 }
 
-impl Display for Uri {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.0.as_str().to_owned())//into_string()
+impl TryFrom<String> for Uri {
+    type Error = crate::Error;
+
+    fn try_from(s: String) -> Result<Self, Self::Error> {
+        fluent_uri::Uri::parse_from(s).map_err(|(_,e)| e.into()).map(Uri)
+    }
+}
+
+impl ToString for Uri {
+    fn to_string(&self) -> String {
+        self.0.as_str().to_owned()//into_string()
     }
 }
 

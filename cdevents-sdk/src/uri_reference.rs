@@ -1,4 +1,3 @@
-use std::fmt::Display;
 use std::str::FromStr;
 
 use serde::{Serialize, Deserialize};
@@ -42,9 +41,17 @@ impl TryFrom<&str> for UriReference {
     }
 }
 
-impl Display for UriReference {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.0.as_str().to_owned())//into_string()
+impl TryFrom<String> for UriReference {
+    type Error = crate::Error;
+
+    fn try_from(s: String) -> Result<Self, Self::Error> {
+        fluent_uri::Uri::parse_from(s).map_err(|(_,e)| e.into()).map(UriReference)
+    }
+}
+
+impl ToString for UriReference {
+    fn to_string(&self) -> String {
+        self.0.as_str().to_owned()//into_string()
     }
 }
 
@@ -64,6 +71,7 @@ impl UriReference {
 impl<> proptest::arbitrary::Arbitrary for UriReference {
     type Parameters = ();
     type Strategy = proptest::strategy::BoxedStrategy<Self>;
+
     fn arbitrary_with(_args: Self::Parameters) -> Self::Strategy {
         use proptest::prelude::*;
         (prop_oneof![
