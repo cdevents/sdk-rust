@@ -1,0 +1,3 @@
+[build]
+# Share one `target` directory at the project root the Cargo project and workspace in sdk-rust
+target-dir = "target"
