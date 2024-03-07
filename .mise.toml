@@ -6,11 +6,17 @@ MISE_CARGO_BINSTALL = "true"
 
 [tools]
 rust = "1.75"
+cargo-binstall = 'latest'
 make = "latest"
 # # experimental
-"cargo:cargo-binstall" = "latest"
 "cargo:cargo-nextest" = "0.9"
 # "cargo:cargo-hack" = "latest"
 "cargo:cargo-deny" = "0.14"
 # "cargo:git-cliff" = "latest"
 "cargo:dprint" = "0.45"
+
+[plugins]
+cargo-binstall = "https://github.com/davidB/asdf-cargo-binstall"
+
+[settings]
+experimental = true
