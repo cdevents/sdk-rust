@@ -81,7 +81,7 @@ The sdk-rust project requires that you develop (commit) code changes to branches
 
 ## Development
 
-### Work into a branche
+### Work into a branch
 
 ```shell
 git switch -c feat_foo
