@@ -69,7 +69,7 @@ clean:
 	cargo clean
 
 generate:
-	cargo run -p generator -- --templates-dir "generator/templates" --jsonschema-dir "cdevents-spec/schemas" --dest "cdevents-sdk/src/generated"
+	cargo run -p generator -- --templates-dir "generator/templates" --jsonschemas "cdevents-specs/*/schemas/*.json" --dest "cdevents-sdk/src/generated"
 
 test:
 	cargo nextest run --all-features

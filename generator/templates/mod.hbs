@@ -1,13 +1,19 @@
 // @generated
 // by cdevents/sdk-rust/generator (mod.hbs)
 
-use serde::de::Error;
+use serde::{Serialize, Deserialize, de::Error};
 
 {{#each variants }}
 pub mod {{this.rust_module}};
 {{/each}}
 
-use serde::{Serialize, Deserialize};
+{{#each variants_per_specs }}
+pub mod {{@key}} {
+    {{#each this }}
+    pub use super::{{this.0}} as {{this.1}};
+    {{/each}}
+}
+{{/each}}
 
 {{#each variants }}
 pub const {{to_screaming_snake_case this.rust_module}}: &str = "{{ this.context_type }}";
@@ -48,7 +54,7 @@ impl Content {
     pub fn subject(&self) -> &'static str {
         match self {
             {{#each variants }}
-            Self::{{to_class_case this.rust_module}}(_) => "{{ this.subject }}",
+            Self::{{to_class_case this.rust_module}}(_) => "{{ this.subject_type }}",
             {{/each}}
         }
     }
@@ -67,7 +73,7 @@ pub fn extract_subject_predicate(ty: &str) -> Option<(&str, &str)>{
     // let mut split = ty.split('.');
     match ty {
         {{#each variants }}
-        {{to_screaming_snake_case this.rust_module}} => Some(("{{ this.subject }}", "{{ this.predicate }}")),
+        {{to_screaming_snake_case this.rust_module}} => Some(("{{ this.subject_type }}", "{{ this.predicate }}")),
         {{/each}}
         _ => None,
     }

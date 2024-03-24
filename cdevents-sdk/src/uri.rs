@@ -60,9 +60,9 @@ impl TryFrom<String> for Uri {
     }
 }
 
-impl ToString for Uri {
-    fn to_string(&self) -> String {
-        self.0.as_str().to_owned()//into_string()
+impl std::fmt::Display for Uri {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.0.as_str().fmt(f)
     }
 }
 

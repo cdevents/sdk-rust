@@ -1,4 +1,7 @@
-[submodule "cdevents-spec"]
-	path = cdevents-spec
+[submodule "cdevents-specs/spec-v0.3"]
+	path = cdevents-specs/spec-v0.3
 	url = https://github.com/cdevents/spec.git
 	branch = spec-v0.3
+[submodule "cdevents-specs/main"]
+	path = cdevents-specs/main
+	url = https://github.com/cdevents/spec.git

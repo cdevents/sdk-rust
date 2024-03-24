@@ -8,8 +8,14 @@ use serde::{Serialize, Deserialize};
 #[cfg_attr(feature = "testkit", derive(Arbitrary))]
 #[serde(deny_unknown_fields)]
 pub struct Content {
-    #[serde(rename = "signature",)]
-    pub signature: String,
+    #[serde(rename = "name",)]
+    pub name: crate::Name,
+    #[serde(rename = "owner", default, skip_serializing_if = "Option::is_none",)]
+    pub owner: Option<String>,
+    #[serde(rename = "url",)]
+    pub url: crate::Uri,
+    #[serde(rename = "viewUrl", default, skip_serializing_if = "Option::is_none",)]
+    pub view_url: Option<String>,
 }
 
 #[cfg(test)]
