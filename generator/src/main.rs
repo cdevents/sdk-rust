@@ -347,7 +347,7 @@ fn collect_structs(
         None => match field_names.last() {
             // HACK for an anyOf (string or enum/string)
             Some(&"priority") | Some(&"ticketType") | Some(&"resolution") => TypeInfo {
-                type_declaration: "String".to_string(),
+                type_declaration: "crate::NonEmptyString".to_string(),
                 ..Default::default()
             },
             _ => unimplemented!("expected key 'type' in field '{}'", field_names.join(".")),
