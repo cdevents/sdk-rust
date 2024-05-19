@@ -19,11 +19,11 @@ pub struct Content {
     #[serde(rename = "milestone", default, skip_serializing_if = "Option::is_none",)]
     pub milestone: Option<String>,
     #[serde(rename = "priority", default, skip_serializing_if = "Option::is_none",)]
-    pub priority: Option<String>,
+    pub priority: Option<crate::NonEmptyString>,
     #[serde(rename = "summary", default, skip_serializing_if = "Option::is_none",)]
     pub summary: Option<String>,
     #[serde(rename = "ticketType", default, skip_serializing_if = "Option::is_none",)]
-    pub ticket_type: Option<String>,
+    pub ticket_type: Option<crate::NonEmptyString>,
     #[serde(rename = "updatedBy", default, skip_serializing_if = "Option::is_none",)]
     pub updated_by: Option<String>,
     #[serde(rename = "uri",)]

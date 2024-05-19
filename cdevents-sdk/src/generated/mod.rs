@@ -177,7 +177,46 @@ pub mod spec_0_3_0 {
     pub use super::testsuiterun_queued_0_1_0 as testsuiterun_queued;
     pub use super::testsuiterun_started_0_1_0 as testsuiterun_started;
 }
-pub mod spec_0_4_0 {
+pub mod spec_0_4_0_draft {
+    pub use super::artifact_signed_0_1_0 as artifact_signed;
+    pub use super::branch_created_0_1_2 as branch_created;
+    pub use super::branch_deleted_0_1_2 as branch_deleted;
+    pub use super::build_finished_0_1_1 as build_finished;
+    pub use super::build_queued_0_1_1 as build_queued;
+    pub use super::build_started_0_1_1 as build_started;
+    pub use super::change_abandoned_0_1_2 as change_abandoned;
+    pub use super::change_created_0_2_0 as change_created;
+    pub use super::change_merged_0_1_2 as change_merged;
+    pub use super::change_reviewed_0_1_2 as change_reviewed;
+    pub use super::change_updated_0_1_2 as change_updated;
+    pub use super::environment_created_0_1_1 as environment_created;
+    pub use super::environment_deleted_0_1_1 as environment_deleted;
+    pub use super::environment_modified_0_1_1 as environment_modified;
+    pub use super::incident_detected_0_1_0 as incident_detected;
+    pub use super::incident_reported_0_1_0 as incident_reported;
+    pub use super::incident_resolved_0_1_0 as incident_resolved;
+    pub use super::pipelinerun_finished_0_1_1 as pipelinerun_finished;
+    pub use super::pipelinerun_queued_0_1_1 as pipelinerun_queued;
+    pub use super::pipelinerun_started_0_1_1 as pipelinerun_started;
+    pub use super::repository_created_0_1_1 as repository_created;
+    pub use super::repository_deleted_0_1_1 as repository_deleted;
+    pub use super::repository_modified_0_1_1 as repository_modified;
+    pub use super::service_deployed_0_1_1 as service_deployed;
+    pub use super::service_published_0_1_1 as service_published;
+    pub use super::service_removed_0_1_1 as service_removed;
+    pub use super::service_rolledback_0_1_1 as service_rolledback;
+    pub use super::service_upgraded_0_1_1 as service_upgraded;
+    pub use super::taskrun_finished_0_1_1 as taskrun_finished;
+    pub use super::taskrun_started_0_1_1 as taskrun_started;
+    pub use super::testcaserun_finished_0_1_0 as testcaserun_finished;
+    pub use super::testcaserun_queued_0_1_0 as testcaserun_queued;
+    pub use super::testcaserun_started_0_1_0 as testcaserun_started;
+    pub use super::testoutput_published_0_1_0 as testoutput_published;
+    pub use super::testsuiterun_finished_0_1_0 as testsuiterun_finished;
+    pub use super::testsuiterun_queued_0_1_0 as testsuiterun_queued;
+    pub use super::testsuiterun_started_0_1_0 as testsuiterun_started;
+}
+pub mod spec_0_4_1 {
     pub use super::artifact_deleted_0_1_0 as artifact_deleted;
     pub use super::artifact_downloaded_0_1_0 as artifact_downloaded;
     pub use super::artifact_packaged_0_2_0 as artifact_packaged;
@@ -223,45 +262,6 @@ pub mod spec_0_4_0 {
     pub use super::ticket_closed_0_1_0 as ticket_closed;
     pub use super::ticket_created_0_1_0 as ticket_created;
     pub use super::ticket_updated_0_1_0 as ticket_updated;
-}
-pub mod spec_0_4_0_draft {
-    pub use super::artifact_signed_0_1_0 as artifact_signed;
-    pub use super::branch_created_0_1_2 as branch_created;
-    pub use super::branch_deleted_0_1_2 as branch_deleted;
-    pub use super::build_finished_0_1_1 as build_finished;
-    pub use super::build_queued_0_1_1 as build_queued;
-    pub use super::build_started_0_1_1 as build_started;
-    pub use super::change_abandoned_0_1_2 as change_abandoned;
-    pub use super::change_created_0_2_0 as change_created;
-    pub use super::change_merged_0_1_2 as change_merged;
-    pub use super::change_reviewed_0_1_2 as change_reviewed;
-    pub use super::change_updated_0_1_2 as change_updated;
-    pub use super::environment_created_0_1_1 as environment_created;
-    pub use super::environment_deleted_0_1_1 as environment_deleted;
-    pub use super::environment_modified_0_1_1 as environment_modified;
-    pub use super::incident_detected_0_1_0 as incident_detected;
-    pub use super::incident_reported_0_1_0 as incident_reported;
-    pub use super::incident_resolved_0_1_0 as incident_resolved;
-    pub use super::pipelinerun_finished_0_1_1 as pipelinerun_finished;
-    pub use super::pipelinerun_queued_0_1_1 as pipelinerun_queued;
-    pub use super::pipelinerun_started_0_1_1 as pipelinerun_started;
-    pub use super::repository_created_0_1_1 as repository_created;
-    pub use super::repository_deleted_0_1_1 as repository_deleted;
-    pub use super::repository_modified_0_1_1 as repository_modified;
-    pub use super::service_deployed_0_1_1 as service_deployed;
-    pub use super::service_published_0_1_1 as service_published;
-    pub use super::service_removed_0_1_1 as service_removed;
-    pub use super::service_rolledback_0_1_1 as service_rolledback;
-    pub use super::service_upgraded_0_1_1 as service_upgraded;
-    pub use super::taskrun_finished_0_1_1 as taskrun_finished;
-    pub use super::taskrun_started_0_1_1 as taskrun_started;
-    pub use super::testcaserun_finished_0_1_0 as testcaserun_finished;
-    pub use super::testcaserun_queued_0_1_0 as testcaserun_queued;
-    pub use super::testcaserun_started_0_1_0 as testcaserun_started;
-    pub use super::testoutput_published_0_1_0 as testoutput_published;
-    pub use super::testsuiterun_finished_0_1_0 as testsuiterun_finished;
-    pub use super::testsuiterun_queued_0_1_0 as testsuiterun_queued;
-    pub use super::testsuiterun_started_0_1_0 as testsuiterun_started;
 }
 
 pub const ARTIFACT_DELETED_0_1_0: &str = "dev.cdevents.artifact.deleted.0.1.0";
