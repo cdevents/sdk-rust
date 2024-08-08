@@ -78,7 +78,7 @@ fn events_schemas() -> &'static EventsSchemas {
 }
 
 #[rstest]
-fn can_serde_example(#[files("../cdevents-specs/spec-*/examples/*.json")] path: PathBuf) {
+fn can_serde_example(#[files("../cdevents-specs/spec-*/examples/*.json")] #[files("../cdevents-specs/spec-*/conformance/*.json")] path: PathBuf) {
     let example_txt = fs::read_to_string(path).expect("to read file as string");
     // HACK uri are stored ad http::Uri, they are "normalized" when serialized, so prenormalization to avoid failure like
     // json atoms at path ".subject.content.repository.source" are not equal:
@@ -102,7 +102,7 @@ fn can_serde_example(#[files("../cdevents-specs/spec-*/examples/*.json")] path: 
 }
 
 #[rstest]
-fn validate_example_against_schema(#[files("../cdevents-specs/spec-*/examples/*.json")] path: PathBuf) {
+fn validate_example_against_schema(#[files("../cdevents-specs/spec-*/examples/*.json")] #[files("../cdevents-specs/spec-*/conformance/*.json")] path: PathBuf) {
     let events_schemas = events_schemas();
     let example_txt = fs::read_to_string(path).expect("to read file as string");
     let example_json: serde_json::Value =

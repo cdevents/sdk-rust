@@ -14,7 +14,7 @@ pub(crate) struct Context {
     pub(crate) timestamp: time::OffsetDateTime,
     #[serde(rename = "schemaUri", skip_serializing_if = "Option::is_none")]
     pub(crate) schema_uri: Option<Uri>,
-    #[serde(rename = "chain_id", skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "chainId", skip_serializing_if = "Option::is_none")]
     pub(crate) chain_id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) links: Option<serde_json::Value>,
