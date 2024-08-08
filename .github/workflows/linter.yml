@@ -7,9 +7,9 @@ permissions:
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
   workflow_dispatch:
     inputs:
       commit_sha:
@@ -29,9 +29,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Check Commit Lint
-        with:
-          configFile: "./.commitlint.config.js"
-        uses: wagoid/commitlint-github-action@v6.0.1
+        uses: wagoid/commitlint-github-action@v6
 
   lint_check:
     name: Rust - lint_${{ matrix.lint_projects }}
@@ -63,14 +61,14 @@ jobs:
         uses: actions/cache@v4
         continue-on-error: false
         with:
-            path: |
-              ~/.cargo/bin
-              ~/.cargo/registry
-              ~/.cargo/git/db/
-            key: ${{ runner.os }}-sdk-rust-${{ hashFiles('**/Cargo.lock') }}
-            restore-keys: |
-              ${{ runner.os }}-sdk-rust-
+          path: |
+            ~/.cargo/bin
+            ~/.cargo/registry
+            ~/.cargo/git/db/
+          key: ${{ runner.os }}-sdk-rust-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-sdk-rust-
       - name: Check cargo version
         run: cargo --version
       - name: Run ${{ matrix.lint_projects }}
-        run:  make -f Makefile lint_${{ matrix.lint_projects }}
+        run: make -f Makefile lint_${{ matrix.lint_projects }}
