@@ -6,10 +6,8 @@ multiple-versions = "deny"
 wildcards = "deny"
 
 [licenses]
-unlicensed = "deny"
-copyleft = "deny"
 confidence-threshold = 0.95
-allow = ["Apache-2.0", "MIT", "BSD-2-Clause", "Unicode-DFS-2016"]
+allow = ["Apache-2.0", "MIT", "Unicode-DFS-2016"]
 exceptions = []
 
 # The unpublished packages (generator) would be ignored now
@@ -18,8 +16,6 @@ exceptions = []
 ignore = true
 
 [advisories]
-unmaintained = "deny"
-vulnerability = "deny"
 yanked = "warn"
 # Users who require or prefer Git to use SSH cloning instead of HTTPS,
 # such as implemented via "insteadOf" rules in Git config, can still
