@@ -31,7 +31,7 @@ jobs:
       - name: Check Commit Lint
         with:
           configFile: "./.commitlint.config.js"
-        uses: wagoid/commitlint-github-action@v6.0.1
+        uses: wagoid/commitlint-github-action@v6.0.2
 
   lint_check:
     name: Rust - lint_${{ matrix.lint_projects }}
