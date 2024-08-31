@@ -20,7 +20,7 @@ impl EventsSchemas {
         let mut mapping = HashMap::new();
 
         //HACK to resolve invalid `$ref: "/schema/links/embeddedlinksarray.json"`
-        compiler.register_url_loader("https", Box::new(HackUrlLoader{}));
+        compiler.use_loader(Box::new(HackUrlLoader{}));
 
         for entry in glob("../cdevents-specs/*/schemas/*.json").expect("Failed to read glob pattern") {
             let schemapath = entry.unwrap();
@@ -64,6 +64,10 @@ impl UrlLoader for HackUrlLoader {
             // HACK to fix a bug in specs 0.4.0
             // [Link's ref path needs an update for all the event schemas · Issue #211 · cdevents/spec](https://github.com/cdevents/spec/issues/211)
             let path = url.replace("https://cdevents.dev/schema", "../cdevents-specs/spec-v0.4/schemas/");
+            let jsonschema: serde_json::Value = serde_json::from_str(&std::fs::read_to_string(path)?)?;
+            Ok(jsonschema)
+        } else if url.starts_with("file://") {
+            let path = url.replace("file://", "");
             let jsonschema: serde_json::Value = serde_json::from_str(&std::fs::read_to_string(path)?)?;
             Ok(jsonschema)
         } else {

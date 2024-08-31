@@ -25,7 +25,7 @@ boon = "0.6"
 glob = "0.3"
 proptest = "1"
 regex = "1.10"
-rstest = "0.21"
+rstest = "0.22"
 
 [features]
 default = ["cloudevents"]
