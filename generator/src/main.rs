@@ -328,8 +328,30 @@ fn collect_structs(
                 type_info
             }
         },
-        Some(x) => todo!("impl for type='{}'", x),
-        None => unimplemented!("expected key 'type' in field '{}'", field_names.join(".")),
+        // Some("array") => TypeInfo {
+        //     type_declaration: "serde_json::Array<serde_json::Value>".to_string(),
+        //     ..Default::default()
+        // },
+        Some(x) => match field_names.last() {
+            // HACK for array of string
+            Some(&"assignees") | Some(&"labels") => TypeInfo {
+                type_declaration: "Vec<String>".to_string(),
+                ..Default::default()
+            },
+            _ => todo!(
+                "impl for type='{}' for field='{}'",
+                x,
+                field_names.join(".")
+            ),
+        },
+        None => match field_names.last() {
+            // HACK for an anyOf (string or enum/string)
+            Some(&"priority") | Some(&"ticketType") | Some(&"resolution") => TypeInfo {
+                type_declaration: "crate::NonEmptyString".to_string(),
+                ..Default::default()
+            },
+            _ => unimplemented!("expected key 'type' in field '{}'", field_names.join(".")),
+        },
     }
 }
 

@@ -34,6 +34,14 @@ test:
 	cargo nextest run --all-features
 	cargo test --doc
 
+# buid_cdevents-specs:
+# 	git submodule deinit -f --all
+# 	git submodule init
+# 	git submodule add -f https://github.com/cdevents/spec.git cdevents-specs/main
+# 	git submodule add -f -b spec-v0.3 https://github.com/cdevents/spec.git cdevents-specs/spec-v0.3
+# 	git submodule add -f -b spec-v0.4 https://github.com/cdevents/spec.git cdevents-specs/spec-v0.4
+# 	git submodule update -f --rebase -- cdevents-specs/main
+
 .PHONY:
 	generate \
 	check check_no_uncommitted_changes_on_sdk \

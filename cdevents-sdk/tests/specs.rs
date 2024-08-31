@@ -4,7 +4,7 @@ use rstest::*;
 use std::{collections::HashMap, fs};
 use std::path::PathBuf;
 use proptest::prelude::*;
-use boon::{Schemas, Compiler, SchemaIndex};
+use boon::{Compiler, SchemaIndex, Schemas, UrlLoader};
 use glob::glob;
 use std::sync::OnceLock;
 
@@ -18,6 +18,10 @@ impl EventsSchemas {
         let mut schemas = Schemas::new();
         let mut compiler = Compiler::new();
         let mut mapping = HashMap::new();
+
+        //HACK to resolve invalid `$ref: "/schema/links/embeddedlinksarray.json"`
+        compiler.use_loader(Box::new(HackUrlLoader{}));
+
         for entry in glob("../cdevents-specs/*/schemas/*.json").expect("Failed to read glob pattern") {
             let schemapath = entry.unwrap();
             //TODO avoid to read the schema twice (as json, then as jsonschema)
@@ -47,6 +51,30 @@ impl EventsSchemas {
     }
 }
 
+struct HackUrlLoader;
+
+impl UrlLoader for HackUrlLoader {
+    fn load(&self, url: &str) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
+        let re = regex::Regex::new(r"https://cdevents.dev/(?<version>\d+\.\d+)\.\d+/schema/(?<path>.*)")?;
+        if let Some(caps) = re.captures(url) {
+            let path = format!("../cdevents-specs/spec-v{}/schemas/{}.json", &caps["version"], &caps["path"]);
+            let jsonschema: serde_json::Value = serde_json::from_str(&std::fs::read_to_string(path)?)?;
+            Ok(jsonschema)
+        } else if url.starts_with("https://cdevents.dev/schema/links/") {
+            // HACK to fix a bug in specs 0.4.0
+            // [Link's ref path needs an update for all the event schemas · Issue #211 · cdevents/spec](https://github.com/cdevents/spec/issues/211)
+            let path = url.replace("https://cdevents.dev/schema", "../cdevents-specs/spec-v0.4/schemas/");
+            let jsonschema: serde_json::Value = serde_json::from_str(&std::fs::read_to_string(path)?)?;
+            Ok(jsonschema)
+        } else if url.starts_with("file://") {
+            let path = url.replace("file://", "");
+            let jsonschema: serde_json::Value = serde_json::from_str(&std::fs::read_to_string(path)?)?;
+            Ok(jsonschema)
+        } else {
+            Err(format!("fail to load {url}").into())
+        }
+    }
+}
 static EVENTS_SCHEMA_CELL: OnceLock<EventsSchemas> = OnceLock::new();
 
 fn events_schemas() -> &'static EventsSchemas { 
@@ -54,9 +82,9 @@ fn events_schemas() -> &'static EventsSchemas {
 }
 
 #[rstest]
-fn for_each_example(#[files("../cdevents-specs/spec-v0.3/examples/*.json")] path: PathBuf) {
+fn can_serde_example(#[files("../cdevents-specs/spec-*/examples/*.json")] #[files("../cdevents-specs/spec-*/conformance/*.json")] path: PathBuf) {
     let example_txt = fs::read_to_string(path).expect("to read file as string");
-    //HACK uri are stored ad http::Uri, they are "normalized" when serialized, so prenormalization to avoid failure like
+    // HACK uri are stored ad http::Uri, they are "normalized" when serialized, so prenormalization to avoid failure like
     // json atoms at path ".subject.content.repository.source" are not equal:
     //     lhs:
     //         "https://example.org"
@@ -78,7 +106,7 @@ fn for_each_example(#[files("../cdevents-specs/spec-v0.3/examples/*.json")] path
 }
 
 #[rstest]
-fn validate_example_against_schema(#[files("../cdevents-specs/spec-v0.3/examples/*.json")] path: PathBuf) {
+fn validate_example_against_schema(#[files("../cdevents-specs/spec-*/examples/*.json")] #[files("../cdevents-specs/spec-*/conformance/*.json")] path: PathBuf) {
     let events_schemas = events_schemas();
     let example_txt = fs::read_to_string(path).expect("to read file as string");
     let example_json: serde_json::Value =
