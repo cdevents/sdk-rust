@@ -29,15 +29,15 @@ pub(crate) mod datetime {
 pub(crate) mod fluent_uri {
     use serde::{de::Error, Deserialize, Deserializer, Serializer};
 
-    pub fn deserialize<'de, D>(deserializer: D) -> Result<fluent_uri::Uri<String>, D::Error>
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<fluent_uri::UriRef<String>, D::Error>
     where
         D: Deserializer<'de>,
     {
         let txt = String::deserialize(deserializer)?;
-        fluent_uri::Uri::parse_from(txt).map_err(|e| D::Error::custom(e.1))
+        fluent_uri::UriRef::parse(txt).map_err(D::Error::custom)
     }
 
-    pub fn serialize<S>(input: &fluent_uri::Uri<String>, serializer: S) -> Result<S::Ok, S::Error>
+    pub fn serialize<S>(input: &fluent_uri::UriRef<String>, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
     {

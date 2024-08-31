@@ -1,4 +1,4 @@
-// wrapper for fluent_uri::Uri to allow for restristed set of operations
+// wrapper for fluent_uri::UriRef to allow for restristed set of operations
 // and to complete currently missing features.
 // Why fluent_uri?
 // - support uri & uri-reference, preserve the original string, but young, doesn't impl PartialEq,...
@@ -14,9 +14,9 @@ use crate::UriReference;
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[cfg_attr(feature = "testkit", derive(Arbitrary))]
 pub struct Uri(
-    #[cfg_attr(feature = "testkit", proptest(value = "fluent_uri::Uri::parse_from(\"https://example.com/\".to_owned()).unwrap()"))] //TODO generate random value
+    #[cfg_attr(feature = "testkit", proptest(value = "fluent_uri::UriRef::parse(\"https://example.com/\".to_owned()).unwrap()"))] //TODO generate random value
     #[serde(with = "crate::serde::fluent_uri")]
-    pub(crate) fluent_uri::Uri<String>
+    pub(crate) fluent_uri::UriRef<String>
 );
 
 impl PartialEq for Uri {
@@ -32,7 +32,7 @@ impl FromStr for Uri {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         //TODO check it's not a reference URI
-        fluent_uri::Uri::parse_from(s.to_owned()).map_err(|(_,e)| e.into()).map(Uri)
+        fluent_uri::UriRef::parse(s.to_owned()).map_err(Self::Err::from).map(Uri)
     }
 }
 
@@ -48,7 +48,7 @@ impl TryFrom<&str> for Uri {
     type Error = crate::Error;
 
     fn try_from(s: &str) -> Result<Self, Self::Error> {
-        fluent_uri::Uri::parse_from(s.to_owned()).map_err(|(_,e)| e.into()).map(Uri)
+        fluent_uri::UriRef::parse(s.to_owned()).map_err(Self::Error::from).map(Uri)
     }
 }
 
@@ -56,7 +56,7 @@ impl TryFrom<String> for Uri {
     type Error = crate::Error;
 
     fn try_from(s: String) -> Result<Self, Self::Error> {
-        fluent_uri::Uri::parse_from(s).map_err(|(_,e)| e.into()).map(Uri)
+        fluent_uri::UriRef::parse(s).map_err(Self::Error::from).map(Uri)
     }
 }
 
@@ -72,7 +72,7 @@ impl Uri {
     }
 }
 
-// impl From<Uri> for fluent_uri::Uri<String> {
+// impl From<Uri> for fluent_uri::UriRef<String> {
 //     fn from(uri: Uri) -> Self {
 //         uri.0
 //     }
