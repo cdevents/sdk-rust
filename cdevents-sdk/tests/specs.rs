@@ -90,7 +90,7 @@ fn can_serde_example(#[files("../cdevents-specs/spec-*/examples/*.json")] #[file
     //         "https://example.org"
     //     rhs:
     //         "https://example.org/"
-    // But it's not the case with fluent_uri::Uri
+    // But it's not the case with fluent_uri::UriRef
     //
     // example_txt = example_txt.replace("\"https://example.org\"", "\"https://example.org/\"");
 

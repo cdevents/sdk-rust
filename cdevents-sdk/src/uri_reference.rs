@@ -6,7 +6,7 @@ use crate::Uri;
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct UriReference(
     #[serde(with = "crate::serde::fluent_uri")]
-    pub(crate) fluent_uri::Uri<String>
+    pub(crate) fluent_uri::UriRef<String>
 );
 
 impl PartialEq for UriReference {
@@ -21,7 +21,7 @@ impl FromStr for UriReference {
     type Err = crate::Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        fluent_uri::Uri::parse_from(s.to_owned()).map_err(|(_,e)| e.into()).map(UriReference)
+        fluent_uri::UriRef::parse(s.to_owned()).map_err(Self::Err::from).map(UriReference)
     }
 }
 
@@ -37,7 +37,7 @@ impl TryFrom<&str> for UriReference {
     type Error = crate::Error;
 
     fn try_from(s: &str) -> Result<Self, Self::Error> {
-        fluent_uri::Uri::parse_from(s.to_owned()).map_err(|(_,e)| e.into()).map(UriReference)
+        fluent_uri::UriRef::parse(s.to_owned()).map_err(Self::Error::from).map(UriReference)
     }
 }
 
@@ -45,7 +45,7 @@ impl TryFrom<String> for UriReference {
     type Error = crate::Error;
 
     fn try_from(s: String) -> Result<Self, Self::Error> {
-        fluent_uri::Uri::parse_from(s).map_err(|(_,e)| e.into()).map(UriReference)
+        fluent_uri::UriRef::parse(s).map_err(Self::Error::from).map(UriReference)
     }
 }
 
@@ -61,7 +61,7 @@ impl UriReference {
     }
 }
 
-// impl From<UriReference> for fluent_uri::Uri<String> {
+// impl From<UriReference> for fluent_uri::UriRef<String> {
 //     fn from(uri: UriReference) -> Self {
 //         uri.0
 //     }

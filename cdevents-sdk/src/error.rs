@@ -7,7 +7,7 @@ pub enum Error {
     #[error("Empty data in cloudevent")]
     DataNotFoundInCloudEvent,
     #[error(transparent)]
-    UriParseError( #[from] fluent_uri::ParseError),
+    UriParseError( #[from] fluent_uri::error::ParseError<String>),
     #[error(transparent)]
     SerdeJsonError( #[from] serde_json::Error),
     #[error("unknown error")]
