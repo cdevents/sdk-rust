@@ -1,4 +1,4 @@
-#![doc = include_str!("../../README.md")]
+#![doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/README.md"))]
 //#![warn(missing_docs)]
 // TODO remove unwrap(), expect(...)
 // TODO reduce clone()
