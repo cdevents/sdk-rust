@@ -9,7 +9,7 @@ The SDK can be used to create CDEvents and send them as CloudEvents, as well as 
 Import the modules in your code
 
 ```toml
-cdevents = "0.1.0"
+cdevents-sdk = "0.1.0"
 ```
 
 To send a CDEvent as CloudEvent:
