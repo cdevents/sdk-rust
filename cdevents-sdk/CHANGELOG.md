@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1](https://github.com/cdevents/sdk-rust/compare/cdevents-sdk-v0.1.0...cdevents-sdk-v0.1.1) - 2024-09-30
+
+### Other
+
+- *(deps)* update fluent-uri requirement from 0.2 to 0.3
+- *(deps)* update rstest requirement from 0.22 to 0.23
+
 ## [0.1.0](https://github.com/cdevents/sdk-rust/releases/tag/cdevents-sdk-v0.1.0) - 2024-09-01
 
 ### Added
