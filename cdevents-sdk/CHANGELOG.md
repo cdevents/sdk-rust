@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2](https://github.com/cdevents/sdk-rust/compare/cdevents-sdk-v0.1.1...cdevents-sdk-v0.1.2) - 2025-01-07
+
+### Other
+
+- *(deps)* update thiserror requirement from 1.0 to 2.0
+
 ## [0.1.1](https://github.com/cdevents/sdk-rust/compare/cdevents-sdk-v0.1.0...cdevents-sdk-v0.1.1) - 2024-09-30
 
 ### Other
