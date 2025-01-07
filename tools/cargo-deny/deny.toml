@@ -7,7 +7,7 @@ wildcards = "deny"
 
 [licenses]
 confidence-threshold = 0.95
-allow = ["Apache-2.0", "MIT", "MIT-0", "Unicode-DFS-2016"]
+allow = ["Apache-2.0", "MIT", "MIT-0", "Unicode-3.0"]
 exceptions = []
 
 # The unpublished packages (generator) would be ignored now
