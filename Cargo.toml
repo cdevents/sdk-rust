@@ -4,7 +4,7 @@ members = ["cdevents-sdk", "generator"]
 
 [workspace.package]
 edition = "2021"
-version = "0.1.2"
+version = "0.1.3"
 authors = [
   # The actual list of contributors can be retrieved from the git log
   "The CDEvents Rust SDK Authors",

@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3](https://github.com/cdevents/sdk-rust/compare/cdevents-sdk-v0.1.2...cdevents-sdk-v0.1.3) - 2025-01-09
+
+### Other
+
+- *(deps)* update cloudevents-sdk requirement from 0.7 to 0.8
+
 ## [0.1.2](https://github.com/cdevents/sdk-rust/compare/cdevents-sdk-v0.1.1...cdevents-sdk-v0.1.2) - 2025-01-07
 
 ### Other
