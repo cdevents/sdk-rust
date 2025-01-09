@@ -11,5 +11,5 @@ authors = [
 ]
 license = "Apache-2.0"
 repository = "https://github.com/cdevents/sdk-rust"
-rust-version = "1.75"
+rust-version = "1.80"
 publish = false
