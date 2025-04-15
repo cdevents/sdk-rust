@@ -7,7 +7,7 @@ use glob::glob;
 use handlebars::{DirectorySourceOptions, Handlebars};
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use std::{collections::HashMap, fs, path::PathBuf};
 use version::Version;
 
