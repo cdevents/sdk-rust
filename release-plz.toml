@@ -1,0 +1,5 @@
+[workspace]
+features_always_increment_minor = true
+
+[changelog]
+protect_breaking_commits = true
