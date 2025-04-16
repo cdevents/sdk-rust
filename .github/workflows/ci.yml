@@ -7,6 +7,11 @@ on:
 permissions:
   contents: read
 
+env:
+  # configure sccache to cache the build artifacts (on github caches)
+  SCCACHE_GHA_ENABLED: "true"
+  RUSTC_WRAPPER: "sccache"
+
 jobs:
   tests:
     runs-on: ${{ matrix.os }}
@@ -22,22 +27,10 @@ jobs:
         with:
           fetch-depth: 0
           submodules: "true"
-      # - uses: jdx/mise-action@v2
-      - name: install mise until mise-action is allowed
-        uses: taiki-e/install-action@v2
-        with:
-          tool: mise, cargo-nextest, cargo-hack
-      - name: Rust Cache
-        uses: actions/cache@v4
-        continue-on-error: false
-        with:
-          path: |
-            ~/.cargo/bin
-            ~/.cargo/registry
-            ~/.cargo/git/db/
-          key: ${{ runner.os }}-sdk-rust-${{ hashFiles('**/Cargo.toml') }} # no Cargo.lock in this repo
-          restore-keys: |
-            ${{ runner.os }}-sdk-rust-
+      - uses: mozilla-actions/sccache-action@v0.0.9
+      - uses: jdx/mise-action@v2
+      - run: mise install
+        shell: bash
       - run: make generate
       - run: make check_no_uncommitted_changes_on_sdk
       - run: make check
