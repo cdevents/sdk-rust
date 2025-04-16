@@ -77,12 +77,12 @@ impl UrlLoader for HackUrlLoader {
 }
 static EVENTS_SCHEMA_CELL: OnceLock<EventsSchemas> = OnceLock::new();
 
-fn events_schemas() -> &'static EventsSchemas { 
+fn events_schemas() -> &'static EventsSchemas {
     EVENTS_SCHEMA_CELL.get_or_init(EventsSchemas::load)
 }
 
 #[rstest]
-fn can_serde_example(#[files("../cdevents-specs/spec-*/examples/*.json")] #[files("../cdevents-specs/spec-*/conformance/*.json")] path: PathBuf) {
+fn can_serde_example(#[files("../cdevents-specs/spec-*/examples/*.json")] #[files("../cdevents-specs/spec-*/conformance/*.json")] #[files("../cdevents-specs/spec-*/custom/conformance.json")] path: PathBuf) {
     let example_txt = fs::read_to_string(path).expect("to read file as string");
     // HACK uri are stored ad http::Uri, they are "normalized" when serialized, so prenormalization to avoid failure like
     // json atoms at path ".subject.content.repository.source" are not equal:
@@ -96,12 +96,12 @@ fn can_serde_example(#[files("../cdevents-specs/spec-*/examples/*.json")] #[file
 
     let example_json: serde_json::Value =
         serde_json::from_str(&example_txt).expect("to parse as json");
-    dbg!(&example_json);
+    // dbg!(&example_json);
     let cdevent: CDEvent =
         serde_json::from_value(example_json.clone()).expect("to parse as cdevent");
-    dbg!(&cdevent);
+    // dbg!(&cdevent);
     let cdevent_json = serde_json::to_value(cdevent).expect("to convert into json");
-    dbg!(&cdevent_json);
+    // dbg!(&cdevent_json);
     assert_json_eq!(example_json, cdevent_json);
 }
 
