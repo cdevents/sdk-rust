@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0](https://github.com/cdevents/sdk-rust/compare/cdevents-sdk-v0.1.3...cdevents-sdk-v0.2.0) - 2025-04-16
+
+### Added
+
+- [**breaking**] remove support of 0.4.0-draft
+- accept to deserialize & serialize custom event (content is defined as JSON)
+
+### Other
+
+- switch to sccache + mise
+- list features
+- *(deps)* update rstest requirement from 0.24 to 0.25
+
 ## [0.1.3](https://github.com/cdevents/sdk-rust/compare/cdevents-sdk-v0.1.2...cdevents-sdk-v0.1.3) - 2025-01-09
 
 ### Other
