@@ -9,7 +9,7 @@ The SDK can be used to create CDEvents and send them as CloudEvents, as well as 
 Import the modules in your code
 
 ```toml
-cdevents-sdk = "0.1.0"
+cdevents-sdk = "0.1"
 ```
 
 To send a CDEvent as CloudEvent:
@@ -59,6 +59,24 @@ fn main() -> Result<(), Box<dyn Error>> {
 ```
 
 See the [CloudEvents](https://github.com/cloudevents/sdk-rust) docs as well.
+
+## Features
+
+- [x] support cdevents spec 0.3.0
+- [x] support cdevents spec 0.4.1
+- [ ] support of custom event
+  - [ ] compile-time generation of type for custom event
+  - [ ] runtime validation (download of jsonschemas & validation)
+  - [x] serialize/deserialize of custom event (type `dev.cdeventsx.{subject}.{predicate}.{version}`)
+  - [x] partial validation of custom event (`subject.content` is not validated, stored as json)
+- [x] Cloudevents support (provide wrapper/extractor for CDEvent)
+- [x] CDEvent stored into static types (=> no use of jsonshema at runtime)
+- [x] rutime validation for scalar types (purl, datetime, uri-reference)
+- [ ] report clear and readable error messages on deserialization
+- [x] provide type with builder pattern (fluent)
+- [x] provide random/sample generator for CDEvent (property based testing)
+- [x] test `serialization(deserialization(of spec's examples & conformances)) == spec's examples & conformances`
+- [x] test `serialization(random CDEvent) matches the jsonschemas`
 
 ## References
 
