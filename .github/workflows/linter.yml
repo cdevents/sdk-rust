@@ -19,6 +19,11 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 
+env:
+  # configure sccache to cache the build artifacts (on github caches)
+  SCCACHE_GHA_ENABLED: "true"
+  RUSTC_WRAPPER: "sccache"
+
 jobs:
   lint_commits:
     name: Lint Commit Messages
@@ -48,27 +53,13 @@ jobs:
         with:
           fetch-depth: 0
           submodules: "true"
-      - name: Install rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          toolchain: stable
-          components: clippy, rustfmt
-      - name: Install development tools
-        uses: taiki-e/install-action@v2
-        with:
-          tool: cargo-deny, dprint
-      - name: Rust Cache
-        uses: actions/cache@v4
-        continue-on-error: false
-        with:
-          path: |
-            ~/.cargo/bin
-            ~/.cargo/registry
-            ~/.cargo/git/db/
-          key: ${{ runner.os }}-sdk-rust-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-sdk-rust-
+      - uses: mozilla-actions/sccache-action@v0.0.9
+      - uses: jdx/mise-action@v2
+      - run: mise install
+        shell: bash
       - name: Check cargo version
         run: cargo --version
       - name: Run ${{ matrix.lint_projects }}
         run: make -f Makefile lint_${{ matrix.lint_projects }}
+      - run: ${SCCACHE_PATH} --show-stats
+        shell: bash

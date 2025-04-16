@@ -6,11 +6,11 @@ MISE_CARGO_BINSTALL = "true"
 
 [tools]
 "aqua:cargo-bins/cargo-binstall" = "1"
-rust = "1.85"
+rust = { version = "1.85", profile = "default" }
 make = "latest"
 # # experimental
 "cargo:cargo-nextest" = "0.9"
-# "cargo:cargo-hack" = "latest"
+"cargo:cargo-hack" = "0.6"
 "cargo:cargo-deny" = "0.16"
 # "cargo:git-cliff" = "latest"
 "cargo:dprint" = "0.45"
