@@ -56,14 +56,19 @@ struct HackUrlLoader;
 impl UrlLoader for HackUrlLoader {
     fn load(&self, url: &str) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
         let re = regex::Regex::new(r"https://cdevents.dev/(?<version>\d+\.\d+)\.\d+/schema/(?<path>.*)")?;
+        let re_draft = regex::Regex::new(r"https://cdevents.dev/(?<version>\d+\.\d+)\.\d+-draft/schema/(?<path>.*)")?;
         if let Some(caps) = re.captures(url) {
             let path = format!("../cdevents-specs/spec-v{}/schemas/{}.json", &caps["version"], &caps["path"]);
+            let jsonschema: serde_json::Value = serde_json::from_str(&std::fs::read_to_string(path)?)?;
+            Ok(jsonschema)
+        } else if let Some(caps) = re_draft.captures(url) {
+            let path = format!("../cdevents-specs/main/schemas/{}.json", &caps["path"]);
             let jsonschema: serde_json::Value = serde_json::from_str(&std::fs::read_to_string(path)?)?;
             Ok(jsonschema)
         } else if url.starts_with("https://cdevents.dev/schema/links/") {
             // HACK to fix a bug in specs 0.4.0
             // [Link's ref path needs an update for all the event schemas · Issue #211 · cdevents/spec](https://github.com/cdevents/spec/issues/211)
-            let path = url.replace("https://cdevents.dev/schema", "../cdevents-specs/spec-v0.4/schemas/");
+            let path = url.replace("https://cdevents.dev/schema", "../cdevents-specs/spec-v0.4/schemas");
             let jsonschema: serde_json::Value = serde_json::from_str(&std::fs::read_to_string(path)?)?;
             Ok(jsonschema)
         } else if url.starts_with("file://") {

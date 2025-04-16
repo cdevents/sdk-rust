@@ -42,6 +42,9 @@ test:
 # 	git submodule add -f -b spec-v0.4 https://github.com/cdevents/spec.git cdevents-specs/spec-v0.4
 # 	git submodule update -f --rebase -- cdevents-specs/main
 
+update_cdevents-specs:
+	git submodule update --recursive --remote
+
 .PHONY:
 	generate \
 	check check_no_uncommitted_changes_on_sdk \

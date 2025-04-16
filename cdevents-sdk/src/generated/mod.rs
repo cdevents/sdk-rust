@@ -23,7 +23,6 @@ pub mod build_started_0_1_1;
 pub mod build_started_0_2_0;
 pub mod change_abandoned_0_1_2;
 pub mod change_abandoned_0_2_0;
-pub mod change_created_0_2_0;
 pub mod change_created_0_1_2;
 pub mod change_created_0_3_0;
 pub mod change_merged_0_1_2;
@@ -177,45 +176,6 @@ pub mod spec_0_3_0 {
     pub use super::testsuiterun_queued_0_1_0 as testsuiterun_queued;
     pub use super::testsuiterun_started_0_1_0 as testsuiterun_started;
 }
-pub mod spec_0_4_0_draft {
-    pub use super::artifact_signed_0_1_0 as artifact_signed;
-    pub use super::branch_created_0_1_2 as branch_created;
-    pub use super::branch_deleted_0_1_2 as branch_deleted;
-    pub use super::build_finished_0_1_1 as build_finished;
-    pub use super::build_queued_0_1_1 as build_queued;
-    pub use super::build_started_0_1_1 as build_started;
-    pub use super::change_abandoned_0_1_2 as change_abandoned;
-    pub use super::change_created_0_2_0 as change_created;
-    pub use super::change_merged_0_1_2 as change_merged;
-    pub use super::change_reviewed_0_1_2 as change_reviewed;
-    pub use super::change_updated_0_1_2 as change_updated;
-    pub use super::environment_created_0_1_1 as environment_created;
-    pub use super::environment_deleted_0_1_1 as environment_deleted;
-    pub use super::environment_modified_0_1_1 as environment_modified;
-    pub use super::incident_detected_0_1_0 as incident_detected;
-    pub use super::incident_reported_0_1_0 as incident_reported;
-    pub use super::incident_resolved_0_1_0 as incident_resolved;
-    pub use super::pipelinerun_finished_0_1_1 as pipelinerun_finished;
-    pub use super::pipelinerun_queued_0_1_1 as pipelinerun_queued;
-    pub use super::pipelinerun_started_0_1_1 as pipelinerun_started;
-    pub use super::repository_created_0_1_1 as repository_created;
-    pub use super::repository_deleted_0_1_1 as repository_deleted;
-    pub use super::repository_modified_0_1_1 as repository_modified;
-    pub use super::service_deployed_0_1_1 as service_deployed;
-    pub use super::service_published_0_1_1 as service_published;
-    pub use super::service_removed_0_1_1 as service_removed;
-    pub use super::service_rolledback_0_1_1 as service_rolledback;
-    pub use super::service_upgraded_0_1_1 as service_upgraded;
-    pub use super::taskrun_finished_0_1_1 as taskrun_finished;
-    pub use super::taskrun_started_0_1_1 as taskrun_started;
-    pub use super::testcaserun_finished_0_1_0 as testcaserun_finished;
-    pub use super::testcaserun_queued_0_1_0 as testcaserun_queued;
-    pub use super::testcaserun_started_0_1_0 as testcaserun_started;
-    pub use super::testoutput_published_0_1_0 as testoutput_published;
-    pub use super::testsuiterun_finished_0_1_0 as testsuiterun_finished;
-    pub use super::testsuiterun_queued_0_1_0 as testsuiterun_queued;
-    pub use super::testsuiterun_started_0_1_0 as testsuiterun_started;
-}
 pub mod spec_0_4_1 {
     pub use super::artifact_deleted_0_1_0 as artifact_deleted;
     pub use super::artifact_downloaded_0_1_0 as artifact_downloaded;
@@ -284,7 +244,6 @@ pub const BUILD_STARTED_0_1_1: &str = "dev.cdevents.build.started.0.1.1";
 pub const BUILD_STARTED_0_2_0: &str = "dev.cdevents.build.started.0.2.0";
 pub const CHANGE_ABANDONED_0_1_2: &str = "dev.cdevents.change.abandoned.0.1.2";
 pub const CHANGE_ABANDONED_0_2_0: &str = "dev.cdevents.change.abandoned.0.2.0";
-pub const CHANGE_CREATED_0_2_0: &str = "dev.cdevents.change.created.0.2.0";
 pub const CHANGE_CREATED_0_1_2: &str = "dev.cdevents.change.created.0.1.2";
 pub const CHANGE_CREATED_0_3_0: &str = "dev.cdevents.change.created.0.3.0";
 pub const CHANGE_MERGED_0_1_2: &str = "dev.cdevents.change.merged.0.1.2";
@@ -373,7 +332,6 @@ pub enum Content {
     BuildStarted020(build_started_0_2_0::Content),
     ChangeAbandoned012(change_abandoned_0_1_2::Content),
     ChangeAbandoned020(change_abandoned_0_2_0::Content),
-    ChangeCreated020(change_created_0_2_0::Content),
     ChangeCreated012(change_created_0_1_2::Content),
     ChangeCreated030(change_created_0_3_0::Content),
     ChangeMerged012(change_merged_0_1_2::Content),
@@ -527,10 +485,6 @@ impl Content {
             },
             CHANGE_ABANDONED_0_2_0 => {
                 let variant: change_abandoned_0_2_0::Content = serde_json::from_value(json)?;
-                Ok(variant.into())
-            },
-            CHANGE_CREATED_0_2_0 => {
-                let variant: change_created_0_2_0::Content = serde_json::from_value(json)?;
                 Ok(variant.into())
             },
             CHANGE_CREATED_0_1_2 => {
@@ -822,7 +776,6 @@ impl Content {
             Self::BuildStarted020(_) => BUILD_STARTED_0_2_0,
             Self::ChangeAbandoned012(_) => CHANGE_ABANDONED_0_1_2,
             Self::ChangeAbandoned020(_) => CHANGE_ABANDONED_0_2_0,
-            Self::ChangeCreated020(_) => CHANGE_CREATED_0_2_0,
             Self::ChangeCreated012(_) => CHANGE_CREATED_0_1_2,
             Self::ChangeCreated030(_) => CHANGE_CREATED_0_3_0,
             Self::ChangeMerged012(_) => CHANGE_MERGED_0_1_2,
@@ -913,7 +866,6 @@ impl Content {
             Self::BuildStarted020(_) => "build",
             Self::ChangeAbandoned012(_) => "change",
             Self::ChangeAbandoned020(_) => "change",
-            Self::ChangeCreated020(_) => "change",
             Self::ChangeCreated012(_) => "change",
             Self::ChangeCreated030(_) => "change",
             Self::ChangeMerged012(_) => "change",
@@ -1004,7 +956,6 @@ impl Content {
             Self::BuildStarted020(_) => "started",
             Self::ChangeAbandoned012(_) => "abandoned",
             Self::ChangeAbandoned020(_) => "abandoned",
-            Self::ChangeCreated020(_) => "created",
             Self::ChangeCreated012(_) => "created",
             Self::ChangeCreated030(_) => "created",
             Self::ChangeMerged012(_) => "merged",
@@ -1099,7 +1050,6 @@ pub fn extract_subject_predicate(ty: &str) -> Option<(&str, &str)>{
         BUILD_STARTED_0_2_0 => Some(("build", "started")),
         CHANGE_ABANDONED_0_1_2 => Some(("change", "abandoned")),
         CHANGE_ABANDONED_0_2_0 => Some(("change", "abandoned")),
-        CHANGE_CREATED_0_2_0 => Some(("change", "created")),
         CHANGE_CREATED_0_1_2 => Some(("change", "created")),
         CHANGE_CREATED_0_3_0 => Some(("change", "created")),
         CHANGE_MERGED_0_1_2 => Some(("change", "merged")),
@@ -1266,11 +1216,6 @@ impl From<change_abandoned_0_1_2::Content> for Content {
 impl From<change_abandoned_0_2_0::Content> for Content {
     fn from(value: change_abandoned_0_2_0::Content) -> Self {
         Self::ChangeAbandoned020(value)
-    }
-}
-impl From<change_created_0_2_0::Content> for Content {
-    fn from(value: change_created_0_2_0::Content) -> Self {
-        Self::ChangeCreated020(value)
     }
 }
 impl From<change_created_0_1_2::Content> for Content {
@@ -1622,7 +1567,6 @@ impl<> proptest::arbitrary::Arbitrary for Content {
             any::<build_started_0_2_0::Content>().prop_map(Content::from),
             any::<change_abandoned_0_1_2::Content>().prop_map(Content::from),
             any::<change_abandoned_0_2_0::Content>().prop_map(Content::from),
-            any::<change_created_0_2_0::Content>().prop_map(Content::from),
             any::<change_created_0_1_2::Content>().prop_map(Content::from),
             any::<change_created_0_3_0::Content>().prop_map(Content::from),
             any::<change_merged_0_1_2::Content>().prop_map(Content::from),
@@ -1737,8 +1681,6 @@ impl<> proptest::arbitrary::Arbitrary for Content {
 //         assert_eq!(extract_subject_predicate(CHANGE_ABANDONED_0_1_2), Some(("change","abandoned")));
 //         
 //         assert_eq!(extract_subject_predicate(CHANGE_ABANDONED_0_2_0), Some(("change","abandoned")));
-//         
-//         assert_eq!(extract_subject_predicate(CHANGE_CREATED_0_2_0), Some(("change","created")));
 //         
 //         assert_eq!(extract_subject_predicate(CHANGE_CREATED_0_1_2), Some(("change","created")));
 //         
