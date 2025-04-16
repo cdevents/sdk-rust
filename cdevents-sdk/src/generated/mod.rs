@@ -438,6 +438,12 @@ pub enum Content {
     TicketClosed010(ticket_closed_0_1_0::Content),
     TicketCreated010(ticket_created_0_1_0::Content),
     TicketUpdated010(ticket_updated_0_1_0::Content),
+    Custom{
+      #[serde(skip)]
+      ty: String,
+      #[serde(flatten)]
+      json: serde_json::Value,
+    },
 }
 
 impl Content {
@@ -783,14 +789,18 @@ impl Content {
                 let variant: ticket_updated_0_1_0::Content = serde_json::from_value(json)?;
                 Ok(variant.into())
             },
-            variant => Err(serde_json::Error::custom(format_args!(
-                "unknown variant `{}`, expected 'dev.cdevents.{{subject}}.{{predicate}}.{{version}}'",
-                variant,
-            ))),
+            variant => if variant.starts_with("dev.cdeventsx.") {
+                Ok(Self::Custom{ ty: ty.to_string(), json })
+            } else {
+              Err(serde_json::Error::custom(format_args!(
+                  "unknown variant `{}`, expected 'dev.cdevents.{{subject}}.{{predicate}}.{{version}}'",
+                  variant,
+              )))
+            },
         }
     }
 
-    pub fn ty(&self) -> &'static str {
+    pub fn ty(&self) -> &str {
         match self {
             Self::ArtifactDeleted010(_) => ARTIFACT_DELETED_0_1_0,
             Self::ArtifactDownloaded010(_) => ARTIFACT_DOWNLOADED_0_1_0,
@@ -877,10 +887,11 @@ impl Content {
             Self::TicketClosed010(_) => TICKET_CLOSED_0_1_0,
             Self::TicketCreated010(_) => TICKET_CREATED_0_1_0,
             Self::TicketUpdated010(_) => TICKET_UPDATED_0_1_0,
+            Self::Custom{ty, ..} => ty,
         }
     }
 
-    pub fn subject(&self) -> &'static str {
+    pub fn subject(&self) -> &str {
         match self {
             Self::ArtifactDeleted010(_) => "artifact",
             Self::ArtifactDownloaded010(_) => "artifact",
@@ -967,10 +978,11 @@ impl Content {
             Self::TicketClosed010(_) => "ticket",
             Self::TicketCreated010(_) => "ticket",
             Self::TicketUpdated010(_) => "ticket",
+            Self::Custom{ty, ..} => ty.split('.').nth(2).unwrap_or_default(),
         }
     }
 
-    pub fn predicate(&self) -> &'static str {
+    pub fn predicate(&self) -> &str {
         match self {
             Self::ArtifactDeleted010(_) => "deleted",
             Self::ArtifactDownloaded010(_) => "downloaded",
@@ -1057,11 +1069,13 @@ impl Content {
             Self::TicketClosed010(_) => "closed",
             Self::TicketCreated010(_) => "created",
             Self::TicketUpdated010(_) => "updated",
+            Self::Custom{ty, ..} => ty.split('.').nth(3).unwrap_or_default(),
         }
     }
 }
 
-// due to inconstency in case/format the subject could be not be extracted from the context.type (ty), jsonshema $id, spec filename (shema, examples)
+/// Due to inconstency in case/format the subject could be not be extracted from the context.type (ty), jsonshema $id, spec filename (shema, examples)
+/// Custom type are not supported
 pub fn extract_subject_predicate(ty: &str) -> Option<(&str, &str)>{
     // let mut split = ty.split('.');
     match ty {
@@ -1680,7 +1694,7 @@ impl<> proptest::arbitrary::Arbitrary for Content {
 // #[cfg(test)]
 // mod tests {
 //     use super::*;
-// 
+//
 //     #[test]
 //     fn test_true() {
 //         
