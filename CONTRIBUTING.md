@@ -1,4 +1,3 @@
-
 # Contributing
 
 🚀 Thank you for contributing to cdevents! 🚀
@@ -24,7 +23,7 @@ GitHub is used for project Source Code Management (SCM) using the SSH protocol f
 
 1. Create [a GitHub account](https://github.com/join) if you do not already have one.
 1. Setup
-[GitHub access via SSH](https://help.github.com/articles/connecting-to-github-with-ssh/)
+   [GitHub access via SSH](https://help.github.com/articles/connecting-to-github-with-ssh/)
 
 ### Install tools
 
@@ -32,8 +31,10 @@ You must install these tools:
 
 1. [`git`](https://help.github.com/articles/set-up-git/): For source control
 
-2. If you use [mise](https://mise.jdx.dev/): `mise install` (after git clone)
-  Else look into the mise configuration file [`.mise.toml`](https://github.com/cdevents/sdk-rust/blob/main/.mise.toml) to have the list of tools to install
+2. [mise](https://mise.jdx.dev/):
+
+- `mise install`: to install complementary tools, sdk,...
+- `mise tasks`: to list all tasks used to build
 
 ### Setup a fork
 
@@ -43,41 +44,40 @@ The sdk-rust project requires that you develop (commit) code changes to branches
 
 1. Create a clone of your fork on your local machine:
 
-    ```shell
-    git clone git@github.com:${YOUR_GITHUB_USERNAME}/sdk-rust.git
-    ```
+   ```shell
+   git clone git@github.com:${YOUR_GITHUB_USERNAME}/sdk-rust.git
+   ```
 
 1. Configure `git` remote repositories
 
-    Adding `cdevents/sdk-rust` as the `upstream` and your fork as the `origin` remote repositories to your `.git/config` sets you up nicely for regularly [syncing your fork](https://help.github.com/articles/syncing-a-fork/) and submitting pull requests.
+   Adding `cdevents/sdk-rust` as the `upstream` and your fork as the `origin` remote repositories to your `.git/config` sets you up nicely for regularly [syncing your fork](https://help.github.com/articles/syncing-a-fork/) and submitting pull requests.
+   1. Change into the project directory
 
-    1. Change into the project directory
+      ```shell
+      cd sdk-rust
+      ```
 
-        ```shell
-        cd sdk-rust
-        ```
+   2. Retrieve submodules
 
-    2. Retrieve submodules
+      ```shell
+      git submodule init
+      git submodule update --init --recursive
+      ```
 
-        ```shell
-        git submodule init
-        git submodule update --init --recursive
-        ```
+   3. Configure sdk-rust as the `upstream` repository
 
-    3. Configure sdk-rust as the `upstream` repository
+      ```shell
+      git remote add upstream git@github.com:cdevents/sdk-rust.git
 
-        ```shell
-        git remote add upstream git@github.com:cdevents/sdk-rust.git
+      # Optional: Prevent accidental pushing of commits by changing the upstream URL to `no_push`
+      git remote set-url --push upstream no_push
+      ```
 
-        # Optional: Prevent accidental pushing of commits by changing the upstream URL to `no_push`
-        git remote set-url --push upstream no_push
-        ```
+   4. Configure your fork as the `origin` repository
 
-    4. Configure your fork as the `origin` repository
-
-        ```shell
-        git remote add origin git@github.com:${YOUR_GITHUB_USERNAME}/sdk-rust.git
-        ```
+      ```shell
+      git remote add origin git@github.com:${YOUR_GITHUB_USERNAME}/sdk-rust.git
+      ```
 
 ## Development
 
@@ -92,19 +92,19 @@ git switch -c feat_foo
 To format the rust code and imports:
 
 ```shell
-make fmt
+mise run fmt
 ```
 
-To run the go linter:
+To run the all the tasks like the ci:
 
 ```shell
-make lint
+mise run ci
 ```
 
 To run unit tests:
 
 ```shell
-make test
+mise run test
 ```
 
 ### Commit & push
@@ -130,4 +130,4 @@ Create a PR (pull request) and ask for review.
 The last reviewer, will "Squash & merge" when ready.
 The message of the squashed commit follows the [conventional commit], and aggregate/summaries commits of the branch.
 
-  [conventional commit]: https://www.conventionalcommits.org/en/v1.0.0/#summary
+[conventional commit]: https://www.conventionalcommits.org/en/v1.0.0/#summary

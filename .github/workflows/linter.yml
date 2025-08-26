@@ -19,11 +19,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 
-env:
-  # configure sccache to cache the build artifacts (on github caches)
-  SCCACHE_GHA_ENABLED: "true"
-  RUSTC_WRAPPER: "sccache"
-
 jobs:
   lint_commits:
     name: Lint Commit Messages
@@ -35,31 +30,3 @@ jobs:
           fetch-depth: 0
       - name: Check Commit Lint
         uses: wagoid/commitlint-github-action@v6
-
-  lint_check:
-    name: Rust - lint_${{ matrix.lint_projects }}
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        lint_projects:
-          - cargo_fmt_check
-          - cargo_toml_fmt_files
-          - cargo_clippy
-          - cargo_deny
-    steps:
-      - name: Run the checkout command
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-          submodules: "true"
-      - uses: mozilla-actions/sccache-action@v0.0.9
-      - uses: jdx/mise-action@v2
-      - run: mise install
-        shell: bash
-      - name: Check cargo version
-        run: cargo --version
-      - name: Run ${{ matrix.lint_projects }}
-        run: make -f Makefile lint_${{ matrix.lint_projects }}
-      - run: ${SCCACHE_PATH} --show-stats
-        shell: bash

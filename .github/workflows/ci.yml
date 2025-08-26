@@ -28,10 +28,13 @@ jobs:
           fetch-depth: 0
           submodules: "true"
       - uses: mozilla-actions/sccache-action@v0.0.9
-      - uses: jdx/mise-action@v2
-      - run: mise install
+      - uses: jdx/mise-action@v3
+        with:
+          # version 2025.5.11, a symlink is created for rust setup
+          # without cache, missing components are installed
+          # with cache, nothing is installed, but as rust tool is symlinked, it is not cached => missing components failure
+          cache: false
+          cache_save: false
+          experimental: true
+      - run: mise run ci
         shell: bash
-      - run: make generate
-      - run: make check_no_uncommitted_changes_on_sdk
-      - run: make check
-      - run: make test
