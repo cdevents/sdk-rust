@@ -1,16 +1,78 @@
 [env]
 # RUSTC_WRAPPER = "sccache"
-RUST_WITHOUT = "rust-docs"
-# ASDF_RUST_PROFILE = "minimal"
 MISE_CARGO_BINSTALL = "true"
 
 [tools]
 "aqua:cargo-bins/cargo-binstall" = "1"
-rust = { version = "1.85", profile = "default" }
-make = "latest"
-# # experimental
+rust = { version = "1.89.0", profile = "minimal", components = "rustfmt,clippy" } # the rust tool stack (with cargo, fmt, clippy) to build source
 "cargo:cargo-nextest" = "0.9"
 "cargo:cargo-hack" = "0.6"
 "cargo:cargo-deny" = "0.16"
 # "cargo:git-cliff" = "latest"
-"cargo:dprint" = "0.45"
+"dprint" = "latest"
+
+[tasks."format"]
+alias = "fmt"
+description = "Format the code and sort dependencies"
+run = [
+  "cargo --locked fmt",
+  "cargo --locked sort --grouped",
+  "dprint fmt --config=tools/dprint/dprint.json",
+]
+
+[tasks.check]
+run = "cargo hack check --each-feature"
+
+# no uncommitted changes on sdk (generated code)
+[tasks."check:no_uncommitted_changes_on_sdk"]
+run = "git diff --exit-code cdevents-sdk"
+
+[tasks."lint:cargo_fmt"]
+run = "cargo fmt --all -- --check"
+
+[tasks."lint:cargo_deny"]
+run = """
+cargo deny --workspace --all-features \
+  --exclude-dev \
+  --exclude generator \
+  check licenses advisories \
+  --config=tools/cargo-deny/deny.toml
+"""
+
+[tasks."lint:cargo_clippy"]
+run = "cargo clippy --workspace --all-features --no-deps --all-targets -- --deny warnings"
+
+[tasks."lint:toml"]
+run = "dprint check --config=tools/dprint/dprint.json"
+
+[tasks."lint"]
+depends = ["lint:*"]
+
+[tasks.clean]
+run = "cargo clean"
+
+[tasks.generate]
+run = """cargo run -p generator -- --templates-dir "generator/templates" --jsonschemas "cdevents-specs/*/schemas/*.json" --dest "cdevents-sdk/src/generated""""
+
+[tasks.test]
+wait_for = ["generate", "lint:*"]
+run = [
+  "cargo nextest run --all-features",
+  "cargo test --doc",
+]
+
+# [tasks."git:setup_cdevents-specs"]
+# run = [
+#   "git submodule deinit -f --all",
+#   "git submodule init",
+#   "git submodule add -f https://github.com/cdevents/spec.git cdevents-specs/main",
+#   "git submodule add -f -b spec-v0.3 https://github.com/cdevents/spec.git cdevents-specs/spec-v0.3",
+#   "git submodule add -f -b spec-v0.4 https://github.com/cdevents/spec.git cdevents-specs/spec-v0.4",
+#   "git submodule update -f --rebase -- cdevents-specs/main",
+# ]
+
+[tasks."git:update_cdevents-specs"]
+run = "git submodule update --recursive --remote"
+
+[tasks.ci]
+depends = ["generate", "test", "lint", "check"]
