@@ -12,7 +12,7 @@ description = "A Rust SDK for CDEvents"
 
 [dependencies]
 cloudevents-sdk = { version = "0.9", optional = true, default-features = false }
-fluent-uri = "0.3"
+fluent-uri = "0.4"
 proptest = { version = "1.4", optional = true }
 proptest-derive = { version = "0.7", optional = true }
 serde = { version = "1.0", features = ["derive"] }
