@@ -15,7 +15,7 @@ use crate::UriReference;
 #[cfg_attr(feature = "testkit", derive(Arbitrary))]
 pub struct Uri(
     #[cfg_attr(feature = "testkit", proptest(value = "fluent_uri::UriRef::parse(\"https://example.com/\".to_owned()).unwrap()"))] //TODO generate random value
-    #[serde(with = "crate::serde::fluent_uri")]
+    //#[serde(with = "crate::serde::fluent_uri")]
     pub(crate) fluent_uri::UriRef<String>
 );
 
@@ -32,7 +32,7 @@ impl FromStr for Uri {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         //TODO check it's not a reference URI
-        fluent_uri::UriRef::parse(s.to_owned()).map_err(Self::Err::from).map(Uri)
+        fluent_uri::UriRef::parse(s.to_owned()).map_err(|(e,_)| Self::Err::from(e)).map(Uri)
     }
 }
 
@@ -48,7 +48,7 @@ impl TryFrom<&str> for Uri {
     type Error = crate::Error;
 
     fn try_from(s: &str) -> Result<Self, Self::Error> {
-        fluent_uri::UriRef::parse(s.to_owned()).map_err(Self::Error::from).map(Uri)
+        fluent_uri::UriRef::parse(s.to_owned()).map_err(|(e, _)| Self::Error::from(e)).map(Uri)
     }
 }
 
@@ -56,7 +56,7 @@ impl TryFrom<String> for Uri {
     type Error = crate::Error;
 
     fn try_from(s: String) -> Result<Self, Self::Error> {
-        fluent_uri::UriRef::parse(s).map_err(Self::Error::from).map(Uri)
+        fluent_uri::UriRef::parse(s).map_err(|(e, _)| Self::Error::from(e)).map(Uri)
     }
 }
 
