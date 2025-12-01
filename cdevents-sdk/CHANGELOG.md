@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1](https://github.com/cdevents/sdk-rust/compare/cdevents-sdk-v0.2.0...cdevents-sdk-v0.2.1) - 2025-12-01
+
+### Fixed
+
+- adapt code to fluent-uri upgrade
+
+### Other
+
+- *(deps)* remove explicit `minor` in dependencies version with `major` > 0
+- *(deps)* update fluent-uri requirement from 0.3 to 0.4
+- *(deps)* update cloudevents-sdk requirement from 0.8 to 0.9 ([#61](https://github.com/cdevents/sdk-rust/pull/61))
+- *(deps)* update proptest-derive requirement from 0.6 to 0.7 ([#58](https://github.com/cdevents/sdk-rust/pull/58))
+- *(deps)* update rstest requirement from 0.25 to 0.26
+- *(deps)* update proptest-derive requirement from 0.5 to 0.6
+
 ## [0.2.0](https://github.com/cdevents/sdk-rust/compare/cdevents-sdk-v0.1.3...cdevents-sdk-v0.2.0) - 2025-04-16
 
 ### Added
