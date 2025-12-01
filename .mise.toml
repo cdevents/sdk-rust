@@ -21,6 +21,7 @@ run = [
 ]
 
 [tasks.check]
+wait_for = ["generate"]
 run = "cargo hack check --each-feature"
 
 # no uncommitted changes on sdk (generated code)
@@ -40,6 +41,7 @@ cargo deny --workspace --all-features \
 """
 
 [tasks."lint:cargo_clippy"]
+wait_for = ["generate"]
 run = "cargo clippy --workspace --all-features --no-deps --all-targets -- --deny warnings"
 
 [tasks."lint:toml"]
