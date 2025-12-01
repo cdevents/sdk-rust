@@ -12,12 +12,12 @@ description = "A Rust SDK for CDEvents"
 
 [dependencies]
 cloudevents-sdk = { version = "0.9", optional = true, default-features = false }
-fluent-uri = "0.4"
-proptest = { version = "1.4", optional = true }
+fluent-uri = { version = "0.4", features = ["serde"] }
+proptest = { version = "1", optional = true }
 proptest-derive = { version = "0.7", optional = true }
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-thiserror = "2.0"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
 time = { version = "0.3", features = ["serde-human-readable"] }
 
 [dev-dependencies]
@@ -25,7 +25,7 @@ assert-json-diff = "2.0"
 boon = "0.6"
 glob = "0.3"
 proptest = "1"
-regex = "1.10"
+regex = "1"
 rstest = "0.26"
 
 [features]
