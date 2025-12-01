@@ -11,7 +11,7 @@ rust-version.workspace = true
 description = "A Rust SDK for CDEvents"
 
 [dependencies]
-cloudevents-sdk = { version = "0.8", optional = true, default-features = false }
+cloudevents-sdk = { version = "0.9", optional = true, default-features = false }
 fluent-uri = "0.3"
 proptest = { version = "1.4", optional = true }
 proptest-derive = { version = "0.7", optional = true }
