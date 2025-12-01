@@ -5,7 +5,7 @@ use crate::Uri;
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct UriReference(
-    #[serde(with = "crate::serde::fluent_uri")]
+    //#[serde(with = "crate::serde::fluent_uri")]
     pub(crate) fluent_uri::UriRef<String>
 );
 
@@ -21,7 +21,7 @@ impl FromStr for UriReference {
     type Err = crate::Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        fluent_uri::UriRef::parse(s.to_owned()).map_err(Self::Err::from).map(UriReference)
+        fluent_uri::UriRef::parse(s.to_owned()).map_err(|(e,_)| Self::Err::from(e)).map(UriReference)
     }
 }
 
@@ -29,6 +29,7 @@ impl TryFrom<Uri> for UriReference {
     type Error = crate::Error;
 
     fn try_from(s: Uri) -> Result<Self, Self::Error> {
+        //fluent_uri::UriRef::try_from(s.0).map_err(Self::Error::from).map(UriReference)
         Ok(UriReference(s.0))
     }
 }
@@ -37,7 +38,7 @@ impl TryFrom<&str> for UriReference {
     type Error = crate::Error;
 
     fn try_from(s: &str) -> Result<Self, Self::Error> {
-        fluent_uri::UriRef::parse(s.to_owned()).map_err(Self::Error::from).map(UriReference)
+        fluent_uri::UriRef::parse(s.to_owned()).map_err(|(e,_)| Self::Error::from(e)).map(UriReference)
     }
 }
 
@@ -45,7 +46,7 @@ impl TryFrom<String> for UriReference {
     type Error = crate::Error;
 
     fn try_from(s: String) -> Result<Self, Self::Error> {
-        fluent_uri::UriRef::parse(s).map_err(Self::Error::from).map(UriReference)
+        fluent_uri::UriRef::parse(s).map_err(|(e,_)| Self::Error::from(e)).map(UriReference)
     }
 }
 
