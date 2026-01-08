@@ -87,9 +87,28 @@ pub fn extract_subject_predicate(ty: &str) -> Option<(&str, &str)>{
     // let mut split = ty.split('.');
     match ty {
         {{#each variants }}
+        {{#if (or (eq this.spec_version "0.4.1") (eq this.spec_version "0.4.0") (eq this.spec_version "0.3.0")) }}
         {{to_screaming_snake_case this.rust_module}} => Some(("{{ this.subject_type }}", "{{ this.predicate }}")),
+        {{/if}}
         {{/each}}
         _ => None,
+    }
+}
+
+/// Due to inconstency in case/format the subject could be not be extracted from the context.type (ty), jsonshema $id, spec filename (shema, examples)
+/// Custom type are not supported
+pub(crate) fn new_context(ty: &str) -> crate::context::ContextEnum {
+    use crate::context::{ContextEnum, Context_0_3, Context_0_4, Context_0_5};
+    match ty {
+        {{#each variants }}
+        {{#if (eq this.spec_version "0.3.0") }}
+        {{to_screaming_snake_case this.rust_module}} => ContextEnum::Context_0_3(Context_0_3::new(ty.into())),
+        {{/if}}
+        {{#if (or (eq this.spec_version "0.4.1") (eq this.spec_version "0.4.0")) }}
+        {{to_screaming_snake_case this.rust_module}} => ContextEnum::Context_0_4(Context_0_4::new(ty.into())),
+        {{/if}}
+        {{/each}}
+        _ => ContextEnum::Context_0_5(Context_0_5::new(ty.into())),
     }
 }
 

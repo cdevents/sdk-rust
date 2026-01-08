@@ -1,4 +1,4 @@
-use crate::{Context, Id, Subject, UriReference};
+use crate::{Context, ContextEnum, Id, Subject, UriReference};
 use serde::{
     de::{self, Deserializer, MapAccess, Visitor},
     Deserialize, Serialize,
@@ -8,7 +8,7 @@ use std::fmt;
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct CDEvent {
-    context: Context,
+    context: ContextEnum,
     subject: Subject,
     #[serde(rename = "customData", skip_serializing_if = "Option::is_none")]
     custom_data: Option<serde_json::Value>,
@@ -21,10 +21,8 @@ pub struct CDEvent {
 
 impl From<Subject> for CDEvent {
     fn from(subject: Subject) -> Self {
-        let context = Context {
-            ty: subject.content().ty().into(),
-            ..Default::default()
-        };
+        // TODO select context from subject version
+        let context = crate::new_context(subject.content().ty());
         Self {
             context,
             subject,
@@ -37,41 +35,41 @@ impl From<Subject> for CDEvent {
 impl CDEvent {
     /// see <https://github.com/cdevents/spec/blob/main/spec.md#version>
     pub fn version(&self) -> &str {
-        self.context.version.as_str()
+        self.context.version()
     }
 
-    pub fn with_version<T>(mut self, v: T) -> Self where T: Into<String> {
-        self.context.version = v.into();
-        self
-    }
+    // pub fn with_version<T>(mut self, v: T) -> Self where T: Into<String> {
+    //     self.context.with_version(v);
+    //     self
+    // }
 
     /// see <https://github.com/cdevents/spec/blob/main/spec.md#id-context>
     pub fn id(&self) -> &Id {
-        &self.context.id
+        self.context.id()
     }
 
     pub fn with_id(mut self, v: Id) -> Self {
-        self.context.id = v;
+        self.context = self.context.with_id(v);
         self
     }
 
     /// see <https://github.com/cdevents/spec/blob/main/spec.md#source-context>
     pub fn source(&self) -> &UriReference {
-        &self.context.source
+        self.context.source()
     }
 
     pub fn with_source(mut self, v: UriReference) -> Self {
-        self.context.source = v;
+        self.context = self.context.with_source(v);
         self
     }
 
     /// see <https://github.com/cdevents/spec/blob/main/spec.md#timestamp>
     pub fn timestamp(&self) -> &time::OffsetDateTime {
-        &self.context.timestamp
+        self.context.timestamp()
     }
 
     pub fn with_timestamp(mut self, v: time::OffsetDateTime) -> Self {
-        self.context.timestamp = v;
+        self.context = self.context.with_timestamp(v);
         self
     }
 
@@ -84,7 +82,7 @@ impl CDEvent {
     /// derived from subject.content
     pub fn ty(&self) -> &str {
         //self.subject.content().ty()
-        self.context.ty.as_str()
+        self.context.ty()
     }
 
     /// see <https://github.com/cdevents/spec/blob/main/spec.md#customdata>
@@ -127,6 +125,7 @@ impl<'de> Deserialize<'de> for CDEvent {
 
         struct CDEventVisitor;
 
+        // TODO remove dependencie to serde_json
         impl<'de> Visitor<'de> for CDEventVisitor {
             type Value = CDEvent;
 
@@ -138,17 +137,17 @@ impl<'de> Deserialize<'de> for CDEvent {
             where
                 V: MapAccess<'de>,
             {
-                let mut context: Option<Context> = None;
+                let mut context_json: Option<serde_json::value::Value> = None;
                 let mut subject_json: Option<serde_json::value::Value> = None;
                 let mut custom_data = None;
                 let mut custom_data_content_type = None;
                 while let Some(key) = map.next_key()? {
                     match key {
                         Field::Context => {
-                            if context.is_some() {
+                            if context_json.is_some() {
                                 return Err(de::Error::duplicate_field("context"));
                             }
-                            context = Some(map.next_value()?);
+                            context_json = Some(map.next_value()?);
                         }
                         Field::Subject => {
                             if subject_json.is_some() {
@@ -170,11 +169,14 @@ impl<'de> Deserialize<'de> for CDEvent {
                         }
                     }
                 }
-                let context = context.ok_or_else(|| de::Error::missing_field("context"))?;
-                let subject_json =
-                    subject_json.ok_or_else(|| de::Error::missing_field("subject"))?;
-                let subject =
-                    Subject::from_json(&context.ty, subject_json).map_err(de::Error::custom)?;
+                let context = {
+                    let context_json = context_json.ok_or_else(|| de::Error::missing_field("context"))?;
+                    ContextEnum::from_json(context_json).map_err(de::Error::custom)?
+                };
+                let subject = {
+                    let subject_json = subject_json.ok_or_else(|| de::Error::missing_field("subject"))?;
+                    Subject::from_json(context.ty(), subject_json).map_err(de::Error::custom)?
+                };
 
                 Ok(CDEvent {
                     context,

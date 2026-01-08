@@ -7,9 +7,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     let cdevent = CDEvent::from(
         Subject::from(pipelinerun_finished::Content{
             errors: Some("pipelineErrors".into()),
-            outcome: Some("success".into()),
+            outcome: Some(pipelinerun_finished::ContentOutcome::Success),
             pipeline_name: Some("testPipeline".into()),
-            url: Some("https://dev.pipeline.run/url".into())
+            uri: Some("https://dev.pipeline.run/url".try_into()?)
         })
         .with_id("/dev/pipeline/run/1".try_into()?)
         .with_source("https://dev.pipeline.run/source".try_into()?)
@@ -38,4 +38,3 @@ fn main() -> Result<(), Box<dyn Error>> {
     assert_eq!(cdevent_expected, cdevent_extracted);
     Ok(())
 }
-

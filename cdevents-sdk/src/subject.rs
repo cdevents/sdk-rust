@@ -18,8 +18,10 @@ pub struct Subject {
         skip_serializing_if = "Option::is_none",
     )]
     source: Option<UriReference>,
-    #[serde(rename = "type")]
-    ty: String,
+    #[serde(rename = "type", skip_serializing_if = "Option::is_none", default)]
+    #[deprecated = "this file was removed since cdevents spec 0.5"]
+    #[doc(hidden)]
+    ty: Option<String>,
 }
 
 impl Subject {
@@ -43,17 +45,18 @@ impl Subject {
         self
     }
 
-    /// see <https://github.com/cdevents/spec/blob/main/spec.md#type-context>
-    /// derived from content
-    pub fn ty(&self) -> &str {
-        &self.ty
-    }
+    // /// see <https://github.com/cdevents/spec/blob/main/spec.md#type-context>
+    // /// derived from content
+    // pub fn ty(&self) -> &str {
+    //     &self.ty
+    // }
 
     /// see <https://github.com/cdevents/spec/blob/main/spec.md#content>
     pub fn content(&self) -> &Content {
         &self.content
     }
 
+    #[allow(deprecated)]
     pub fn from_json(ty: &str, json: serde_json::Value) -> Result<Self, serde_json::Error> {
         Ok(Subject {
             id: json["id"]
@@ -62,9 +65,7 @@ impl Subject {
                 .try_into()
                 .map_err(serde::de::Error::custom)?,
             ty: json["type"]
-                .as_str()
-                .ok_or_else(|| serde::de::Error::missing_field("type"))?
-                .to_string(),
+                .as_str().map(|s| s.to_owned()),
             source: match json["source"].as_str() {
                 None => None,
                 Some(s) => Some(
@@ -77,12 +78,12 @@ impl Subject {
 }
 
 impl<T> From<T> for Subject where T: Into<Content>{
+    #[allow(deprecated)]
     fn from(content: T) -> Self {
         let content = content.into();
+        // TODO remove this hack when remove support for spec < 0.5
         let ty = crate::extract_subject_predicate(content.ty())
-            .map(|(s, _)| s)
-            .unwrap_or("unknown")
-            .to_owned();
+            .map(|(s, _)| s.to_string());
         Self {
             content,
             id: Id::default(),

@@ -9,25 +9,25 @@ The SDK can be used to create CDEvents and send them as CloudEvents, as well as 
 Import the modules in your code
 
 ```toml
-cdevents-sdk = "0.1"
+cdevents-sdk = "0.3"
 ```
 
 To send a CDEvent as CloudEvent:
 
-```rust
+````rust
 // from examples/pipelinerun_finished.rs
 use std::error::Error;
 
-use cdevents_sdk::{CDEvent, Subject, spec_0_3_0::pipelinerun_finished, Content};
+use cdevents_sdk::{CDEvent, Subject, spec_0_5_0::pipelinerun_finished, Content};
 use cloudevents::{Event, AttributesReader};
 
 fn main() -> Result<(), Box<dyn Error>> {
     let cdevent = CDEvent::from(
         Subject::from(pipelinerun_finished::Content{
             errors: Some("pipelineErrors".into()),
-            outcome: Some("success".into()),
+            outcome: Some(pipelinerun_finished::ContentOutcome::Success),
             pipeline_name: Some("testPipeline".into()),
-            url: Some("https://dev.pipeline.run/url".into())
+            uri: Some("https://dev.pipeline.run/url".try_into()?)
         })
         .with_id("/dev/pipeline/run/1".try_into()?)
         .with_source("https://dev.pipeline.run/source".try_into()?)
@@ -56,14 +56,15 @@ fn main() -> Result<(), Box<dyn Error>> {
     assert_eq!(cdevent_expected, cdevent_extracted);
     Ok(())
 }
-```
+````
 
 See the [CloudEvents](https://github.com/cloudevents/sdk-rust) docs as well.
 
 ## Features
 
-- [x] support cdevents spec 0.3.0
+- [x] support cdevents spec 0.5.0
 - [x] support cdevents spec 0.4.1
+- [x] support cdevents spec 0.3.0
 - [ ] support of custom event
   - [ ] compile-time generation of type for custom event
   - [ ] runtime validation (download of jsonschemas & validation)

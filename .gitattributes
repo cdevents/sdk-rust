@@ -1,0 +1,10 @@
+# Auto detect text files and normalize line endings to LF
+* text=auto eol=lf
+
+# generated & committed
+cdevents-sdk/src/generated/** linguist-generated=true gitlab-generated
+
+# Lock files (generated but should be diffed)
+Cargo.lock linguist-generated=false
+package-lock.json linguist-generated=false
+bun.lockb binary

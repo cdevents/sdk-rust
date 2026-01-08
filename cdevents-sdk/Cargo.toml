@@ -11,6 +11,7 @@ description = "A Rust SDK for CDEvents"
 
 [dependencies]
 cloudevents-sdk = { version = "0.9", optional = true, default-features = false }
+enum_dispatch = "0.3"
 fluent-uri = { version = "0.4", features = ["serde"] }
 proptest = { version = "1", optional = true }
 proptest-derive = { version = "0.7", optional = true }
