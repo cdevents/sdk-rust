@@ -4,10 +4,10 @@ MISE_CARGO_BINSTALL = "true"
 
 [tools]
 "aqua:cargo-bins/cargo-binstall" = "1"
-rust = { version = "1.89.0", profile = "minimal", components = "rustfmt,clippy" } # the rust tool stack (with cargo, fmt, clippy) to build source
+rust = { version = "1.93.1", profile = "minimal", components = "rustfmt,clippy" } # the rust tool stack (with cargo, fmt, clippy) to build source
 "cargo:cargo-nextest" = "0.9"
 "cargo:cargo-hack" = "0.6"
-"cargo:cargo-deny" = "0.16"
+"cargo:cargo-deny" = "0.19"
 # "cargo:git-cliff" = "latest"
 "dprint" = "latest"
 
