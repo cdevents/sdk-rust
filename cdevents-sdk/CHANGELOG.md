@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0](https://github.com/cdevents/sdk-rust/compare/cdevents-sdk-v0.2.1...cdevents-sdk-v0.3.0) - 2026-02-16
+
+### Added
+
+- add support for cdevents spec 0.5
+
+### Other
+
+- *(deps)* update proptest-derive requirement from 0.7 to 0.8 ([#63](https://github.com/cdevents/sdk-rust/pull/63))
+- remove deprecated "package.authors" from `Cargo.toml`
+
 ## [0.2.1](https://github.com/cdevents/sdk-rust/compare/cdevents-sdk-v0.2.0...cdevents-sdk-v0.2.1) - 2025-12-01
 
 ### Fixed
