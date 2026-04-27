@@ -27,7 +27,7 @@ jobs:
         with:
           fetch-depth: 0
           submodules: "true"
-      - uses: mozilla-actions/sccache-action@v0.0.9
+      - uses: mozilla-actions/sccache-action@v0.0.10
       - uses: jdx/mise-action@v4
         with:
           # version 2025.5.11, a symlink is created for rust setup
