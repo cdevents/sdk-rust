@@ -3,6 +3,9 @@
 
 use serde::{Serialize, Deserialize, de::Error};
 
+pub mod approval_closed_0_1_0;
+pub mod approval_created_0_1_0;
+pub mod approval_updated_0_1_0;
 pub mod artifact_deleted_0_2_0;
 pub mod artifact_deleted_0_1_0;
 pub mod artifact_downloaded_0_2_0;
@@ -134,6 +137,9 @@ pub mod ticket_updated_0_2_0;
 pub mod ticket_updated_0_1_0;
 
 pub mod latest {
+    pub use super::approval_closed_0_1_0 as approval_closed;
+    pub use super::approval_created_0_1_0 as approval_created;
+    pub use super::approval_updated_0_1_0 as approval_updated;
     pub use super::artifact_deleted_0_2_0 as artifact_deleted;
     pub use super::artifact_downloaded_0_2_0 as artifact_downloaded;
     pub use super::artifact_packaged_0_3_0 as artifact_packaged;
@@ -268,7 +274,7 @@ pub mod spec_0_4_1 {
     pub use super::ticket_created_0_1_0 as ticket_created;
     pub use super::ticket_updated_0_1_0 as ticket_updated;
 }
-pub mod spec_0_5_0 {
+pub mod spec_0_5_1 {
     pub use super::artifact_deleted_0_2_0 as artifact_deleted;
     pub use super::artifact_downloaded_0_2_0 as artifact_downloaded;
     pub use super::artifact_packaged_0_3_0 as artifact_packaged;
@@ -316,6 +322,9 @@ pub mod spec_0_5_0 {
     pub use super::ticket_updated_0_2_0 as ticket_updated;
 }
 pub mod spec_0_6_0_draft {
+    pub use super::approval_closed_0_1_0 as approval_closed;
+    pub use super::approval_created_0_1_0 as approval_created;
+    pub use super::approval_updated_0_1_0 as approval_updated;
     pub use super::artifact_deleted_0_2_0 as artifact_deleted;
     pub use super::artifact_downloaded_0_2_0 as artifact_downloaded;
     pub use super::artifact_packaged_0_3_0 as artifact_packaged;
@@ -363,6 +372,9 @@ pub mod spec_0_6_0_draft {
     pub use super::ticket_updated_0_2_0 as ticket_updated;
 }
 
+pub const APPROVAL_CLOSED_0_1_0: &str = "dev.cdevents.approval.closed.0.1.0";
+pub const APPROVAL_CREATED_0_1_0: &str = "dev.cdevents.approval.created.0.1.0";
+pub const APPROVAL_UPDATED_0_1_0: &str = "dev.cdevents.approval.updated.0.1.0";
 pub const ARTIFACT_DELETED_0_2_0: &str = "dev.cdevents.artifact.deleted.0.2.0";
 pub const ARTIFACT_DELETED_0_1_0: &str = "dev.cdevents.artifact.deleted.0.1.0";
 pub const ARTIFACT_DOWNLOADED_0_2_0: &str = "dev.cdevents.artifact.downloaded.0.2.0";
@@ -496,6 +508,9 @@ pub const TICKET_UPDATED_0_1_0: &str = "dev.cdevents.ticket.updated.0.1.0";
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(untagged)] // TODO how to use content of context.type as discriminator ?
 pub enum Content {
+    ApprovalClosed010(approval_closed_0_1_0::Content),
+    ApprovalCreated010(approval_created_0_1_0::Content),
+    ApprovalUpdated010(approval_updated_0_1_0::Content),
     ArtifactDeleted020(artifact_deleted_0_2_0::Content),
     ArtifactDeleted010(artifact_deleted_0_1_0::Content),
     ArtifactDownloaded020(artifact_downloaded_0_2_0::Content),
@@ -636,6 +651,18 @@ pub enum Content {
 impl Content {
     pub fn from_json(ty: &str, json: serde_json::Value) -> Result<Self, serde_json::Error>{
         match ty {
+            APPROVAL_CLOSED_0_1_0 => {
+                let variant: approval_closed_0_1_0::Content = serde_json::from_value(json)?;
+                Ok(variant.into())
+            },
+            APPROVAL_CREATED_0_1_0 => {
+                let variant: approval_created_0_1_0::Content = serde_json::from_value(json)?;
+                Ok(variant.into())
+            },
+            APPROVAL_UPDATED_0_1_0 => {
+                let variant: approval_updated_0_1_0::Content = serde_json::from_value(json)?;
+                Ok(variant.into())
+            },
             ARTIFACT_DELETED_0_2_0 => {
                 let variant: artifact_deleted_0_2_0::Content = serde_json::from_value(json)?;
                 Ok(variant.into())
@@ -1165,6 +1192,9 @@ impl Content {
 
     pub fn ty(&self) -> &str {
         match self {
+            Self::ApprovalClosed010(_) => APPROVAL_CLOSED_0_1_0,
+            Self::ApprovalCreated010(_) => APPROVAL_CREATED_0_1_0,
+            Self::ApprovalUpdated010(_) => APPROVAL_UPDATED_0_1_0,
             Self::ArtifactDeleted020(_) => ARTIFACT_DELETED_0_2_0,
             Self::ArtifactDeleted010(_) => ARTIFACT_DELETED_0_1_0,
             Self::ArtifactDownloaded020(_) => ARTIFACT_DOWNLOADED_0_2_0,
@@ -1300,6 +1330,9 @@ impl Content {
 
     pub fn subject(&self) -> &str {
         match self {
+            Self::ApprovalClosed010(_) => "",
+            Self::ApprovalCreated010(_) => "",
+            Self::ApprovalUpdated010(_) => "",
             Self::ArtifactDeleted020(_) => "",
             Self::ArtifactDeleted010(_) => "artifact",
             Self::ArtifactDownloaded020(_) => "",
@@ -1435,6 +1468,9 @@ impl Content {
 
     pub fn predicate(&self) -> &str {
         match self {
+            Self::ApprovalClosed010(_) => "closed",
+            Self::ApprovalCreated010(_) => "created",
+            Self::ApprovalUpdated010(_) => "updated",
             Self::ArtifactDeleted020(_) => "deleted",
             Self::ArtifactDeleted010(_) => "deleted",
             Self::ArtifactDownloaded020(_) => "downloaded",
@@ -1755,6 +1791,21 @@ pub(crate) fn new_context(ty: &str) -> crate::context::ContextEnum {
     }
 }
 
+impl From<approval_closed_0_1_0::Content> for Content {
+    fn from(value: approval_closed_0_1_0::Content) -> Self {
+        Self::ApprovalClosed010(value)
+    }
+}
+impl From<approval_created_0_1_0::Content> for Content {
+    fn from(value: approval_created_0_1_0::Content) -> Self {
+        Self::ApprovalCreated010(value)
+    }
+}
+impl From<approval_updated_0_1_0::Content> for Content {
+    fn from(value: approval_updated_0_1_0::Content) -> Self {
+        Self::ApprovalUpdated010(value)
+    }
+}
 impl From<artifact_deleted_0_2_0::Content> for Content {
     fn from(value: artifact_deleted_0_2_0::Content) -> Self {
         Self::ArtifactDeleted020(value)
@@ -2409,6 +2460,9 @@ impl<> proptest::arbitrary::Arbitrary for Content {
     fn arbitrary_with(_args: Self::Parameters) -> Self::Strategy {
         use proptest::prelude::*;
         prop_oneof![
+            any::<approval_closed_0_1_0::Content>().prop_map(Content::from),
+            any::<approval_created_0_1_0::Content>().prop_map(Content::from),
+            any::<approval_updated_0_1_0::Content>().prop_map(Content::from),
             any::<artifact_deleted_0_2_0::Content>().prop_map(Content::from),
             any::<artifact_deleted_0_1_0::Content>().prop_map(Content::from),
             any::<artifact_downloaded_0_2_0::Content>().prop_map(Content::from),
@@ -2548,6 +2602,12 @@ impl<> proptest::arbitrary::Arbitrary for Content {
 //
 //     #[test]
 //     fn test_true() {
+//         
+//         assert_eq!(extract_subject_predicate(APPROVAL_CLOSED_0_1_0), Some(("approval","closed")));
+//         
+//         assert_eq!(extract_subject_predicate(APPROVAL_CREATED_0_1_0), Some(("approval","created")));
+//         
+//         assert_eq!(extract_subject_predicate(APPROVAL_UPDATED_0_1_0), Some(("approval","updated")));
 //         
 //         assert_eq!(extract_subject_predicate(ARTIFACT_DELETED_0_2_0), Some(("artifact","deleted")));
 //         
