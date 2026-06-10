@@ -18,7 +18,7 @@ To send a CDEvent as CloudEvent:
 // from examples/pipelinerun_finished.rs
 use std::error::Error;
 
-use cdevents_sdk::{CDEvent, Subject, spec_0_5_0::pipelinerun_finished, Content};
+use cdevents_sdk::{CDEvent, Subject, spec_0_5_1::pipelinerun_finished, Content};
 use cloudevents::{Event, AttributesReader};
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -62,7 +62,7 @@ See the [CloudEvents](https://github.com/cloudevents/sdk-rust) docs as well.
 
 ## Features
 
-- [x] support cdevents spec 0.5.0
+- [x] support cdevents spec 0.5.1
 - [x] support cdevents spec 0.4.1
 - [x] support cdevents spec 0.3.0
 - [ ] support of custom event
