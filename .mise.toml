@@ -20,6 +20,14 @@ run = [
   "dprint fmt --config=tools/dprint/dprint.json",
 ]
 
+[tasks.autofix]
+description = "Automatically fix some linting issues & format code"
+depends_post = ["format"]
+run = [
+  "cargo fix --allow-dirty --workspace --all-features --all-targets --profile test",
+  "cargo clippy --fix --allow-dirty --workspace --all-features --all-targets --no-deps --profile test",
+]
+
 [tasks.check]
 wait_for = ["generate"]
 run = "cargo hack check --each-feature"
