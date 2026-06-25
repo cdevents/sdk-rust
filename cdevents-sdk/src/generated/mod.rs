@@ -650,6 +650,12 @@ pub enum Content {
 
 impl Content {
     pub fn from_json(ty: &str, json: serde_json::Value) -> Result<Self, serde_json::Error>{
+        if ty.chars().filter(|&c| c == '.').count() != 6 {
+              return Err(serde_json::Error::custom(format_args!(
+                  "invalid context.type format `{}`, expected '{{tld}}.{{domain}}.{{subject}}.{{predicate}}.{{version_major}}.{{version_minor}}.{{version_patch}}(-{{version_modifier}})?'",
+                  ty,
+              )))
+        }
         match ty {
             APPROVAL_CLOSED_0_1_0 => {
                 let variant: approval_closed_0_1_0::Content = serde_json::from_value(json)?;
@@ -1179,13 +1185,13 @@ impl Content {
                 let variant: ticket_updated_0_1_0::Content = serde_json::from_value(json)?;
                 Ok(variant.into())
             },
-            variant => if variant.starts_with("dev.cdeventsx.") {
-                Ok(Self::Custom{ ty: ty.to_string(), json })
-            } else {
+            variant => if variant.starts_with("dev.cdevents.") {
               Err(serde_json::Error::custom(format_args!(
                   "unknown variant `{}`, expected 'dev.cdevents.{{subject}}.{{predicate}}.{{version}}'",
                   variant,
               )))
+            } else {
+                Ok(Self::Custom{ ty: ty.to_string(), json })
             },
         }
     }

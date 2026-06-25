@@ -35,6 +35,12 @@ pub enum Content {
 
 impl Content {
     pub fn from_json(ty: &str, json: serde_json::Value) -> Result<Self, serde_json::Error>{
+        if ty.chars().filter(|&c| c == '.').count() != 6 {
+              return Err(serde_json::Error::custom(format_args!(
+                  "invalid context.type format `{}`, expected '\{{tld}}.\{{domain}}.\{{subject}}.\{{predicate}}.\{{version_major}}.\{{version_minor}}.\{{version_patch}}(-\{{version_modifier}})?'",
+                  ty,
+              )))
+        }
         match ty {
             {{#each variants }}
             {{to_screaming_snake_case this.rust_module}} => {
@@ -42,13 +48,13 @@ impl Content {
                 Ok(variant.into())
             },
             {{/each}}
-            variant => if variant.starts_with("dev.cdeventsx.") {
-                Ok(Self::Custom{ ty: ty.to_string(), json })
-            } else {
+            variant => if variant.starts_with("dev.cdevents.") {
               Err(serde_json::Error::custom(format_args!(
                   "unknown variant `{}`, expected 'dev.cdevents.\{{subject}}.\{{predicate}}.\{{version}}'",
                   variant,
               )))
+            } else {
+                Ok(Self::Custom{ ty: ty.to_string(), json })
             },
         }
     }
