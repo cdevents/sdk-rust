@@ -1,5 +1,10 @@
 # Rust CDEvents SDK
 
+[![crates.io](https://img.shields.io/crates/v/cdevents-sdk.svg)](https://crates.io/crates/cdevents-sdk)
+[![docs.rs](https://img.shields.io/docsrs/cdevents-sdk)](https://docs.rs/cdevents-sdk)
+[![CI](https://github.com/cdevents/sdk-rust/actions/workflows/ci.yml/badge.svg)](https://github.com/cdevents/sdk-rust/actions/workflows/ci.yml)
+[![license](https://img.shields.io/crates/l/cdevents-sdk.svg)](LICENSE)
+
 Rust SDK to emit [CDEvents](https://cdevents.dev).
 
 The SDK can be used to create CDEvents and send them as CloudEvents, as well as parse a received CloudEvent into a CDEvent.
@@ -9,7 +14,7 @@ The SDK can be used to create CDEvents and send them as CloudEvents, as well as 
 Import the modules in your code
 
 ```toml
-cdevents-sdk = "0.3"
+cdevents-sdk = "0.4"
 ```
 
 To send a CDEvent as CloudEvent:
@@ -18,7 +23,7 @@ To send a CDEvent as CloudEvent:
 // from examples/pipelinerun_finished.rs
 use std::error::Error;
 
-use cdevents_sdk::{CDEvent, Subject, spec_0_5_1::pipelinerun_finished, Content};
+use cdevents_sdk::{CDEvent, Subject, spec_0_5_1::pipelinerun_finished};
 use cloudevents::{Event, AttributesReader};
 
 fn main() -> Result<(), Box<dyn Error>> {
