@@ -1,0 +1,13 @@
+{
+  "context": {
+      "specversion": "0.5.1",
+      "id": "0",
+      "source": "https://app.cdviz.dev/probe",
+      "type": "dev.cdeventsx.probes.ping.0.1.0",
+      "timestamp": "2026-06-25T12:00:00Z"
+  },
+  "subject": {
+      "id": "0",
+      "content": {}
+  }
+}
