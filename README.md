@@ -3,6 +3,7 @@
 [![crates.io](https://img.shields.io/crates/v/cdevents-sdk.svg)](https://crates.io/crates/cdevents-sdk)
 [![docs.rs](https://img.shields.io/docsrs/cdevents-sdk)](https://docs.rs/cdevents-sdk)
 [![CI](https://github.com/cdevents/sdk-rust/actions/workflows/ci.yml/badge.svg)](https://github.com/cdevents/sdk-rust/actions/workflows/ci.yml)
+[![Plumber Score](https://score.getplumber.io/github.com/cdevents/sdk-rust.svg)](https://score.getplumber.io/github.com/cdevents/sdk-rust)
 [![license](https://img.shields.io/crates/l/cdevents-sdk.svg)](LICENSE)
 
 Rust SDK to emit [CDEvents](https://cdevents.dev).
