@@ -4,7 +4,8 @@ permissions:
   contents: read
   # To upload the SARIF report to the Security tab
   security-events: write
-  # id-token: write  # required only when score-push is enabled (see PR description)
+  # To publish the Plumber Score via OIDC (score-push, see below)
+  id-token: write
 
 on:
   push:
