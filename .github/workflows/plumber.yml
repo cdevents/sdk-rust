@@ -29,7 +29,7 @@ jobs:
         with:
           # Fail the check only when the Plumber Score drops below C.
           min-score: "C"
-          # score-push publishes a public A-E score badge to the hosted
-          # score service. Kept disabled here; see the PR description for
-          # the trade-offs before turning it on.
-          score-push: false
+          # Publish this repository's Plumber Score to the hosted score
+          # service so the README badge stays up to date. This makes the
+          # repository name and its score public.
+          score-push: true
