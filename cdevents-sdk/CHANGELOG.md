@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.2](https://github.com/cdevents/sdk-rust/compare/cdevents-sdk-v0.4.1...cdevents-sdk-v0.4.2) - 2026-09-27
+
+### Other
+
+- *(deps)* update rstest requirement from 0.26 to 0.27 ([#90](https://github.com/cdevents/sdk-rust/pull/90))
+- add plumber score badge to readme
+- update README ([#74](https://github.com/cdevents/sdk-rust/pull/74))
+
 ## [0.4.1](https://github.com/cdevents/sdk-rust/compare/cdevents-sdk-v0.4.0...cdevents-sdk-v0.4.1) - 2026-06-25
 
 ### Fixed
