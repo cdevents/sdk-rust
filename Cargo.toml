@@ -1,5 +1,5 @@
 [workspace]
-resolver = "2"
+resolver = "3"
 members = ["cdevents-sdk", "generator"]
 
 [workspace.package]
@@ -7,5 +7,5 @@ edition = "2024"
 version = "0.4.1"
 license = "Apache-2.0"
 repository = "https://github.com/cdevents/sdk-rust"
-rust-version = "1.85"
+rust-version = "1.89"
 publish = false
