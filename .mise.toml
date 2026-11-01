@@ -17,7 +17,7 @@ description = "Format the code and sort dependencies"
 run = [
   "cargo --locked fmt",
   "cargo --locked sort --grouped",
-  "dprint fmt --config=tools/dprint/dprint.json",
+  "dprint fmt",
 ]
 
 [tasks.autofix]
@@ -44,8 +44,7 @@ run = """
 cargo deny --workspace --all-features \
   --exclude-dev \
   --exclude generator \
-  check licenses advisories \
-  --config=tools/cargo-deny/deny.toml
+  check licenses advisories
 """
 
 [tasks."lint:cargo_clippy"]
@@ -53,7 +52,7 @@ wait_for = ["generate"]
 run = "cargo clippy --workspace --all-features --no-deps --all-targets -- --deny warnings"
 
 [tasks."lint:toml"]
-run = "dprint check --config=tools/dprint/dprint.json"
+run = "dprint check"
 
 [tasks."lint"]
 depends = ["lint:*"]
