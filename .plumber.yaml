@@ -86,7 +86,10 @@ github:
       - jdx/mise-action
       - mozilla-actions/sccache-action
       - release-plz/action
-      - dtolnay/rust-toolchain
+      # Actions pulled in by release-plz/action.
+      - cargo-bins/cargo-binstall
+      - release-plz/git-config
+      - taiki-e/install-action
     workflowMustNotInjectUserInputInScripts:
       enabled: true
     workflowMustNotWriteUntrustedContentToGitHubEnv:
@@ -111,7 +114,7 @@ github:
       enabled: true
     actionsMustNotExecuteMutableRemoteCode:
       enabled: true
-    releaseWorkflowsMustNotRestoreUntrustedCache:
+    untrustedTriggersMustNotWriteCache:
       enabled: true
       publishActions:
       - pypa/gh-action-pypi-publish
