@@ -85,7 +85,6 @@ github:
       # Actions used by this repository's own workflows.
       - jdx/mise-action
       - mozilla-actions/sccache-action
-      - wagoid/commitlint-github-action
       - release-plz/action
       - dtolnay/rust-toolchain
     workflowMustNotInjectUserInputInScripts:
