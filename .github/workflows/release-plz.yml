@@ -33,7 +33,7 @@ jobs:
           install_args: rust
           cache: false
           cache_save: false
-      - uses: release-plz/action@7ef5e4d4b0420630cfcaeb182c01e13651d4c577 # v0.5
+      - uses: release-plz/action@f67a7e724bdad4a0f6875f186060a0ca2770d76c # v0.5
         with:
           command: release
         env:
@@ -63,7 +63,7 @@ jobs:
           install_args: rust
           cache: false
           cache_save: false
-      - uses: release-plz/action@7ef5e4d4b0420630cfcaeb182c01e13651d4c577 # v0.5
+      - uses: release-plz/action@f67a7e724bdad4a0f6875f186060a0ca2770d76c # v0.5
         with:
           command: release-pr
         env:
