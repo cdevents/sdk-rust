@@ -26,7 +26,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Run Plumber
-        uses: getplumber/plumber@6194d20b44fde47bde7ba058156c5964b3a33459 # v0.7.22
+        uses: getplumber/plumber@ec8cb3a7edd6a324b33e85109b627b2df6023d94 # v0.7.23
         with:
           # Fail the check only when the Plumber Score drops below C.
           min-score: "C"
